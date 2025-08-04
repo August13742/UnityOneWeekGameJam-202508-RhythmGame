@@ -1,0 +1,6 @@
+.panel {
+    background-color: rgba(25, 19, 19, 0.39);
+}
+
+.main_button {
+}

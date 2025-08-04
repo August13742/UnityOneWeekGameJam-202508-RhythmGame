@@ -1,0 +1,13 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/TestUIMenuStyle.uss?fileID=7433441132597879392&amp;guid=e6ac6c1bddeef144eae45f2b5a46865b&amp;type=3#TestUIMenuStyle" />
+    <ui:VisualElement name="Main" class="panel" style="flex-grow: 1;">
+        <ui:VisualElement name="Container" class="menu" style="flex-grow: 1; align-items: center;">
+            <ui:Label text="test" style="white-space: pre;" />
+            <ui:Button text="Button" class="main_button" style="height: 64px; width: 128px;" />
+            <ui:Button text="Button" class="main_button" />
+            <ui:Button text="Button" class="main_button" />
+            <ui:RadioButton label="Radio Button" />
+            <ui:EnumField label="Enum" value="Center" type="UnityEngine.TextAlignment, UnityEngine.TextRenderingModule" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
