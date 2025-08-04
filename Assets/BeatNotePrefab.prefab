@@ -52,9 +52,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hitCircle: {fileID: 1952162888957724160}
   approachRing: {fileID: 6695465861740905540}
-  initialScale: 2
-  perfectWindow: 0.1
-  regularWindow: 0.2
 --- !u!1 &3765032236929038731
 GameObject:
   m_ObjectHideFlags: 0
@@ -189,7 +186,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:

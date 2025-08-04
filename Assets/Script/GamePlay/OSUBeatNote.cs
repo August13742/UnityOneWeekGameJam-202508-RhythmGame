@@ -1,108 +1,124 @@
+using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Rhythm.GamePlay
 {
-    public class OSUBeatNote : MonoBehaviour
+    public class OSUBeatNote : MonoBehaviour, IPointerDownHandler
     {
+        [Header("Visual References")]
         [SerializeField] private Image hitCircle;
         [SerializeField] private RawImage approachRing;
 
-        [Header("Note Parameters")]
-        [Tooltip("Scale multiplier for the approach circle at spawn.")]
-        [SerializeField] private float initialScale = 1.0f;
+        // Assigned at spawn:
+        private double hitTime;
+        public double Hittime => hitTime;
+        private float approachTime;
+        private bool hasProcessed = false;
 
-        [Header("Timing Windows (in seconds)")]
-        [Tooltip("Time window for a 'Perfect' hit, +/- from the exact hit time.")]
-        [SerializeField] private float perfectWindow = 0.1f;
-        [Tooltip("Time window for a 'Regular' hit, +/- from the exact hit time.")]
-        [SerializeField] private float regularWindow = 0.2f;
-
-
-        float timeToHit;
-        float approachTime;
-        float spawnTime;
-        bool isHit = false;
-        bool isMissed = false;
-
-        public void Initialise(float hitTime, float approachDuration)
+        // Callbacks injected by the spawner:
+        private Action<double> onHit;  // delta -> JudgmentSystem.RegisterHit
+        private Action onMiss;   // -> JudgmentSystem.RegisterMiss
+        /// <summary>
+        /// Initialise timing and callback hooks.
+        /// </summary>
+        public void Initialise(
+            double hitTime,
+            float approachTime,
+            Action<double> onHit,
+            Action onMiss)
         {
-            timeToHit = hitTime;
-            approachTime = approachDuration;
-            spawnTime = timeToHit - approachTime;
+            this.hitTime = hitTime;
+            this.approachTime = approachTime;
+            this.onHit = onHit;
+            this.onMiss = onMiss;
 
-            isHit = false;
-            isMissed = false;
+            hasProcessed = false;
+            hitCircle.color = Color.white;      // reset any tint
+            approachRing.rectTransform.localScale = Vector3.one;
             gameObject.SetActive(true);
-            approachRing.rectTransform.localScale = new Vector3(initialScale, initialScale, 1f);
         }
+
         private void Update()
         {
-            if (isHit || isMissed) return;
+            if (hasProcessed)
+                return;
 
-            float currentTime = (float) AudioSettings.dspTime;
-            UpdateApproachRing(currentTime);
-            CheckForMiss(currentTime);
+            double now = AudioSettings.dspTime;
+            AnimateApproachRing(now);
 
-        }
-        private void UpdateApproachRing(float currentTime)
-        {
-            float elapsedTime = currentTime - spawnTime;
-            float progress = Mathf.Clamp01(elapsedTime/approachTime);
-
-            float currentScale = Mathf.Lerp(initialScale, .5f, progress);
-            approachRing.rectTransform.localScale = new Vector3 (currentScale, currentScale, 1f);
-        }
-        private void CheckForMiss(float currentTime)
-        {
-            if (currentTime > timeToHit + regularWindow)
+            // grace period 0.2
+            if (now > hitTime + approachTime * .2f)
             {
-                isMissed = true;
-                Debug.Log("result: Miss");
-                gameObject.SetActive (false);
+                hasProcessed = true;
+                onMiss?.Invoke();
+                StartCoroutine(HitFeedbackAndCleanup(Color.red));
             }
         }
-        public string AttemptHit()
+
+        /// <summary>
+        /// Shrinks ring from 1->0 over approachTime.
+        /// </summary>
+        private void AnimateApproachRing(double now)
         {
-            if (isHit || isMissed)
-                return "Inactive";
+            double elapsed = now - (hitTime - approachTime);
+            float t = Mathf.Clamp01((float)(elapsed / approachTime));
 
-            isHit = true;
-
-            float hitDelta = Mathf.Abs((float)AudioSettings.dspTime - timeToHit);
-            string result;
-            if (hitDelta <= perfectWindow)
-            {
-                result = "Perfect";
-                hitCircle.GetComponent<Image>().color = Color.green;
-                // add more
-            }
-            else if (hitDelta <= regularWindow)
-            {
-                result = "Regular";
-                // add more
-                hitCircle.GetComponent<Image>().color = Color.gray;
-            }
-            else
-            {
-                result = "Fail";
-                // add more
-                hitCircle.GetComponent<Image>().color = Color.red;
-            }
-            Debug.Log($"Result: {result} (Delta: {hitDelta:F3}s)");
-            
-
-
-            StartCoroutine(DeactivateAfterDelay(0.15f));
-            
-            return result;
+            approachRing.rectTransform.localScale = Vector3.Lerp(
+                Vector3.one * 1.5f,   // start scale
+                Vector3.one*0.5f,         // end, 0.5 because ring is 2 times as big
+                t);
         }
 
-        private System.Collections.IEnumerator DeactivateAfterDelay(float delay)
+        /// <summary>
+        /// Called by the EventSystem on pointer down.
+        /// </summary>
+        public void OnPointerDown(PointerEventData eventData)
         {
+            if (hasProcessed)
+                return;
+
+            eventData.Use(); //consume input to prevent passing down
+
+            hasProcessed = true;
+            double now = AudioSettings.dspTime;
+            string result = null; // Move declaration here, before usage
+            double delta = now - hitTime;   // +ve = late, –ve = early
+
+            void JudgmentHandler(string ret, int _)
+            {
+                result = ret;
+            }
+
+            JudgementSystem.Instance.OnJudgment += JudgmentHandler;
+            onHit?.Invoke(delta);
+            JudgementSystem.Instance.OnJudgment -= JudgmentHandler;
+
+            Color feedbackColor = Color.blue;
+            if (result == "Perfect")
+                feedbackColor = Color.green;
+            else if (result == "Good")
+                feedbackColor = Color.yellow;
+            else if (result == "Miss")
+                feedbackColor = Color.red;
+
+            StartCoroutine(HitFeedbackAndCleanup(feedbackColor));
+        }
+
+  
+        public System.Collections.IEnumerator HitFeedbackAndCleanup(Color feedbackColor, float delay = 0.1f)
+        {
+            hitCircle.color = feedbackColor;
             yield return new WaitForSeconds(delay);
-            gameObject.SetActive(false);
+            RhythmManager rhythmManager =
+                FindFirstObjectByType<Rhythm.GamePlay.RhythmManager>();
+            // Instead of Destroy(gameObject):
+
+            if (rhythmManager != null)
+                rhythmManager.ReturnNoteToPool(this);
+            else
+                Destroy(gameObject);
         }
     }
 }
-
