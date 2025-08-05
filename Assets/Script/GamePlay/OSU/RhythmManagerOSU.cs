@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace Rhythm.GamePlay
 {
-    public class RhythmManager : MonoBehaviour
+    public class RhythmManagerOSU : MonoBehaviour
     {
         public float delay = 3f;
         [SerializeField] private BeatmapData beatmap;

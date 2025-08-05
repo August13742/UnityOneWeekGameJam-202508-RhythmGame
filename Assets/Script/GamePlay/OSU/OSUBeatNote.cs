@@ -111,8 +111,8 @@ namespace Rhythm.GamePlay
         {
             hitCircle.color = feedbackColor;
             yield return new WaitForSeconds(delay);
-            RhythmManager rhythmManager =
-                FindFirstObjectByType<Rhythm.GamePlay.RhythmManager>();
+            RhythmManagerOSU rhythmManager =
+                FindFirstObjectByType<Rhythm.GamePlay.RhythmManagerOSU>();
             // Instead of Destroy(gameObject):
 
             if (rhythmManager != null)

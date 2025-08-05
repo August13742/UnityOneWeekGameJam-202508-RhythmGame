@@ -15,7 +15,7 @@ namespace Rhythm.GamePlay
         [Header("Gameplay Settings")]
         [SerializeField] private float pixelsPerSecond = 400f;
         [SerializeField] private float approachTime = 1.0f;
-        [SerializeField] private float perfectWindow = 0.1f;
+        //[SerializeField] private float perfectWindow = 0.1f;
         [SerializeField] private float goodWindow = 0.2f;
         [SerializeField] private float missWindow = 0.25f;
 
