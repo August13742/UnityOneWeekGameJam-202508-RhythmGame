@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -16,7 +17,6 @@ namespace Rhythm.GamePlay
         public double Hittime => hitTime;
         private float approachTime;
         private bool hasProcessed = false;
-
         private Color defaultColour = new Vector4(1, 1, 1, 0.35f);
 
         // Callbacks injected by the spawner:
@@ -39,6 +39,8 @@ namespace Rhythm.GamePlay
             hasProcessed = false;
             hitCircle.color = defaultColour;      // reset any tint
             approachRing.rectTransform.localScale = Vector3.one;
+
+            hitCircle.raycastTarget = true;
             gameObject.SetActive(true);
         }
 
@@ -81,37 +83,70 @@ namespace Rhythm.GamePlay
             if (hasProcessed)
                 return;
 
-            eventData.Use(); //consume input to prevent passing down
+            var pointerData = new PointerEventData(EventSystem.current)
+            {
+                position = eventData.position
+            };
 
+            var results = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(pointerData, results);
+
+            if (!IsNodeClosestToExpire(results))
+                return;
+
+            // Process hit
+            eventData.Use();
             hasProcessed = true;
+
             double now = AudioSettings.dspTime;
-            double delta = now - hitTime;   // +ve = late, –ve = early
+            double delta = now - hitTime;
 
             string result = null;
-            void JudgmentHandler(string ret, int _)
-            {
-                result = ret;
-            }
+            void JudgmentHandler(string ret, int _) => result = ret;
 
             JudgementSystem.Instance.OnJudgment += JudgmentHandler;
             onHit?.Invoke(delta);
             JudgementSystem.Instance.OnJudgment -= JudgmentHandler;
 
-            Color feedbackColor = Color.blue;
-            if (result == "Perfect")
-                feedbackColor = Color.green;
-            else if (result == "Good")
-                feedbackColor = Color.yellow;
-            else if (result == "Miss")
-                feedbackColor = Color.red;
+            Color feedbackColor = result switch
+            {
+                "Perfect" => Color.green,
+                "Good" => Color.yellow,
+                "Miss" => Color.red,
+                _ => Color.blue
+            };
 
             StartCoroutine(HitFeedbackAndCleanup(feedbackColor));
         }
+        bool IsNodeClosestToExpire(List<RaycastResult> results)
+        {
+            OSUBeatNote closestToExpireNote = null;
+            double earliestHitTime = double.MaxValue;
+            
+            foreach (var result in results)
+            {
+                var note = result.gameObject.GetComponentInParent<OSUBeatNote>();
+                if (note != null && !note.hasProcessed)
+                {
+                    // The note with the earliest hit time is the one closest to expiring
+                    if (note.Hittime < earliestHitTime)
+                    {
+                        closestToExpireNote = note;
+                        earliestHitTime = note.Hittime;
+                    }
+                }
+            }
+            
+            // Return true if this note is the one closest to expiring (bottom-most)
+            return closestToExpireNote == this;
+        }
 
-  
-        public System.Collections.IEnumerator HitFeedbackAndCleanup(Color feedbackColor, float delay = 0.1f)
+
+
+        public System.Collections.IEnumerator HitFeedbackAndCleanup(Color feedbackColor, float delay = 0.05f)
         {
             hitCircle.color = feedbackColor;
+            hitCircle.raycastTarget = false;
             yield return new WaitForSeconds(delay);
 
             RhythmManagerOSU.Instance.ReturnNoteToPool(this);
