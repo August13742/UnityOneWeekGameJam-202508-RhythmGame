@@ -1,0 +1,423 @@
+{
+  "musicTrack": "bad_apple.mp3",
+  "approachTime": 1.0,
+  "notes": [
+    {
+      "hitTime": 15.249
+    },
+    {
+      "hitTime": 16.988
+    },
+    {
+      "hitTime": 18.727
+    },
+    {
+      "hitTime": 20.032
+    },
+    {
+      "hitTime": 20.467
+    },
+    {
+      "hitTime": 22.206
+    },
+    {
+      "hitTime": 23.945
+    },
+    {
+      "hitTime": 25.685
+    },
+    {
+      "hitTime": 26.989
+    },
+    {
+      "hitTime": 27.424
+    },
+    {
+      "hitTime": 28.294
+    },
+    {
+      "hitTime": 30.033
+    },
+    {
+      "hitTime": 30.903
+    },
+    {
+      "hitTime": 32.642
+    },
+    {
+      "hitTime": 33.512
+    },
+    {
+      "hitTime": 34.382
+    },
+    {
+      "hitTime": 36.991
+    },
+    {
+      "hitTime": 37.861
+    },
+    {
+      "hitTime": 39.6
+    },
+    {
+      "hitTime": 40.47
+    },
+    {
+      "hitTime": 41.339
+    },
+    {
+      "hitTime": 42.209
+    },
+    {
+      "hitTime": 43.948
+    },
+    {
+      "hitTime": 44.818
+    },
+    {
+      "hitTime": 46.557
+    },
+    {
+      "hitTime": 47.427
+    },
+    {
+      "hitTime": 48.297
+    },
+    {
+      "hitTime": 50.906
+    },
+    {
+      "hitTime": 51.776
+    },
+    {
+      "hitTime": 53.515
+    },
+    {
+      "hitTime": 54.385
+    },
+    {
+      "hitTime": 55.689
+    },
+    {
+      "hitTime": 56.124
+    },
+    {
+      "hitTime": 56.559
+    },
+    {
+      "hitTime": 56.994
+    },
+    {
+      "hitTime": 58.733
+    },
+    {
+      "hitTime": 60.473
+    },
+    {
+      "hitTime": 62.212
+    },
+    {
+      "hitTime": 63.951
+    },
+    {
+      "hitTime": 64.821
+    },
+    {
+      "hitTime": 65.691
+    },
+    {
+      "hitTime": 67.43
+    },
+    {
+      "hitTime": 68.3
+    },
+    {
+      "hitTime": 69.169
+    },
+    {
+      "hitTime": 70.039
+    },
+    {
+      "hitTime": 71.778
+    },
+    {
+      "hitTime": 72.648
+    },
+    {
+      "hitTime": 75.257
+    },
+    {
+      "hitTime": 76.127
+    },
+    {
+      "hitTime": 78.736
+    },
+    {
+      "hitTime": 79.606
+    },
+    {
+      "hitTime": 80.475
+    },
+    {
+      "hitTime": 81.345
+    },
+    {
+      "hitTime": 83.954
+    },
+    {
+      "hitTime": 85.694
+    },
+    {
+      "hitTime": 87.433
+    },
+    {
+      "hitTime": 89.172
+    },
+    {
+      "hitTime": 90.912
+    },
+    {
+      "hitTime": 92.651
+    },
+    {
+      "hitTime": 93.521
+    },
+    {
+      "hitTime": 94.39
+    },
+    {
+      "hitTime": 94.825
+    },
+    {
+      "hitTime": 95.26
+    },
+    {
+      "hitTime": 96.13
+    },
+    {
+      "hitTime": 97.0
+    },
+    {
+      "hitTime": 97.869
+    },
+    {
+      "hitTime": 98.304
+    },
+    {
+      "hitTime": 98.739
+    },
+    {
+      "hitTime": 100.478
+    },
+    {
+      "hitTime": 102.218
+    },
+    {
+      "hitTime": 103.957
+    },
+    {
+      "hitTime": 105.696
+    },
+    {
+      "hitTime": 106.566
+    },
+    {
+      "hitTime": 107.436
+    },
+    {
+      "hitTime": 108.306
+    },
+    {
+      "hitTime": 109.175
+    },
+    {
+      "hitTime": 126.569
+    },
+    {
+      "hitTime": 127.439
+    },
+    {
+      "hitTime": 128.308
+    },
+    {
+      "hitTime": 130.048
+    },
+    {
+      "hitTime": 130.917
+    },
+    {
+      "hitTime": 131.787
+    },
+    {
+      "hitTime": 134.396
+    },
+    {
+      "hitTime": 135.266
+    },
+    {
+      "hitTime": 137.005
+    },
+    {
+      "hitTime": 137.875
+    },
+    {
+      "hitTime": 138.745
+    },
+    {
+      "hitTime": 139.614
+    },
+    {
+      "hitTime": 141.354
+    },
+    {
+      "hitTime": 142.223
+    },
+    {
+      "hitTime": 143.963
+    },
+    {
+      "hitTime": 144.833
+    },
+    {
+      "hitTime": 145.702
+    },
+    {
+      "hitTime": 148.311
+    },
+    {
+      "hitTime": 149.181
+    },
+    {
+      "hitTime": 150.92
+    },
+    {
+      "hitTime": 151.79
+    },
+    {
+      "hitTime": 153.095
+    },
+    {
+      "hitTime": 153.529
+    },
+    {
+      "hitTime": 153.964
+    },
+    {
+      "hitTime": 154.399
+    },
+    {
+      "hitTime": 156.139
+    },
+    {
+      "hitTime": 157.878
+    },
+    {
+      "hitTime": 159.617
+    },
+    {
+      "hitTime": 161.357
+    },
+    {
+      "hitTime": 162.226
+    },
+    {
+      "hitTime": 163.096
+    },
+    {
+      "hitTime": 164.835
+    },
+    {
+      "hitTime": 165.705
+    },
+    {
+      "hitTime": 166.575
+    },
+    {
+      "hitTime": 167.445
+    },
+    {
+      "hitTime": 169.184
+    },
+    {
+      "hitTime": 170.054
+    },
+    {
+      "hitTime": 172.663
+    },
+    {
+      "hitTime": 173.532
+    },
+    {
+      "hitTime": 176.141
+    },
+    {
+      "hitTime": 177.011
+    },
+    {
+      "hitTime": 177.881
+    },
+    {
+      "hitTime": 178.751
+    },
+    {
+      "hitTime": 181.36
+    },
+    {
+      "hitTime": 181.794
+    },
+    {
+      "hitTime": 182.229
+    },
+    {
+      "hitTime": 183.969
+    },
+    {
+      "hitTime": 185.708
+    },
+    {
+      "hitTime": 187.447
+    },
+    {
+      "hitTime": 189.187
+    },
+    {
+      "hitTime": 190.926
+    },
+    {
+      "hitTime": 192.666
+    },
+    {
+      "hitTime": 193.535
+    },
+    {
+      "hitTime": 194.405
+    },
+    {
+      "hitTime": 195.275
+    },
+    {
+      "hitTime": 197.014
+    },
+    {
+      "hitTime": 197.884
+    },
+    {
+      "hitTime": 199.623
+    },
+    {
+      "hitTime": 200.493
+    },
+    {
+      "hitTime": 201.362
+    },
+    {
+      "hitTime": 203.102
+    },
+    {
+      "hitTime": 204.841
+    },
+    {
+      "hitTime": 206.581
+    }
+  ]
+}
