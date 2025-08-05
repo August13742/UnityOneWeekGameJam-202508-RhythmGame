@@ -156,8 +156,6 @@ namespace Rhythm.GamePlay
             // 1. Spawn 3D enemy from pool
             GameObject enemy = GetEnemyFromPool();
             enemy.transform.SetPositionAndRotation(spawnPoint.position, spawnPoint.rotation);
-            //enemy.transform.position = spawnPoint.position;
-            //enemy.transform.rotation = spawnPoint.rotation;
             enemy.SetActive(true);
 
             // Init enemy with timing for sync
@@ -170,7 +168,7 @@ namespace Rhythm.GamePlay
             // 2. Spawn UI marker
             Vector3 screenPos = worldCamera.WorldToScreenPoint(spawnPoint.position);
 
-            
+
             Camera cam = canvasComponent.renderMode == RenderMode.ScreenSpaceOverlay ? null : worldCamera;
 
             RectTransformUtility.ScreenPointToLocalPointInRectangle(

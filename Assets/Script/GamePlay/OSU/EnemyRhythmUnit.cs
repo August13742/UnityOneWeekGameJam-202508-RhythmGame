@@ -29,8 +29,8 @@ public class EnemyRhythmUnit : MonoBehaviour
     private void Activate()
     {
         // anim, etc
-        // Example: Return to pool after 2 seconds
-        Invoke(nameof(ReturnToPool), 2f);
+        // Example: Return to pool after seconds
+        Invoke(nameof(ReturnToPool), .5f);
     }
 
     private void ReturnToPool()

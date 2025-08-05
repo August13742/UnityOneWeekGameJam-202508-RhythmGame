@@ -665,6 +665,7 @@ GameObject:
   - component: {fileID: 349511185}
   - component: {fileID: 349511184}
   - component: {fileID: 349511183}
+  - component: {fileID: 349511187}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -757,6 +758,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &349511187
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 349511182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efe09f0dfc1ce944393fe3f8cb6f0df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &372626014
 GameObject:
   m_ObjectHideFlags: 0
@@ -1381,7 +1394,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   delay: 2
-  beatmap: {fileID: 11400000, guid: b70ba039beb52694fb1b4f7668b2e505, type: 2}
+  beatmap: {fileID: 11400000, guid: 8cd2787f16991014399b691eb425e866, type: 2}
   notePrefab: {fileID: 6451794992138514700, guid: c273cb463786c9943b8d4e1fbc558665, type: 3}
   noteParentCanvas: {fileID: 349511186}
   audioOffset: 0
