@@ -5,7 +5,6 @@ namespace Rhythm.GamePlay
 {
     /// <summary>
     /// Singleton
-    /// 
     /// </summary>
     public class JudgementSystem : MonoBehaviour
     {
@@ -13,6 +12,16 @@ namespace Rhythm.GamePlay
         {
             get; private set;
         }
+        private void Awake()
+        {
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+            Instance = this;
+        }
+
         [Header("Timing Windows (seconds)")]
         [Tooltip("± window around hit time for a Perfect judgment")]
         [SerializeField] private float perfectWindow = 0.1f;
@@ -28,15 +37,6 @@ namespace Rhythm.GamePlay
         public event Action<int> OnScoreChanged;
         public event Action<int> OnComboChanged;
 
-        private void Awake()
-        {
-            if (Instance != null && Instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
-            Instance = this;
-        }
 
         /// <summary>
         /// Call this when a note reports a pointer‐click (delta = actualTime − scheduledTime).
