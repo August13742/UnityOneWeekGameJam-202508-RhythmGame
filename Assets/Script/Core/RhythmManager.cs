@@ -8,11 +8,18 @@ namespace Rhythm.GamePlay
         [SerializeField] private BeatmapData beatmap;
         [SerializeField] private OSUBeatNote notePrefab;
         [SerializeField] private RectTransform noteParentCanvas;
-        [SerializeField] private float audioOffset = 0.0f; // Add calibration parameter
+        [SerializeField] private float audioOffset = 0.0f;
+        [SerializeField] private Vector2 spawnRangeOffset = new Vector2(50, 50);
 
+        private Vector2 spawnRange = new Vector2(800, 440);
         private double dspSongStartTime;
         private int spawnIndex = 0;
 
+
+        float minX;
+        float maxX;
+        float minY;
+        float maxY;
         // --- Pooling fields ---
         [Header("Pooling")]
         [SerializeField] private int poolSize = 8;
@@ -20,6 +27,13 @@ namespace Rhythm.GamePlay
 
         private void Awake()
         {
+
+            // Use the actual canvas size minus offset for spawn range
+            spawnRange = new Vector2(
+                noteParentCanvas.rect.width - spawnRangeOffset.x,
+                noteParentCanvas.rect.height - spawnRangeOffset.y
+            );
+
             // Pre-instantiate pool objects and hide them
             for (int i = 0; i < poolSize; i++)
             {
@@ -31,7 +45,7 @@ namespace Rhythm.GamePlay
 
         private void Start()
         {
-            // Start audio after a 3-second delay
+            // Start audio after delay
             AudioSource audioSource = GetComponent<AudioSource>();
             double startTime = AudioSettings.dspTime + delay;
             audioSource.clip = beatmap.musicTrack;
@@ -42,6 +56,11 @@ namespace Rhythm.GamePlay
             var countdownText = FindFirstObjectByType<Rhythm.UI.CountDownText>();
             if (countdownText != null)
                 countdownText.SetScheduledStartTime(dspSongStartTime);
+
+            minX = -spawnRange.x / 2f;
+            maxX = spawnRange.x / 2f;
+            minY = -spawnRange.y / 2f;
+            maxY = spawnRange.y / 2f;
         }
 
         private void Update()
@@ -63,10 +82,16 @@ namespace Rhythm.GamePlay
             OSUBeatNote note = GetNoteFromPool();
             var rect = note.GetComponent<RectTransform>();
             rect.SetParent(noteParentCanvas, false);
-            rect.anchoredPosition = new Vector2(Random.Range(-720, 0), Random.Range(-300, 0));
+
+            //Debug.Log($"{minX},{maxX},{minY},{maxY}");
+            
+            rect.anchoredPosition = new Vector2(
+                Random.Range(minX, maxX),
+                Random.Range(minY, maxY)
+            );
 
             note.Initialise(
-                dspSongStartTime + data.hitTime + audioOffset, // Add offset to compensate for audio latency
+                dspSongStartTime + data.hitTime + audioOffset,
                 beatmap.approachTime,
                 delta => JudgementSystem.Instance.RegisterHit(delta),
                 () => JudgementSystem.Instance.RegisterMiss()
