@@ -4,8 +4,19 @@ using UnityEngine.UI;
 
 namespace Rhythm.GamePlay
 {
+
+    /// <summary>
+    /// Singleton
+    /// </summary>
     public class RhythmManagerTaiko : MonoBehaviour
     {
+
+        public static RhythmManagerTaiko Instance
+        {
+            get; private set;
+        }
+
+
         [Header("Assets and Prefabs")]
         [SerializeField] private BeatmapData beatmap;
         [SerializeField] private TaikoNote prefabA;
@@ -26,6 +37,15 @@ namespace Rhythm.GamePlay
         private readonly List<TaikoNote> activeNotes = new();
 
         private AudioSource audioSource;
+        private void Awake()
+        {
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+            Instance = this;
+        }
 
         private void Start()
         {
@@ -76,7 +96,6 @@ namespace Rhythm.GamePlay
                 absHit,
                 data.type,
                 pixelsPerSecond,
-                this,
                 delta => JudgementSystem.Instance.RegisterHit(delta),
                 () => JudgementSystem.Instance.RegisterMiss()
             );

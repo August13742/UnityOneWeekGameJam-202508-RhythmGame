@@ -2,8 +2,19 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace Rhythm.GamePlay
 {
+
+    /// <summary>
+    /// Singleton
+    /// </summary>
     public class RhythmManagerOSU : MonoBehaviour
     {
+
+        public static RhythmManagerOSU Instance
+        {
+            get; private set;
+        }
+ 
+
         public float delay = 3f;
         [SerializeField] private BeatmapData beatmap;
         [SerializeField] private OSUBeatNote notePrefab;
@@ -11,6 +22,11 @@ namespace Rhythm.GamePlay
         [SerializeField] private float audioOffset = 0.0f;
         [SerializeField] private Vector2 spawnRangeOffset = new Vector2(50, 50);
 
+        [SerializeField] private Camera worldCamera = null ;
+        [SerializeField] private Transform[] enemySpawnPoints; // fixed spawn sockets in the room
+        [SerializeField] private GameObject enemyPrefab;
+
+        private Canvas canvasComponent;
         private Vector2 spawnRange = new Vector2(800, 440);
         private double dspSongStartTime;
         private int spawnIndex = 0;
@@ -24,27 +40,45 @@ namespace Rhythm.GamePlay
         [Header("Pooling")]
         [SerializeField] private int poolSize = 8;
         private readonly Queue<OSUBeatNote> notePool = new();
+        private readonly Queue<GameObject> enemyPool = new();
 
         private void Awake()
         {
 
-            // Use the actual canvas size minus offset for spawn range
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+            Instance = this;
+
+
             spawnRange = new Vector2(
                 noteParentCanvas.rect.width - spawnRangeOffset.x,
                 noteParentCanvas.rect.height - spawnRangeOffset.y
             );
 
-            // Pre-instantiate pool objects and hide them
+            // Pre-instantiate note pool objects and hide them
             for (int i = 0; i < poolSize; i++)
             {
                 var note = Instantiate(notePrefab, noteParentCanvas);
                 note.gameObject.SetActive(false);
                 notePool.Enqueue(note);
             }
+
+            // Pre-instantiate enemy pool objects and hide them
+            for (int i = 0; i < poolSize; i++)
+            {
+                var enemy = Instantiate(enemyPrefab);
+                enemy.SetActive(false);
+                enemyPool.Enqueue(enemy);
+            }
         }
 
         private void Start()
         {
+
+            canvasComponent = noteParentCanvas.GetComponentInParent<Canvas>();
             // Start audio after delay
             AudioSource audioSource = GetComponent<AudioSource>();
             double startTime = AudioSettings.dspTime + delay;
@@ -52,7 +86,7 @@ namespace Rhythm.GamePlay
             audioSource.PlayScheduled(startTime);
             dspSongStartTime = startTime;
 
-            // Synchronize countdown
+            // Synchronise countdown
             var countdownText = FindFirstObjectByType<Rhythm.UI.CountDownText>();
             if (countdownText != null)
                 countdownText.SetScheduledStartTime(dspSongStartTime);
@@ -61,6 +95,38 @@ namespace Rhythm.GamePlay
             maxX = spawnRange.x / 2f;
             minY = -spawnRange.y / 2f;
             maxY = spawnRange.y / 2f;
+
+            // If no spawn points, create virtual ones in front of the camera
+            if (enemySpawnPoints == null || enemySpawnPoints.Length == 0)
+            {
+                int virtualCount = 10;
+                float distMin = 10f;   // near plane
+                float distMax = 30f;   // far plane
+                float halfWidth = 15f;   // +-X spread
+                float heightOffset = 6f;    // +-Y spread
+
+                enemySpawnPoints = new Transform[virtualCount];
+
+                for (int i = 0; i < virtualCount; ++i)
+                {
+                    Vector3 localPos = new Vector3(
+                        Random.Range(-halfWidth, halfWidth),   // X
+                        Random.Range(0, heightOffset),  // Y
+                        Random.Range(distMin, distMax));    // Z (forward)
+
+                    Vector3 worldPos = worldCamera.transform.TransformPoint(localPos);
+
+                    var go = new GameObject($"VirtualSpawnPoint_{i}");
+                    go.transform.position = worldPos;
+
+                    // face the camera
+                    Vector3 dirToCam = (worldCamera.transform.position - worldPos).normalized;
+                    go.transform.rotation = Quaternion.LookRotation(dirToCam, Vector3.up);
+
+                    go.transform.SetParent(transform);          // housekeeping
+                    enemySpawnPoints[i] = go.transform;
+                }
+            }
         }
 
         private void Update()
@@ -77,18 +143,42 @@ namespace Rhythm.GamePlay
             }
         }
 
+
         private void SpawnNote(BeatNoteData data)
         {
+            // pick enemy spawn point
+            int index = (data.spawnPointIndex >= 0 && data.spawnPointIndex < enemySpawnPoints.Length)
+                        ? data.spawnPointIndex
+                        : Random.Range(0, enemySpawnPoints.Length);
+
+            Transform spawnPoint = enemySpawnPoints[index];
+
+            // 1. Spawn 3D enemy from pool
+            GameObject enemy = GetEnemyFromPool();
+            enemy.transform.position = spawnPoint.position;
+            enemy.transform.rotation = spawnPoint.rotation;
+            enemy.SetActive(true);
+
+            // Init enemy with timing for sync
+            if (enemy.TryGetComponent<EnemyRhythmUnit>(out var rhythmUnit))
+            {
+                rhythmUnit.SetHitTime(dspSongStartTime + data.hitTime + audioOffset);
+                rhythmUnit.SetReturnToPoolCallback(ReturnEnemyToPool);
+            }
+
+            // 2. Spawn UI marker
+            Vector3 screenPos = worldCamera.WorldToScreenPoint(spawnPoint.position);
+
+            
+            Camera cam = canvasComponent.renderMode == RenderMode.ScreenSpaceOverlay ? null : worldCamera;
+
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                noteParentCanvas, screenPos, cam, out Vector2 canvasPos);
+
             OSUBeatNote note = GetNoteFromPool();
             var rect = note.GetComponent<RectTransform>();
             rect.SetParent(noteParentCanvas, false);
-
-            //Debug.Log($"{minX},{maxX},{minY},{maxY}");
-            
-            rect.anchoredPosition = new Vector2(
-                Random.Range(minX, maxX),
-                Random.Range(minY, maxY)
-            );
+            rect.anchoredPosition = canvasPos;
 
             note.Initialise(
                 dspSongStartTime + data.hitTime + audioOffset,
@@ -115,6 +205,25 @@ namespace Rhythm.GamePlay
         {
             note.gameObject.SetActive(false);
             notePool.Enqueue(note);
+        }
+
+        private GameObject GetEnemyFromPool()
+        {
+            if (enemyPool.Count > 0)
+            {
+                var enemy = enemyPool.Dequeue();
+                enemy.SetActive(true);
+                return enemy;
+            }
+            // If pool is empty, instantiate as fallback (should be rare)
+            var newEnemy = Instantiate(enemyPrefab);
+            return newEnemy;
+        }
+
+        public void ReturnEnemyToPool(GameObject enemy)
+        {
+            enemy.SetActive(false);
+            enemyPool.Enqueue(enemy);
         }
     }
 }

@@ -19,7 +19,6 @@ namespace Rhythm.GamePlay
         private bool hasProcessed = false;
         private NoteType type;
 
-        private RhythmManagerTaiko manager;
         private Image noteImage;
 
         private Action<double> onHit;   // callback to JudgementSystem.RegisterHit
@@ -38,14 +37,13 @@ namespace Rhythm.GamePlay
             double hitTime,
             NoteType type,
             float speed,
-            RhythmManagerTaiko manager,
             Action<double> onHit,
             Action onMiss)
         {
             this.hitTime = hitTime;
             this.type = type;
             this.speed = speed;
-            this.manager = manager;
+
             this.onHit = onHit;   // store callbacks
             this.onMiss = onMiss;
 
@@ -105,7 +103,7 @@ namespace Rhythm.GamePlay
             if (noteImage != null)
                 noteImage.color = colour;   // show feedback
             yield return new WaitForSeconds(wait);             // let player see it
-            manager.RecycleNote(this);                         // returns to pool, ResetNote() restores white
+            RhythmManagerTaiko.Instance.RecycleNote(this);                         // returns to pool, ResetNote() restores white
         }
 
 

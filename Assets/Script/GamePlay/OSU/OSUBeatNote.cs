@@ -17,6 +17,8 @@ namespace Rhythm.GamePlay
         private float approachTime;
         private bool hasProcessed = false;
 
+        private Color defaultColour = new Vector4(1, 1, 1, 0.35f);
+
         // Callbacks injected by the spawner:
         private Action<double> onHit;  // delta -> JudgmentSystem.RegisterHit
         private Action onMiss;   // -> JudgmentSystem.RegisterMiss
@@ -35,7 +37,7 @@ namespace Rhythm.GamePlay
             this.onMiss = onMiss;
 
             hasProcessed = false;
-            hitCircle.color = Color.white;      // reset any tint
+            hitCircle.color = defaultColour;      // reset any tint
             approachRing.rectTransform.localScale = Vector3.one;
             gameObject.SetActive(true);
         }
@@ -111,14 +113,9 @@ namespace Rhythm.GamePlay
         {
             hitCircle.color = feedbackColor;
             yield return new WaitForSeconds(delay);
-            RhythmManagerOSU rhythmManager =
-                FindFirstObjectByType<Rhythm.GamePlay.RhythmManagerOSU>();
-            // Instead of Destroy(gameObject):
 
-            if (rhythmManager != null)
-                rhythmManager.ReturnNoteToPool(this);
-            else
-                Destroy(gameObject);
+            RhythmManagerOSU.Instance.ReturnNoteToPool(this);
+
         }
     }
 }
