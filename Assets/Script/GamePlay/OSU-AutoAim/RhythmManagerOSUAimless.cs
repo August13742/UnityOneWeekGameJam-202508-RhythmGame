@@ -139,7 +139,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
                     Vector3 dirToCam = (worldCamera.transform.position - worldPos).normalized;
                     go.transform.rotation = Quaternion.LookRotation(dirToCam, Vector3.up);
 
-                    go.transform.SetParent(transform);          // housekeeping
+                    go.transform.SetParent(transform);  // housekeeping
                     enemySpawnPoints[i] = go.transform;
                 }
             }
@@ -250,7 +250,6 @@ namespace Rhythm.GamePlay.OSU.Aimless
 
             if (nextTarget != null)
             {
-                // THIS CALCULATION IS NOW CORRECT AND EASY TO UNDERSTAND
                 timeToHit = (float)(nextTarget.RelativeHitTime - songTime);
                 float leadIn = beatmap.approachTime * indicatorLeadInMultiplier;
 

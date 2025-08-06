@@ -46,7 +46,7 @@ namespace Rhythm.GamePlay.OSU
         
         {
             this.HitTime = hitTime;
-            this.RelativeHitTime = RelativeHitTime;
+            this.RelativeHitTime = relativeHitTime;
             this.approachTime = approachTime;
             this.onHit = onHit;
             this.onMiss = onMiss;
