@@ -62,7 +62,6 @@ namespace Rhythm.GamePlay
             else
             {
                 // Too far off -> treat as miss
-                result = "Miss";
                 RegisterMiss();
                 return;
             }

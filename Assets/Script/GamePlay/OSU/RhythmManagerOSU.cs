@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-namespace Rhythm.GamePlay
+namespace Rhythm.GamePlay.OSU
 {
 
     /// <summary>
@@ -20,14 +20,14 @@ namespace Rhythm.GamePlay
         [SerializeField] private OSUBeatNote notePrefab;
         [SerializeField] private RectTransform noteParentCanvas;
         [SerializeField] private float audioOffset = 0.0f;
-        [SerializeField] private Vector2 spawnRangeOffset = new Vector2(50, 50);
+        [SerializeField] private Vector2 spawnRangeOffset = new (50, 50);
 
         [SerializeField] private Camera worldCamera = null ;
-        [SerializeField] private Transform[] enemySpawnPoints; // fixed spawn sockets in the room
+        [SerializeField] private Transform[] enemySpawnPoints;
         [SerializeField] private GameObject enemyPrefab;
 
         private Canvas canvasComponent;
-        private Vector2 spawnRange = new Vector2(800, 440);
+        private Vector2 spawnRange = new (800, 440);
         private double dspSongStartTime;
         private int spawnIndex = 0;
 
@@ -102,14 +102,14 @@ namespace Rhythm.GamePlay
                 int virtualCount = 10;
                 float distMin = 10f;   // near plane
                 float distMax = 30f;   // far plane
-                float halfWidth = 15f;   // +-X spread
+                float halfWidth = 10f;   // +-X spread
                 float heightOffset = 6f;    // +-Y spread
 
                 enemySpawnPoints = new Transform[virtualCount];
 
                 for (int i = 0; i < virtualCount; ++i)
                 {
-                    Vector3 localPos = new Vector3(
+                    Vector3 localPos = new (
                         Random.Range(-halfWidth, halfWidth),   // X
                         Random.Range(0, heightOffset),  // Y
                         Random.Range(distMin, distMax));    // Z (forward)
@@ -155,8 +155,7 @@ namespace Rhythm.GamePlay
 
             // 1. Spawn 3D enemy from pool
             GameObject enemy = GetEnemyFromPool();
-            enemy.transform.position = spawnPoint.position;
-            enemy.transform.rotation = spawnPoint.rotation;
+            enemy.transform.SetPositionAndRotation(spawnPoint.position, spawnPoint.rotation);
             enemy.SetActive(true);
 
             // Init enemy with timing for sync
@@ -169,7 +168,7 @@ namespace Rhythm.GamePlay
             // 2. Spawn UI marker
             Vector3 screenPos = worldCamera.WorldToScreenPoint(spawnPoint.position);
 
-            
+
             Camera cam = canvasComponent.renderMode == RenderMode.ScreenSpaceOverlay ? null : worldCamera;
 
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
@@ -184,7 +183,8 @@ namespace Rhythm.GamePlay
                 dspSongStartTime + data.hitTime + audioOffset,
                 beatmap.approachTime,
                 delta => JudgementSystem.Instance.RegisterHit(delta),
-                () => JudgementSystem.Instance.RegisterMiss()
+                () => JudgementSystem.Instance.RegisterMiss(),
+                ReturnNoteToPool
             );
         }
 
