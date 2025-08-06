@@ -1,9 +1,9 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.UI.CanvasScaler;
 
-namespace Rhythm.GamePlay
+
+namespace Rhythm.GamePlay.Taiko
 {
     public enum NoteType
     {
@@ -70,7 +70,7 @@ namespace Rhythm.GamePlay
             if (dspNow > hitTime + gracePeriod)
             {
                 hasProcessed = true;
-                onMiss?.Invoke();                         // ← use injected callback
+                onMiss?.Invoke();                         // <- use injected callback
                 StartCoroutine(FeedbackAndRecycle(Color.red));
             }
         }
@@ -85,7 +85,7 @@ namespace Rhythm.GamePlay
             void JudgmentHandler(string j, int _) => result = j;
 
             JudgementSystem.Instance.OnJudgment += JudgmentHandler;
-            onHit?.Invoke(delta);                     // ← call injected RegisterHit
+            onHit?.Invoke(delta);                     // <- call injected RegisterHit
             JudgementSystem.Instance.OnJudgment -= JudgmentHandler;
 
             Color feedback = result switch
@@ -103,7 +103,7 @@ namespace Rhythm.GamePlay
             if (noteImage != null)
                 noteImage.color = colour;   // show feedback
             yield return new WaitForSeconds(wait);             // let player see it
-            RhythmManagerTaiko.Instance.RecycleNote(this);                         // returns to pool, ResetNote() restores white
+            RhythmManagerTaiko.Instance.RecycleNote(this);   // returns to pool, ResetNote() restores white
         }
 
 

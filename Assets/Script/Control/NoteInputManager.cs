@@ -1,9 +1,9 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
-using Rhythm.GamePlay;
+using Rhythm.GamePlay.OSU;
 
-namespace Rhythm.Control
+namespace Rhythm.Control.OSU
 {
     public class NoteInputManager : MonoBehaviour, IPointerDownHandler
     {

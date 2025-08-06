@@ -1,4 +1,4 @@
-using Rhythm.GamePlay;
+using Rhythm.GamePlay.Taiko;
 [System.Serializable]
 public class BeatNoteData
 {
