@@ -18,8 +18,8 @@ namespace Rhythm.GamePlay.OSU.Aimless
             rectTransform.DOKill();
 
             // Start the new tween from its current position to the target's position.
-            rectTransform.DOAnchorPos(target.anchoredPosition, duration);
-//                         .SetEase(Ease.InOutSine);
+            rectTransform.DOAnchorPos(target.anchoredPosition, duration)
+                         .SetEase(Ease.InOutQuint);
         }
     }
 }

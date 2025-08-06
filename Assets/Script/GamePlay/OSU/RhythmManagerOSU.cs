@@ -194,7 +194,8 @@ namespace Rhythm.GamePlay.OSU
                 delta => JudgementSystem.Instance.RegisterHit(delta),
                 () => JudgementSystem.Instance.RegisterMiss(),
                 ReturnNoteToPool,
-                this
+                this,
+                spawnPoint.position
             );
         }
 

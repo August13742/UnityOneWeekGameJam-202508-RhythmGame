@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,6 +23,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
         [SerializeField] private RectTransform noteParentCanvas;
         [SerializeField] private float audioOffset = 0.0f;
         [SerializeField] private Vector2 spawnRangeOffset = new(50, 50);
+        [SerializeField] private SFXResource shootSFXResource;
 
         [SerializeField] private Camera worldCamera = null;
         [SerializeField] private Transform[] enemySpawnPoints;
@@ -95,12 +97,15 @@ namespace Rhythm.GamePlay.OSU.Aimless
         {
 
             canvasComponent = noteParentCanvas.GetComponentInParent<Canvas>();
-            // Start audio after delay
-            AudioSource audioSource = GetComponent<AudioSource>();
+
             double startTime = AudioSettings.dspTime + AudioStartDelay;
-            audioSource.clip = beatmap.musicTrack;
-            audioSource.PlayScheduled(startTime);
+
+            // Announce the intent to play scheduled music via the event system.
+            GameEvents.Instance.PlayMusicScheduled(beatmap.musicTrack, startTime);
+
+ 
             dspSongStartTime = startTime;
+
 
             // Synchronise countdown
             var countdownText = FindFirstObjectByType<Rhythm.UI.CountDownText>();
@@ -112,7 +117,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
             minY = -spawnRange.y / 2f;
             maxY = spawnRange.y / 2f;
 
-            // If no spawn points, create virtual ones in front of the camera
+
             if (enemySpawnPoints == null || enemySpawnPoints.Length == 0)
             {
                 int virtualCount = 10;
@@ -126,9 +131,9 @@ namespace Rhythm.GamePlay.OSU.Aimless
                 for (int i = 0; i < virtualCount; ++i)
                 {
                     Vector3 localPos = new(
-                        Random.Range(-halfWidth, halfWidth),   // X
-                        Random.Range(0, heightOffset),  // Y
-                        Random.Range(distMin, distMax));    // Z (forward)
+                        UnityEngine.Random.Range(-halfWidth, halfWidth),   // X
+                        UnityEngine.Random.Range(0, heightOffset),  // Y
+                        UnityEngine.Random.Range(distMin, distMax));    // Z (forward)
 
                     Vector3 worldPos = worldCamera.transform.TransformPoint(localPos);
 
@@ -166,71 +171,10 @@ namespace Rhythm.GamePlay.OSU.Aimless
             }
             activeNotes.RemoveAll(note => note.HasProcessed);
 
-            Debug.Log($"[Frame] Active Notes: {activeNotes.Count}");
+            //Debug.Log($"[Frame] Active Notes: {activeNotes.Count}");
 
             if (showIndicator) UpdateIndicator();
         }
-
-        //private void UpdateIndicator()
-        //{
-        //    // 1. Find the next valid target
-        //    OSUBeatNote nextTarget = null;
-        //    double earliestHitTime = double.MaxValue;
-        //    foreach (var note in activeNotes)
-        //    {
-        //        // The check for HasProcessed is implicitly handled by the activeNotes.RemoveAll call,
-        //        // but explicit checking here is safer and clearer.
-        //        if (!note.HasProcessed && note.HitTime < earliestHitTime)
-        //        {
-        //            earliestHitTime = note.HitTime;
-        //            nextTarget = note;
-        //        }
-        //    }
-
-        //    // 2. Determine if the indicator *should* be active for the target
-        //    double songTime = AudioSettings.dspTime - dspSongStartTime;
-        //    bool shouldBeActive = false;
-        //    float timeToHit = 0f;
-
-        //    if (nextTarget != null)
-        //    {
-        //        timeToHit = (float)(nextTarget.HitTime - songTime);
-        //        float leadIn = beatmap.approachTime * indicatorLeadInMultiplier;
-        //        if (timeToHit <= leadIn)
-        //        {
-        //            shouldBeActive = true;
-        //        }
-        //    }
-
-        //    // 3. Manage state transitions
-        //    if (shouldBeActive)
-        //    {
-        //        // Activate and initialize ONLY if it's a new target or if the indicator was off.
-        //        if (CurrentIndicatorTarget != nextTarget || !indicator.gameObject.activeSelf)
-        //        {
-        //            // If there was no previous target, start the tween from the center.
-        //            if (CurrentIndicatorTarget == null)
-        //            {
-        //                indicator.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
-        //            }
-
-        //            indicator.gameObject.SetActive(true);
-        //            float duration = Mathf.Max(0.1f, timeToHit);
-        //            indicator.Initialise(nextTarget.GetComponent<RectTransform>(), duration);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        // If it shouldn't be active, ensure it's turned off.
-        //        if (indicator.gameObject.activeSelf)
-        //        {
-        //            indicator.gameObject.SetActive(false);
-        //        }
-        //    }
-
-        //    // 4. Update the current target for the next frame's comparison
-        //    CurrentIndicatorTarget = nextTarget;
-        //}
         private void UpdateIndicator()
         {
             OSUBeatNote nextTarget = null;
@@ -279,9 +223,12 @@ namespace Rhythm.GamePlay.OSU.Aimless
             CurrentIndicatorTarget = nextTarget;
         }
 
+        public Action ShotFired;
+        public Action ShotHit;
 
         private void HandleInput()
         {
+            ShotFired?.Invoke();
             OSUBeatNote noteToHit = null;
             double earliestHitTime = double.MaxValue;
 
@@ -297,6 +244,8 @@ namespace Rhythm.GamePlay.OSU.Aimless
 
             if (noteToHit != null)
             {
+                ShotHit?.Invoke();
+                AudioManager.Instance.PlaySFX(shootSFXResource);
                 noteToHit.ProcessHit();
             }
             else
@@ -315,7 +264,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
             // pick enemy spawn point
             int index = (data.spawnPointIndex >= 0 && data.spawnPointIndex < enemySpawnPoints.Length)
                         ? data.spawnPointIndex
-                        : Random.Range(0, enemySpawnPoints.Length);
+                        : UnityEngine.Random.Range(0, enemySpawnPoints.Length);
 
             Transform spawnPoint = enemySpawnPoints[index];
 
@@ -328,7 +277,6 @@ namespace Rhythm.GamePlay.OSU.Aimless
             // Init enemy with timing for sync
             if (enemy.TryGetComponent<EnemyRhythmUnit>(out var rhythmUnit))
             {
-                // Convert hitTime from ms to seconds before adding it to the start time
                 rhythmUnit.SetHitTime(absoluteDSPHitTime);
                 rhythmUnit.SetReturnToPoolCallback(ReturnEnemyToPool);
             }
@@ -355,8 +303,10 @@ namespace Rhythm.GamePlay.OSU.Aimless
                 delta => JudgementSystem.Instance.RegisterHit(delta),
                 () => JudgementSystem.Instance.RegisterMiss(),
                 ReturnNoteToPool,
-                this
+                this,
+                spawnPoint.position
             );
+
 
             activeNotes.Add(note);
         }
@@ -397,6 +347,17 @@ namespace Rhythm.GamePlay.OSU.Aimless
         {
             enemy.SetActive(false);
             enemyPool.Enqueue(enemy);
+        }
+
+        public Vector3 GetCurrentTargetPosition()
+        {
+            if (CurrentIndicatorTarget != null)
+            {
+                return CurrentIndicatorTarget.WorldPosition;
+            }
+
+            // Fallback if no target exists.
+            return worldCamera.transform.position + worldCamera.transform.forward * 20f;
         }
     }
 }
