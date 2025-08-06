@@ -22,6 +22,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
         [SerializeField] private RectTransform noteParentCanvas;
         [SerializeField] private float audioOffset = 0.0f;
         [SerializeField] private Vector2 spawnRangeOffset = new(50, 50);
+        [SerializeField] private SFXResource shootSFXResource;
 
         [SerializeField] private Camera worldCamera = null;
         [SerializeField] private Transform[] enemySpawnPoints;
@@ -95,12 +96,15 @@ namespace Rhythm.GamePlay.OSU.Aimless
         {
 
             canvasComponent = noteParentCanvas.GetComponentInParent<Canvas>();
-            // Start audio after delay
-            AudioSource audioSource = GetComponent<AudioSource>();
+
             double startTime = AudioSettings.dspTime + AudioStartDelay;
-            audioSource.clip = beatmap.musicTrack;
-            audioSource.PlayScheduled(startTime);
+
+            // Announce the intent to play scheduled music via the event system.
+            GameEvents.Instance.PlayMusicScheduled(beatmap.musicTrack, startTime);
+
+ 
             dspSongStartTime = startTime;
+
 
             // Synchronise countdown
             var countdownText = FindFirstObjectByType<Rhythm.UI.CountDownText>();
@@ -170,67 +174,6 @@ namespace Rhythm.GamePlay.OSU.Aimless
 
             if (showIndicator) UpdateIndicator();
         }
-
-        //private void UpdateIndicator()
-        //{
-        //    // 1. Find the next valid target
-        //    OSUBeatNote nextTarget = null;
-        //    double earliestHitTime = double.MaxValue;
-        //    foreach (var note in activeNotes)
-        //    {
-        //        // The check for HasProcessed is implicitly handled by the activeNotes.RemoveAll call,
-        //        // but explicit checking here is safer and clearer.
-        //        if (!note.HasProcessed && note.HitTime < earliestHitTime)
-        //        {
-        //            earliestHitTime = note.HitTime;
-        //            nextTarget = note;
-        //        }
-        //    }
-
-        //    // 2. Determine if the indicator *should* be active for the target
-        //    double songTime = AudioSettings.dspTime - dspSongStartTime;
-        //    bool shouldBeActive = false;
-        //    float timeToHit = 0f;
-
-        //    if (nextTarget != null)
-        //    {
-        //        timeToHit = (float)(nextTarget.HitTime - songTime);
-        //        float leadIn = beatmap.approachTime * indicatorLeadInMultiplier;
-        //        if (timeToHit <= leadIn)
-        //        {
-        //            shouldBeActive = true;
-        //        }
-        //    }
-
-        //    // 3. Manage state transitions
-        //    if (shouldBeActive)
-        //    {
-        //        // Activate and initialize ONLY if it's a new target or if the indicator was off.
-        //        if (CurrentIndicatorTarget != nextTarget || !indicator.gameObject.activeSelf)
-        //        {
-        //            // If there was no previous target, start the tween from the center.
-        //            if (CurrentIndicatorTarget == null)
-        //            {
-        //                indicator.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
-        //            }
-
-        //            indicator.gameObject.SetActive(true);
-        //            float duration = Mathf.Max(0.1f, timeToHit);
-        //            indicator.Initialise(nextTarget.GetComponent<RectTransform>(), duration);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        // If it shouldn't be active, ensure it's turned off.
-        //        if (indicator.gameObject.activeSelf)
-        //        {
-        //            indicator.gameObject.SetActive(false);
-        //        }
-        //    }
-
-        //    // 4. Update the current target for the next frame's comparison
-        //    CurrentIndicatorTarget = nextTarget;
-        //}
         private void UpdateIndicator()
         {
             OSUBeatNote nextTarget = null;
@@ -297,6 +240,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
 
             if (noteToHit != null)
             {
+                AudioManager.Instance.PlaySFX(shootSFXResource);
                 noteToHit.ProcessHit();
             }
             else
@@ -328,7 +272,6 @@ namespace Rhythm.GamePlay.OSU.Aimless
             // Init enemy with timing for sync
             if (enemy.TryGetComponent<EnemyRhythmUnit>(out var rhythmUnit))
             {
-                // Convert hitTime from ms to seconds before adding it to the start time
                 rhythmUnit.SetHitTime(absoluteDSPHitTime);
                 rhythmUnit.SetReturnToPoolCallback(ReturnEnemyToPool);
             }

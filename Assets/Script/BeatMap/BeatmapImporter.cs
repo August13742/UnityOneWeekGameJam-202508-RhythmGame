@@ -43,14 +43,30 @@ public class BeatmapImporter : EditorWindow
         BeatmapData asset = ScriptableObject.CreateInstance<BeatmapData>();
         asset.musicTrack = clip;
         asset.approachTime = parsed.approachTime;
-        asset.notes = new List<BeatNoteData>(); //
+        asset.notes = new List<BeatNoteData>();
 
         foreach (var n in parsed.notes)
         {
             asset.notes.Add(new BeatNoteData { hitTime = n.hitTime });
         }
 
-        string path = EditorUtility.SaveFilePanelInProject("Save Beatmap Asset", "NewBeatmap", "asset", "Save beatmap as asset");
+        // Extract the name of the JSON file without extension
+        string defaultName = "NewBeatmap";
+        if (json != null)
+        {
+            string assetPath = AssetDatabase.GetAssetPath(json);
+            if (!string.IsNullOrEmpty(assetPath))
+            {
+                defaultName = System.IO.Path.GetFileNameWithoutExtension(assetPath);
+            }
+        }
+
+        string path = EditorUtility.SaveFilePanelInProject(
+            "Save Beatmap Asset",
+            defaultName,
+            "asset",
+            "Save beatmap as asset"
+        );
         if (!string.IsNullOrEmpty(path))
         {
             AssetDatabase.CreateAsset(asset, path);
