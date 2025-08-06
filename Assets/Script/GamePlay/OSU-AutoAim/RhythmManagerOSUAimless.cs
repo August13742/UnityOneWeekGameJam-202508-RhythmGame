@@ -1,33 +1,36 @@
 using System.Collections.Generic;
 using UnityEngine;
-namespace Rhythm.GamePlay.OSU
+
+namespace Rhythm.GamePlay.OSU.Aimless
 {
 
     /// <summary>
     /// Singleton
     /// </summary>
-    public class RhythmManagerOSU : MonoBehaviour
+    public class RhythmManagerOSUAimless : MonoBehaviour
     {
 
-        public static RhythmManagerOSU Instance
+        public static RhythmManagerOSUAimless Instance
         {
             get; private set;
         }
- 
 
-        public float delay = 3f;
+
+        public float AudioStartDelay = 3f;
         [SerializeField] private BeatmapData beatmap;
         [SerializeField] private OSUBeatNote notePrefab;
         [SerializeField] private RectTransform noteParentCanvas;
         [SerializeField] private float audioOffset = 0.0f;
-        [SerializeField] private Vector2 spawnRangeOffset = new (50, 50);
+        [SerializeField] private Vector2 spawnRangeOffset = new(50, 50);
 
-        [SerializeField] private Camera worldCamera = null ;
+        [SerializeField] private Camera worldCamera = null;
         [SerializeField] private Transform[] enemySpawnPoints;
         [SerializeField] private GameObject enemyPrefab;
 
+        [SerializeField] private AimIndicator indicatorPrefab;
+
         private Canvas canvasComponent;
-        private Vector2 spawnRange = new (800, 440);
+        private Vector2 spawnRange = new(800, 440);
         private double dspSongStartTime;
         private int spawnIndex = 0;
 
@@ -41,6 +44,11 @@ namespace Rhythm.GamePlay.OSU
         [SerializeField] private int poolSize = 8;
         private readonly Queue<OSUBeatNote> notePool = new();
         private readonly Queue<GameObject> enemyPool = new();
+
+
+        private readonly List<OSUBeatNote> activeNotes = new();
+        private AimIndicator indicator;
+        private OSUBeatNote currentIndicatorTarget = null;
 
         private void Awake()
         {
@@ -57,6 +65,7 @@ namespace Rhythm.GamePlay.OSU
                 noteParentCanvas.rect.width - spawnRangeOffset.x,
                 noteParentCanvas.rect.height - spawnRangeOffset.y
             );
+
 
             // Pre-instantiate note pool objects and hide them
             for (int i = 0; i < poolSize; i++)
@@ -81,7 +90,7 @@ namespace Rhythm.GamePlay.OSU
             canvasComponent = noteParentCanvas.GetComponentInParent<Canvas>();
             // Start audio after delay
             AudioSource audioSource = GetComponent<AudioSource>();
-            double startTime = AudioSettings.dspTime + delay;
+            double startTime = AudioSettings.dspTime + AudioStartDelay;
             audioSource.clip = beatmap.musicTrack;
             audioSource.PlayScheduled(startTime);
             dspSongStartTime = startTime;
@@ -109,7 +118,7 @@ namespace Rhythm.GamePlay.OSU
 
                 for (int i = 0; i < virtualCount; ++i)
                 {
-                    Vector3 localPos = new (
+                    Vector3 localPos = new(
                         Random.Range(-halfWidth, halfWidth),   // X
                         Random.Range(0, heightOffset),  // Y
                         Random.Range(distMin, distMax));    // Z (forward)
@@ -127,6 +136,9 @@ namespace Rhythm.GamePlay.OSU
                     enemySpawnPoints[i] = go.transform;
                 }
             }
+
+            indicator = Instantiate(indicatorPrefab, noteParentCanvas);
+            indicator.gameObject.SetActive(false);
         }
 
         private void Update()
@@ -141,8 +153,89 @@ namespace Rhythm.GamePlay.OSU
                 SpawnNote(beatmap.notes[spawnIndex]);
                 spawnIndex++;
             }
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                HandleInput();
+            }
+            activeNotes.RemoveAll(note => note.HasProcessed);
+
+            UpdateIndicator();
         }
 
+        private void UpdateIndicator()
+        {
+            // 1. Find the next note to target (the one with the earliest HitTime)
+            OSUBeatNote nextTarget = null;
+            double earliestHitTime = double.MaxValue;
+
+            foreach (var note in activeNotes)
+            {
+                // The list is cleaned of processed notes, so the first one we find in a sorted
+                // list would be the one. This loop finds the one with the minimum HitTime.
+                if (note.HitTime < earliestHitTime)
+                {
+                    earliestHitTime = note.HitTime;
+                    nextTarget = note;
+                }
+            }
+
+            // 2. Check if the target has changed
+            if (nextTarget != currentIndicatorTarget)
+            {
+                if (nextTarget != null)
+                {
+                    // --- We have a new target ---
+                    // Determine the start time for our duration calculation.
+                    // If it's the first note, we start from the beginning of the song.
+                    // Otherwise, we start from the previous note's hit time.
+                    double prevNoteTime = (currentIndicatorTarget == null)
+                                        ? dspSongStartTime
+                                        : currentIndicatorTarget.HitTime;
+
+                    float duration = (float)(nextTarget.HitTime - prevNoteTime);
+
+                    // Set a minimum duration to prevent instant-teleporting on very fast notes.
+                    if (duration < 0.1f)
+                        duration = 0.1f;
+
+                    // Command the indicator to move.
+                    indicator.Initialise(nextTarget.GetComponent<RectTransform>(), duration);
+                }
+                else if (currentIndicatorTarget != null)
+                {
+                    indicator.gameObject.SetActive(false);
+                }
+
+                // 3. Update the state to reflect the new target
+                currentIndicatorTarget = nextTarget;
+            }
+        }
+
+
+        private void HandleInput()
+        {
+            OSUBeatNote noteToHit = null;
+            double earliestHitTime = double.MaxValue;
+
+            // Find the oldest note that hasn't been processed yet.
+            foreach (var note in activeNotes)
+            {
+                if (!note.HasProcessed && note.HitTime < earliestHitTime)
+                {
+                    earliestHitTime = note.HitTime;
+                    noteToHit = note;
+                }
+            }
+
+            if (noteToHit != null)
+            {
+                noteToHit.ProcessHit();
+            }
+            else
+            {
+                //penalty optional
+            }
+        }
 
         private void SpawnNote(BeatNoteData data)
         {
@@ -186,6 +279,8 @@ namespace Rhythm.GamePlay.OSU
                 () => JudgementSystem.Instance.RegisterMiss(),
                 ReturnNoteToPool
             );
+
+            activeNotes.Add(note);
         }
 
         private OSUBeatNote GetNoteFromPool()
@@ -227,3 +322,4 @@ namespace Rhythm.GamePlay.OSU
         }
     }
 }
+

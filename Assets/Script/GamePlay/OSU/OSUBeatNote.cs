@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
-namespace Rhythm.GamePlay
+namespace Rhythm.GamePlay.OSU
 {
     public class OSUBeatNote : MonoBehaviour
     {
@@ -25,17 +25,23 @@ namespace Rhythm.GamePlay
 
         private System.Action<double> onHit;
         private System.Action onMiss;
+        private System.Action<OSUBeatNote> onReturnToPool;
 
-        public void Initialise(double hitTime, float approachTime, System.Action<double> onHit, System.Action onMiss)
+        public void Initialise(
+            double hitTime,
+            float approachTime,
+            System.Action<double> onHit,
+            System.Action onMiss,
+            System.Action<OSUBeatNote> onReturnToPool)
         {
             this.HitTime = hitTime;
             this.approachTime = approachTime;
             this.onHit = onHit;
             this.onMiss = onMiss;
+            this.onReturnToPool = onReturnToPool;
 
             HasProcessed = false;
             hitCircle.color = defaultColour;
-
 
             if (approachRing)
             {
@@ -45,6 +51,7 @@ namespace Rhythm.GamePlay
 
             gameObject.SetActive(true);
         }
+
 
         private void Update()
         {
@@ -111,7 +118,7 @@ namespace Rhythm.GamePlay
 
             yield return new WaitForSeconds(delay);
 
-            RhythmManagerOSU.Instance.ReturnNoteToPool(this);
+            onReturnToPool?.Invoke(this);
         }
     }
 }

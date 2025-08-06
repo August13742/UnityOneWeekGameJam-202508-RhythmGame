@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
-namespace Rhythm.GamePlay
+namespace Rhythm.GamePlay.Taiko
 {
 
     /// <summary>
