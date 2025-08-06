@@ -1,0 +1,452 @@
+fileFormatVersion: 2
+guid: 5955440da71534a7092abb5fb36f4f66
+ModelImporter:
+  serializedVersion: 22200
+  internalIDToNameTable: []
+  externalObjects: {}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: "\u30A2\u30FC\u30DE\u30C1\u30E5\u30A2|ShotAnimation1"
+      takeName: "\u30A2\u30FC\u30DE\u30C1\u30E5\u30A2|ShotAnimation1"
+      internalID: -911089749993175530
+      firstFrame: 5
+      lastFrame: 16
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: "\u30A2\u30FC\u30DE\u30C1\u30E5\u30A2|ShotAnimation1.001"
+      takeName: "\u30A2\u30FC\u30DE\u30C1\u30E5\u30A2|ShotAnimation1.001"
+      internalID: 2052553531382436202
+      firstFrame: 0
+      lastFrame: 16
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: "\u30A2\u30FC\u30DE\u30C1\u30E5\u30A2|ShotAnimation2"
+      takeName: "\u30A2\u30FC\u30DE\u30C1\u30E5\u30A2|ShotAnimation2"
+      internalID: -9086221506467171788
+      firstFrame: 5
+      lastFrame: 14
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: "\u30A2\u30FC\u30DE\u30C1\u30E5\u30A2|ShotAnimation3"
+      takeName: "\u30A2\u30FC\u30DE\u30C1\u30E5\u30A2|ShotAnimation3"
+      internalID: 2190377797784363764
+      firstFrame: 0
+      lastFrame: 16
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: "\u30A2\u30FC\u30DE\u30C1\u30E5\u30A2|ShotAnimation4"
+      takeName: "\u30A2\u30FC\u30DE\u30C1\u30E5\u30A2|ShotAnimation4"
+      internalID: -2321935482724032844
+      firstFrame: 5
+      lastFrame: 12
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    strictVertexDataChecks: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton:
+    - name: "\u4E3B\u4EBA\u516C\u30DC\u30FC\u30F3(Clone)"
+      parentName: 
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: "\u5186.020"
+      parentName: "\u4E3B\u4EBA\u516C\u30DC\u30FC\u30F3(Clone)"
+      position: {x: 0.5201473, y: 2.821763, z: -0.041326523}
+      rotation: {x: -0.7054653, y: -0.048152685, z: 0.048152685, w: 0.7054653}
+      scale: {x: 1, y: 1, z: 1}
+    - name: "\u7ACB\u65B9\u4F53.015"
+      parentName: "\u4E3B\u4EBA\u516C\u30DC\u30FC\u30F3(Clone)"
+      position: {x: 0.57833004, y: 2.5857635, z: -0.033058167}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 0.87257844, y: 0.87257844, z: 0.87257844}
+    - name: "\u5186.021"
+      parentName: "\u4E3B\u4EBA\u516C\u30DC\u30FC\u30F3(Clone)"
+      position: {x: -0.2931932, y: 1.0696938, z: -1.290047}
+      rotation: {x: 0.249336, y: 0.75026685, z: 0.44683373, w: -0.4186536}
+      scale: {x: 0.111874774, y: 0.10058779, z: 0.10434286}
+    - name: "\u5186.022"
+      parentName: "\u4E3B\u4EBA\u516C\u30DC\u30FC\u30F3(Clone)"
+      position: {x: -1.1095922, y: 1.1703433, z: -1.7938013}
+      rotation: {x: -0.11972559, y: 0.846478, z: -0.21455956, w: -0.47234002}
+      scale: {x: 0.15062964, y: 0.15062964, z: 0.12531643}
+    - name: "\u5186.023"
+      parentName: "\u4E3B\u4EBA\u516C\u30DC\u30FC\u30F3(Clone)"
+      position: {x: -1.9018528, y: 0.75904053, z: -2.282661}
+      rotation: {x: -0.11972559, y: 0.846478, z: -0.21455954, w: -0.47234002}
+      scale: {x: 0.065391295, y: 0.065391295, z: 0.10214055}
+    - name: "\u5186.024"
+      parentName: "\u4E3B\u4EBA\u516C\u30DC\u30FC\u30F3(Clone)"
+      position: {x: -1.4413005, y: 0.9557307, z: -1.9984798}
+      rotation: {x: -0.11972558, y: 0.8464779, z: -0.21455957, w: -0.47234}
+      scale: {x: 0.037861295, y: 0.037861295, z: 0.045224015}
+    - name: "\u5186.025"
+      parentName: "\u4E3B\u4EBA\u516C\u30DC\u30FC\u30F3(Clone)"
+      position: {x: 0.6278068, y: 0.82798404, z: -0.72174954}
+      rotation: {x: 0.07242033, y: 0.85183, z: -0.314666, w: -0.41246364}
+      scale: {x: 0.15062964, y: 0.15062964, z: 0.15062964}
+    - name: "\u5186.032"
+      parentName: "\u4E3B\u4EBA\u516C\u30DC\u30FC\u30F3(Clone)"
+      position: {x: -0.13956451, y: 1.2127372, z: 0.044483185}
+      rotation: {x: 0.000000021855694, y: 0, z: -0, w: 1}
+      scale: {x: 0.07716839, y: 0.07716839, z: 0.07716839}
+    - name: "\u5186.033"
+      parentName: "\u4E3B\u4EBA\u516C\u30DC\u30FC\u30F3(Clone)"
+      position: {x: -0.16320515, y: 1.6048857, z: -0.020271301}
+      rotation: {x: -0.62852514, y: 0.3239694, z: -0.3239693, w: 0.62852514}
+      scale: {x: 0.08698119, y: 0.08698118, z: 0.08698119}
+    - name: "\u5186.034"
+      parentName: "\u4E3B\u4EBA\u516C\u30DC\u30FC\u30F3(Clone)"
+      position: {x: -0.24866581, y: 1.4687859, z: 0.026376724}
+      rotation: {x: 0.000000021855694, y: 0, z: -0, w: 1}
+      scale: {x: 0.09395085, y: 0.10145915, z: 0.09395085}
+    - name: "\u5186.035"
+      parentName: "\u4E3B\u4EBA\u516C\u30DC\u30FC\u30F3(Clone)"
+      position: {x: -0.24866581, y: 1.7295867, z: 0.00066185}
+      rotation: {x: 0.000000021855692, y: 0, z: -0, w: 1}
+      scale: {x: 0.08912513, y: 0.08912513, z: 0.08912513}
+    - name: "\u5186.036"
+      parentName: "\u4E3B\u4EBA\u516C\u30DC\u30FC\u30F3(Clone)"
+      position: {x: -0.13956451, y: 0.9718939, z: 0.044483185}
+      rotation: {x: 0.000000021855694, y: 0, z: -0, w: 1}
+      scale: {x: 0.06769104, y: 0.06769104, z: 0.06769104}
+    - name: "\u5186.037"
+      parentName: "\u4E3B\u4EBA\u516C\u30DC\u30FC\u30F3(Clone)"
+      position: {x: 0.41784096, y: 2.0260262, z: 0.0634346}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 0.61313105, y: 0.8945742, z: 0.5690455}
+    - name: "\u7403.002"
+      parentName: "\u4E3B\u4EBA\u516C\u30DC\u30FC\u30F3(Clone)"
+      position: {x: -0.39718005, y: 1.1394558, z: -1.3514881}
+      rotation: {x: -0.6886223, y: 0.16062176, z: -0.16062173, w: 0.6886223}
+      scale: {x: 0.33143103, y: 0.33143103, z: 0.30860895}
+    - name: "\u5186.038"
+      parentName: "\u4E3B\u4EBA\u516C\u30DC\u30FC\u30F3(Clone)"
+      position: {x: 0.36315727, y: 0.924111, z: -0.0253582}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 0.43525058, y: 0.78828746, z: 0.78828746}
+    - name: "\u7ACB\u65B9\u4F53.016"
+      parentName: "\u4E3B\u4EBA\u516C\u30DC\u30FC\u30F3(Clone)"
+      position: {x: -0.070474625, y: 0.85045445, z: -0.0047245026}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 0.025544727, y: 0.17073745, z: 0.08609505}
+    - name: "\u5186.041"
+      parentName: "\u4E3B\u4EBA\u516C\u30DC\u30FC\u30F3(Clone)"
+      position: {x: 0.4127903, y: 0.9464835, z: -0.87324524}
+      rotation: {x: -0.68683183, y: -0.16811322, z: 0.1681132, w: 0.68683183}
+      scale: {x: 0.16213739, y: 0.15201059, z: 0.3225018}
+    - name: "\u5186.042"
+      parentName: "\u4E3B\u4EBA\u516C\u30DC\u30FC\u30F3(Clone)"
+      position: {x: 0.026394844, y: 1.0799557, z: 0.8064976}
+      rotation: {x: -0.18865655, y: 0.6814751, z: 0.18865636, w: 0.6814758}
+      scale: {x: 0.057219177, y: 0.05144637, z: 0.05336694}
+    - name: "\u5186.043"
+      parentName: "\u4E3B\u4EBA\u516C\u30DC\u30FC\u30F3(Clone)"
+      position: {x: 0.4749012, y: 0.87446296, z: 0.8064976}
+      rotation: {x: 0.34847584, y: 0.61527586, z: -0.34847552, w: 0.6152764}
+      scale: {x: 0.07704064, y: 0.07704066, z: 0.06409403}
+    - name: "\u5186.046"
+      parentName: "\u4E3B\u4EBA\u516C\u30DC\u30FC\u30F3(Clone)"
+      position: {x: -0.51294994, y: 1.2553555, z: 0.8064976}
+      rotation: {x: 0.47713172, y: 0.52186716, z: -0.20220232, w: 0.6775797}
+      scale: {x: 0.07704064, y: 0.07704065, z: 0.07704064}
+    - name: "\u5186.048"
+      parentName: "\u4E3B\u4EBA\u516C\u30DC\u30FC\u30F3(Clone)"
+      position: {x: 0.41437054, y: 0.2882923, z: -0.46539497}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 0.12999585, y: 0.12999585, z: 0.12999585}
+    - name: "\u5186.018"
+      parentName: "\u4E3B\u4EBA\u516C\u30DC\u30FC\u30F3(Clone)"
+      position: {x: 0.41087055, y: 0.40973938, z: -0.45914078}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 0.22540306, y: 0.28913656, z: 0.28509796}
+    - name: "\u30A2\u30FC\u30DE\u30C1\u30E5\u30A2"
+      parentName: "\u4E3B\u4EBA\u516C\u30DC\u30FC\u30F3(Clone)"
+      position: {x: -0.388291, y: 1.4598796, z: 0}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 1, y: 1, z: 1}
+    - name: body
+      parentName: "\u30A2\u30FC\u30DE\u30C1\u30E5\u30A2"
+      position: {x: 0.388291, y: 0, z: 0}
+      rotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
+      scale: {x: 1, y: 0.99999994, z: 0.99999994}
+    - name: Head
+      parentName: body
+      position: {x: -0, y: 1.283565, z: 0}
+      rotation: {x: -0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 0.9999996, z: 0.9999996}
+    - name: Hat
+      parentName: Head
+      position: {x: -0, y: 0.8900037, z: 0}
+      rotation: {x: -0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1.0000001, z: 1.0000001}
+    - name: Hat_end
+      parentName: Hat
+      position: {x: -0, y: 0.6592984, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: LeftUde
+      parentName: body
+      position: {x: -0, y: 0.89729923, z: -0.57737285}
+      rotation: {x: 0.84511566, y: -0.22445033, z: -0.18557087, w: -0.44829127}
+      scale: {x: 1, y: 1.0000024, z: 1.0000026}
+    - name: LeftHand
+      parentName: LeftUde
+      position: {x: -0.000000007450581, y: 0.93881357, z: -0.00000017136335}
+      rotation: {x: -0.15563257, y: 0.19487655, z: -0.29883924, w: -0.9211389}
+      scale: {x: 1.0000037, y: 1.000004, z: 1.0000045}
+    - name: LeftHand_end
+      parentName: LeftHand
+      position: {x: -0, y: 0.6111723, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: RightUde
+      parentName: body
+      position: {x: -0, y: 0.89729923, z: 0.5402319}
+      rotation: {x: 0.80359954, y: -0.45524803, z: -0.33603948, w: 0.18453841}
+      scale: {x: 1.0000004, y: 1.0000035, z: 1.000004}
+    - name: RightHand
+      parentName: RightUde
+      position: {x: 0.000000013038516, y: 0.91239834, z: -0.00000002142042}
+      rotation: {x: -0.1794611, y: 0.67136395, z: -0.08505061, w: -0.7140242}
+      scale: {x: 1.0000104, y: 1.000007, z: 1.0000068}
+    - name: RightHand_end
+      parentName: RightHand
+      position: {x: -0, y: 0.6223832, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Leftleg
+      parentName: "\u30A2\u30FC\u30DE\u30C1\u30E5\u30A2"
+      position: {x: 0.388291, y: 0.462573, z: 0.09676014}
+      rotation: {x: 0.7071068, y: -0, z: -0, w: -0.7071068}
+      scale: {x: 1, y: 0.99999994, z: 0.99999994}
+    - name: LeftBoot
+      parentName: Leftleg
+      position: {x: -0, y: 0.43440467, z: 0}
+      rotation: {x: -0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 0.999999, z: 0.999999}
+    - name: LeftBoot_end
+      parentName: LeftBoot
+      position: {x: -0, y: 0.9431537, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: RightLeg
+      parentName: "\u30A2\u30FC\u30DE\u30C1\u30E5\u30A2"
+      position: {x: 0.388291, y: -0.40517336, z: 0.09676014}
+      rotation: {x: 0.7071068, y: -0, z: -0, w: -0.7071068}
+      scale: {x: 1, y: 0.99999994, z: 0.99999994}
+    - name: RightBoot
+      parentName: RightLeg
+      position: {x: -0, y: 0.43440467, z: 0}
+      rotation: {x: -0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 0.999999, z: 0.999999}
+    - name: RightBoot_end
+      parentName: RightBoot
+      position: {x: -0, y: 0.9431537, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 0
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
