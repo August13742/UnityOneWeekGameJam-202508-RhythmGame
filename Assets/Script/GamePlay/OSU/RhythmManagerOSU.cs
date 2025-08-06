@@ -6,8 +6,9 @@ namespace Rhythm.GamePlay.OSU
     /// <summary>
     /// Singleton
     /// </summary>
-    public class RhythmManagerOSU : MonoBehaviour
+    public class RhythmManagerOSU : RhythmManager, INoteVisualSettings
     {
+
 
         public static RhythmManagerOSU Instance
         {
@@ -25,7 +26,11 @@ namespace Rhythm.GamePlay.OSU
         [SerializeField] private Camera worldCamera = null ;
         [SerializeField] private Transform[] enemySpawnPoints;
         [SerializeField] private GameObject enemyPrefab;
+        [Header("Gameplay Options")]
+        public bool showApproachRing = true;
 
+        public bool ShowApproachRing => showApproachRing;
+        public bool ShowIndicator => false; // OSU does not use indicator
         private Canvas canvasComponent;
         private Vector2 spawnRange = new (800, 440);
         private double dspSongStartTime;
@@ -146,6 +151,9 @@ namespace Rhythm.GamePlay.OSU
 
         private void SpawnNote(BeatNoteData data)
         {
+            double relativeHitTime = data.hitTime; //
+            double absoluteDSPHitTime = dspSongStartTime + relativeHitTime + audioOffset;
+
             // pick enemy spawn point
             int index = (data.spawnPointIndex >= 0 && data.spawnPointIndex < enemySpawnPoints.Length)
                         ? data.spawnPointIndex
@@ -161,7 +169,7 @@ namespace Rhythm.GamePlay.OSU
             // Init enemy with timing for sync
             if (enemy.TryGetComponent<EnemyRhythmUnit>(out var rhythmUnit))
             {
-                rhythmUnit.SetHitTime(dspSongStartTime + data.hitTime + audioOffset);
+                rhythmUnit.SetHitTime(absoluteDSPHitTime);
                 rhythmUnit.SetReturnToPoolCallback(ReturnEnemyToPool);
             }
 
@@ -180,11 +188,13 @@ namespace Rhythm.GamePlay.OSU
             rect.anchoredPosition = canvasPos;
 
             note.Initialise(
-                dspSongStartTime + data.hitTime + audioOffset,
+                absoluteDSPHitTime,
+                relativeHitTime,
                 beatmap.approachTime,
                 delta => JudgementSystem.Instance.RegisterHit(delta),
                 () => JudgementSystem.Instance.RegisterMiss(),
-                ReturnNoteToPool
+                ReturnNoteToPool,
+                this
             );
         }
 
