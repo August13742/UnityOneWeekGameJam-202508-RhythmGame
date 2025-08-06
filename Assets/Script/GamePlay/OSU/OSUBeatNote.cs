@@ -15,6 +15,10 @@ namespace Rhythm.GamePlay.OSU
         {
             get; private set;
         }
+        public Vector3 WorldPosition
+        {
+            get; private set;
+        }
         public double RelativeHitTime
         {
             get; private set;
@@ -42,7 +46,8 @@ namespace Rhythm.GamePlay.OSU
             System.Action<double> onHit,
             System.Action onMiss,
             System.Action<OSUBeatNote> onReturnToPool,
-            INoteVisualSettings visualSettings)
+            INoteVisualSettings visualSettings,
+            Vector3 worldPosition)
         
         {
             this.HitTime = hitTime;
@@ -52,6 +57,7 @@ namespace Rhythm.GamePlay.OSU
             this.onMiss = onMiss;
             this.onReturnToPool = onReturnToPool;
             this.visualSettings = visualSettings;
+            this.WorldPosition = worldPosition;
 
             HasProcessed = false;
             hitCircle.color = defaultColour;

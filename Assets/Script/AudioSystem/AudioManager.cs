@@ -41,10 +41,18 @@ public class AudioManager : MonoBehaviour
     }
     private void OnEnable()
     {
+        
+    }
+    private void Start()
+    {
         if (GameEvents.Instance != null)
         {
+
             GameEvents.Instance.OnPlayMusicScheduled += HandlePlayMusicScheduled;
         }
+        else
+            Debug.Log("no game event");
+
     }
     private void OnDisable()
     {
@@ -85,7 +93,7 @@ public class AudioManager : MonoBehaviour
             return;
         }
 
-        Debug.Log($"[AudioManager] Received event to schedule '{clip.name}' at DSP Time: {dspTime}");
+        //Debug.Log($"[AudioManager] Received event to schedule '{clip.name}' at DSP Time: {dspTime}");
         musicPlayer.clip = clip;
         musicPlayer.PlayScheduled(dspTime);
     }

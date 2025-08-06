@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -116,7 +117,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
             minY = -spawnRange.y / 2f;
             maxY = spawnRange.y / 2f;
 
-            // If no spawn points, create virtual ones in front of the camera
+
             if (enemySpawnPoints == null || enemySpawnPoints.Length == 0)
             {
                 int virtualCount = 10;
@@ -130,9 +131,9 @@ namespace Rhythm.GamePlay.OSU.Aimless
                 for (int i = 0; i < virtualCount; ++i)
                 {
                     Vector3 localPos = new(
-                        Random.Range(-halfWidth, halfWidth),   // X
-                        Random.Range(0, heightOffset),  // Y
-                        Random.Range(distMin, distMax));    // Z (forward)
+                        UnityEngine.Random.Range(-halfWidth, halfWidth),   // X
+                        UnityEngine.Random.Range(0, heightOffset),  // Y
+                        UnityEngine.Random.Range(distMin, distMax));    // Z (forward)
 
                     Vector3 worldPos = worldCamera.transform.TransformPoint(localPos);
 
@@ -170,7 +171,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
             }
             activeNotes.RemoveAll(note => note.HasProcessed);
 
-            Debug.Log($"[Frame] Active Notes: {activeNotes.Count}");
+            //Debug.Log($"[Frame] Active Notes: {activeNotes.Count}");
 
             if (showIndicator) UpdateIndicator();
         }
@@ -222,9 +223,12 @@ namespace Rhythm.GamePlay.OSU.Aimless
             CurrentIndicatorTarget = nextTarget;
         }
 
+        public Action ShotFired;
+        public Action ShotHit;
 
         private void HandleInput()
         {
+            ShotFired?.Invoke();
             OSUBeatNote noteToHit = null;
             double earliestHitTime = double.MaxValue;
 
@@ -240,6 +244,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
 
             if (noteToHit != null)
             {
+                ShotHit?.Invoke();
                 AudioManager.Instance.PlaySFX(shootSFXResource);
                 noteToHit.ProcessHit();
             }
@@ -259,7 +264,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
             // pick enemy spawn point
             int index = (data.spawnPointIndex >= 0 && data.spawnPointIndex < enemySpawnPoints.Length)
                         ? data.spawnPointIndex
-                        : Random.Range(0, enemySpawnPoints.Length);
+                        : UnityEngine.Random.Range(0, enemySpawnPoints.Length);
 
             Transform spawnPoint = enemySpawnPoints[index];
 
@@ -298,8 +303,10 @@ namespace Rhythm.GamePlay.OSU.Aimless
                 delta => JudgementSystem.Instance.RegisterHit(delta),
                 () => JudgementSystem.Instance.RegisterMiss(),
                 ReturnNoteToPool,
-                this
+                this,
+                spawnPoint.position
             );
+
 
             activeNotes.Add(note);
         }
@@ -340,6 +347,17 @@ namespace Rhythm.GamePlay.OSU.Aimless
         {
             enemy.SetActive(false);
             enemyPool.Enqueue(enemy);
+        }
+
+        public Vector3 GetCurrentTargetPosition()
+        {
+            if (CurrentIndicatorTarget != null)
+            {
+                return CurrentIndicatorTarget.WorldPosition;
+            }
+
+            // Fallback if no target exists.
+            return worldCamera.transform.position + worldCamera.transform.forward * 20f;
         }
     }
 }
