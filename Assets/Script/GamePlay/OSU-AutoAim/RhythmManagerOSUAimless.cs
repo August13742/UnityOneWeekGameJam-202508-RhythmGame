@@ -7,7 +7,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
     /// <summary>
     /// Singleton
     /// </summary>
-    public class RhythmManagerOSUAimless : MonoBehaviour
+    public class RhythmManagerOSUAimless : MonoBehaviour, INoteVisualSettings
     {
 
         public static RhythmManagerOSUAimless Instance
@@ -28,6 +28,13 @@ namespace Rhythm.GamePlay.OSU.Aimless
         [SerializeField] private GameObject enemyPrefab;
 
         [SerializeField] private AimIndicator indicatorPrefab;
+        [Header("Gameplay Options")]
+        public bool showIndicator = true;
+        public bool showApproachRing = true;
+
+        public bool ShowApproachRing => showApproachRing;
+        public bool ShowIndicator => showIndicator;
+        public float indicatorLeadInMultiplier = 1.0f; // 1 × approachTime by default
 
         private Canvas canvasComponent;
         private Vector2 spawnRange = new(800, 440);
@@ -48,7 +55,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
 
         private readonly List<OSUBeatNote> activeNotes = new();
         private AimIndicator indicator;
-        private OSUBeatNote currentIndicatorTarget = null;
+        public OSUBeatNote CurrentIndicatorTarget {get; private set;}
 
         private void Awake()
         {
@@ -148,7 +155,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
 
             // Spawn all notes whose hitTime is within the lead-in window
             while (spawnIndex < beatmap.notes.Count &&
-                   beatmap.notes[spawnIndex].hitTime - beatmap.approachTime <= songTime)
+                (beatmap.notes[spawnIndex].hitTime) - beatmap.approachTime <= songTime) // <-- FIX HERE
             {
                 SpawnNote(beatmap.notes[spawnIndex]);
                 spawnIndex++;
@@ -159,56 +166,118 @@ namespace Rhythm.GamePlay.OSU.Aimless
             }
             activeNotes.RemoveAll(note => note.HasProcessed);
 
-            UpdateIndicator();
+            Debug.Log($"[Frame] Active Notes: {activeNotes.Count}");
+
+            if (showIndicator) UpdateIndicator();
         }
 
+        //private void UpdateIndicator()
+        //{
+        //    // 1. Find the next valid target
+        //    OSUBeatNote nextTarget = null;
+        //    double earliestHitTime = double.MaxValue;
+        //    foreach (var note in activeNotes)
+        //    {
+        //        // The check for HasProcessed is implicitly handled by the activeNotes.RemoveAll call,
+        //        // but explicit checking here is safer and clearer.
+        //        if (!note.HasProcessed && note.HitTime < earliestHitTime)
+        //        {
+        //            earliestHitTime = note.HitTime;
+        //            nextTarget = note;
+        //        }
+        //    }
+
+        //    // 2. Determine if the indicator *should* be active for the target
+        //    double songTime = AudioSettings.dspTime - dspSongStartTime;
+        //    bool shouldBeActive = false;
+        //    float timeToHit = 0f;
+
+        //    if (nextTarget != null)
+        //    {
+        //        timeToHit = (float)(nextTarget.HitTime - songTime);
+        //        float leadIn = beatmap.approachTime * indicatorLeadInMultiplier;
+        //        if (timeToHit <= leadIn)
+        //        {
+        //            shouldBeActive = true;
+        //        }
+        //    }
+
+        //    // 3. Manage state transitions
+        //    if (shouldBeActive)
+        //    {
+        //        // Activate and initialize ONLY if it's a new target or if the indicator was off.
+        //        if (CurrentIndicatorTarget != nextTarget || !indicator.gameObject.activeSelf)
+        //        {
+        //            // If there was no previous target, start the tween from the center.
+        //            if (CurrentIndicatorTarget == null)
+        //            {
+        //                indicator.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+        //            }
+
+        //            indicator.gameObject.SetActive(true);
+        //            float duration = Mathf.Max(0.1f, timeToHit);
+        //            indicator.Initialise(nextTarget.GetComponent<RectTransform>(), duration);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        // If it shouldn't be active, ensure it's turned off.
+        //        if (indicator.gameObject.activeSelf)
+        //        {
+        //            indicator.gameObject.SetActive(false);
+        //        }
+        //    }
+
+        //    // 4. Update the current target for the next frame's comparison
+        //    CurrentIndicatorTarget = nextTarget;
+        //}
         private void UpdateIndicator()
         {
-            // 1. Find the next note to target (the one with the earliest HitTime)
             OSUBeatNote nextTarget = null;
             double earliestHitTime = double.MaxValue;
-
             foreach (var note in activeNotes)
             {
-                // The list is cleaned of processed notes, so the first one we find in a sorted
-                // list would be the one. This loop finds the one with the minimum HitTime.
-                if (note.HitTime < earliestHitTime)
+                if (!note.HasProcessed && note.RelativeHitTime < earliestHitTime)
                 {
-                    earliestHitTime = note.HitTime;
+                    earliestHitTime = note.RelativeHitTime;
                     nextTarget = note;
                 }
             }
 
-            // 2. Check if the target has changed
-            if (nextTarget != currentIndicatorTarget)
+            double songTime = AudioSettings.dspTime - dspSongStartTime;
+            bool shouldBeActive = false;
+            float timeToHit = 0f;
+
+            if (nextTarget != null)
             {
-                if (nextTarget != null)
+                // THIS CALCULATION IS NOW CORRECT AND EASY TO UNDERSTAND
+                timeToHit = (float)(nextTarget.RelativeHitTime - songTime);
+                float leadIn = beatmap.approachTime * indicatorLeadInMultiplier;
+
+                if (timeToHit <= leadIn)
                 {
-                    // --- We have a new target ---
-                    // Determine the start time for our duration calculation.
-                    // If it's the first note, we start from the beginning of the song.
-                    // Otherwise, we start from the previous note's hit time.
-                    double prevNoteTime = (currentIndicatorTarget == null)
-                                        ? dspSongStartTime
-                                        : currentIndicatorTarget.HitTime;
+                    shouldBeActive = true;
+                }
+            }
 
-                    float duration = (float)(nextTarget.HitTime - prevNoteTime);
-
-                    // Set a minimum duration to prevent instant-teleporting on very fast notes.
-                    if (duration < 0.1f)
-                        duration = 0.1f;
-
-                    // Command the indicator to move.
+            if (shouldBeActive)
+            {
+                if (CurrentIndicatorTarget != nextTarget || !indicator.gameObject.activeSelf)
+                {
+                    indicator.gameObject.SetActive(true);
+                    float duration = Mathf.Max(0.1f, timeToHit);
                     indicator.Initialise(nextTarget.GetComponent<RectTransform>(), duration);
                 }
-                else if (currentIndicatorTarget != null)
+            }
+            else
+            {
+                if (indicator.gameObject.activeSelf)
                 {
                     indicator.gameObject.SetActive(false);
                 }
-
-                // 3. Update the state to reflect the new target
-                currentIndicatorTarget = nextTarget;
             }
+
+            CurrentIndicatorTarget = nextTarget;
         }
 
 
@@ -239,6 +308,11 @@ namespace Rhythm.GamePlay.OSU.Aimless
 
         private void SpawnNote(BeatNoteData data)
         {
+
+            double relativeHitTime = data.hitTime; //
+            double absoluteDSPHitTime = dspSongStartTime + relativeHitTime + audioOffset;
+
+
             // pick enemy spawn point
             int index = (data.spawnPointIndex >= 0 && data.spawnPointIndex < enemySpawnPoints.Length)
                         ? data.spawnPointIndex
@@ -251,10 +325,12 @@ namespace Rhythm.GamePlay.OSU.Aimless
             enemy.transform.SetPositionAndRotation(spawnPoint.position, spawnPoint.rotation);
             enemy.SetActive(true);
 
+            ;
             // Init enemy with timing for sync
             if (enemy.TryGetComponent<EnemyRhythmUnit>(out var rhythmUnit))
             {
-                rhythmUnit.SetHitTime(dspSongStartTime + data.hitTime + audioOffset);
+                // Convert hitTime from ms to seconds before adding it to the start time
+                rhythmUnit.SetHitTime(absoluteDSPHitTime);
                 rhythmUnit.SetReturnToPoolCallback(ReturnEnemyToPool);
             }
 
@@ -272,12 +348,15 @@ namespace Rhythm.GamePlay.OSU.Aimless
             rect.SetParent(noteParentCanvas, false);
             rect.anchoredPosition = canvasPos;
 
+
             note.Initialise(
-                dspSongStartTime + data.hitTime + audioOffset,
+                absoluteDSPHitTime,
+                relativeHitTime,
                 beatmap.approachTime,
                 delta => JudgementSystem.Instance.RegisterHit(delta),
                 () => JudgementSystem.Instance.RegisterMiss(),
-                ReturnNoteToPool
+                ReturnNoteToPool,
+                this
             );
 
             activeNotes.Add(note);

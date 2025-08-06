@@ -14,17 +14,12 @@ namespace Rhythm.GamePlay.OSU.Aimless
 
         public void Initialise(RectTransform target, float duration)
         {
-            if (!gameObject.activeSelf)
-            {
-                gameObject.SetActive(true);
-            }
-
-            // Stop any animation that is already running on this object.
+            // Kill any previously running tweens on this object.
             rectTransform.DOKill();
 
-            // Start the new animation from its current position to the new target.
+            // Start the new tween from its current position to the target's position.
             rectTransform.DOAnchorPos(target.anchoredPosition, duration)
-                         .SetEase(Ease.OutQuint);
+                         .SetEase(Ease.InOutSine);
         }
     }
 }

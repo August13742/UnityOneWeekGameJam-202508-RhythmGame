@@ -1143,7 +1143,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AudioStartDelay: 3
-  beatmap: {fileID: 11400000, guid: 66decd2038c903641bb912a803a33115, type: 2}
+  beatmap: {fileID: 11400000, guid: 8cd2787f16991014399b691eb425e866, type: 2}
   notePrefab: {fileID: 6451794992138514700, guid: c273cb463786c9943b8d4e1fbc558665, type: 3}
   noteParentCanvas: {fileID: 349511186}
   audioOffset: 0
@@ -1152,6 +1152,9 @@ MonoBehaviour:
   enemySpawnPoints: []
   enemyPrefab: {fileID: 1222443706707990221, guid: 2cc14649f0677014995c899179fb7b52, type: 3}
   indicatorPrefab: {fileID: 2071840571437292467, guid: badb515b7f64c0c4596cc5df7ee2410c, type: 3}
+  showIndicator: 1
+  showApproachRing: 1
+  indicatorLeadInMultiplier: 1
   poolSize: 8
 --- !u!1 &631714558
 GameObject:
@@ -1548,6 +1551,7 @@ MonoBehaviour:
   worldCamera: {fileID: 330585545}
   enemySpawnPoints: []
   enemyPrefab: {fileID: 1222443706707990221, guid: 2cc14649f0677014995c899179fb7b52, type: 3}
+  showApproachRing: 0
   poolSize: 16
 --- !u!4 &976579030
 Transform:

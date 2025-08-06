@@ -15,6 +15,10 @@ namespace Rhythm.GamePlay.OSU
         {
             get; private set;
         }
+        public double RelativeHitTime
+        {
+            get; private set;
+        }
         public bool HasProcessed
         {
             get; private set;
@@ -27,23 +31,33 @@ namespace Rhythm.GamePlay.OSU
         private System.Action onMiss;
         private System.Action<OSUBeatNote> onReturnToPool;
 
+
+        private INoteVisualSettings visualSettings;
+
+
         public void Initialise(
             double hitTime,
+            double relativeHitTime,
             float approachTime,
             System.Action<double> onHit,
             System.Action onMiss,
-            System.Action<OSUBeatNote> onReturnToPool)
+            System.Action<OSUBeatNote> onReturnToPool,
+            INoteVisualSettings visualSettings)
+        
         {
             this.HitTime = hitTime;
+            this.RelativeHitTime = RelativeHitTime;
             this.approachTime = approachTime;
             this.onHit = onHit;
             this.onMiss = onMiss;
             this.onReturnToPool = onReturnToPool;
+            this.visualSettings = visualSettings;
 
             HasProcessed = false;
             hitCircle.color = defaultColour;
 
-            if (approachRing)
+
+            if (approachRing && visualSettings.ShowApproachRing)
             {
                 approachRing.gameObject.SetActive(true);
                 approachRing.rectTransform.localScale = Vector3.one;
