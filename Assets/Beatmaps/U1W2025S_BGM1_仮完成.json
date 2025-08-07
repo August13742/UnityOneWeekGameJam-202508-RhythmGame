@@ -1,0 +1,1141 @@
+{
+  "musicTrack": "C:\\Users\\augus\\AppData\\Local\\Temp\\U1W2025S_BGM1_\u4eee\u5b8c\u6210.wav",
+  "approachTime": 1.0,
+  "notes": [
+    {
+      "hitTime": 1.567347,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 4.794921,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 5.0039,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 5.21288,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 7.790295,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 8.219864,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 11.644807,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 12.074376,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 12.712925,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 12.921905,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 13.142494,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 13.363084,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 13.572063,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 13.781043,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 14.210612,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 14.425397,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 14.640181,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 15.069751,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 15.49932,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 15.928889,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 16.143673,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 16.358458,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 16.573243,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 16.788027,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 17.002812,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 17.217596,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 17.647166,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 18.076735,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 18.291519,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 18.506304,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 18.721088,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 18.935873,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 19.574422,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 19.783401,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 19.998186,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 20.212971,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 20.427755,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 20.64254,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 20.857324,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 21.072109,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 21.286893,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 21.501678,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 21.716463,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 21.931247,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 22.360816,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 22.575601,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 22.790385,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 23.00517,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 23.219955,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 23.434739,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 23.649524,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 23.864308,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 24.079093,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 24.288073,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 24.497052,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 24.926621,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 25.141406,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 25.35619,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 25.570975,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 25.78576,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 26.430113,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 26.644898,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 27.074467,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 27.921995,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 28.351565,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 28.781134,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 29.210703,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 29.425488,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 29.640272,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 29.855057,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 30.069841,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 30.284626,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 30.49941,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 30.714195,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 30.92898,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 31.143764,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 31.358549,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 31.573333,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 31.788118,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 32.002902,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 32.217687,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 32.432472,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 32.647256,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 32.862041,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 33.076825,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 33.29161,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 33.506395,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 33.721179,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 34.144943,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 34.353923,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 34.783492,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 35.213061,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 35.64263,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 36.0722,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 36.286984,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 36.501769,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 36.716553,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 36.931338,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 37.146122,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 37.360907,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 37.575692,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 37.790476,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 38.220045,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 38.649615,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 39.079184,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 39.288163,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 39.497143,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 39.711927,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 39.926712,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 40.141497,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 40.356281,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 40.571066,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 40.78585,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 41.000635,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 41.21542,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 41.430204,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 41.644989,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 41.859773,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 42.074558,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 42.289342,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 42.504127,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 42.933696,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 43.148481,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 43.363265,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 43.572245,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 43.781224,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 43.996009,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 44.210794,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 44.425578,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 44.640363,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 44.855147,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 45.069932,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 45.284717,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 45.499501,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 45.714286,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 45.92907,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 46.143855,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 46.358639,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 46.573424,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 46.788209,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 47.002993,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 47.217778,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 47.432562,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 47.647347,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 47.862132,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 48.076916,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 48.285896,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 48.494875,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 48.70966,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 48.924444,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 49.139229,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 49.354014,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 49.574603,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 49.795193,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 50.004172,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 50.213152,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 50.427937,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 50.642721,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 50.857506,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 51.07229,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 51.287075,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 51.501859,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 51.716644,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 51.931429,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 52.146213,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 52.360998,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 52.575782,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 52.790567,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 53.005351,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 53.220136,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 53.429116,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 53.638095,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 53.85288,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 54.067664,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 54.282449,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 54.497234,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 54.712018,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 54.926803,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 55.141587,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 55.356372,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 55.571156,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 55.785941,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 56.000726,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 56.21551,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 56.430295,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 56.645079,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 57.074649,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 57.492608,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 57.933787,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 58.148571,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 58.363356,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 58.578141,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 58.792925,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 59.001905,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 59.210884,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 59.431474,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 59.861043,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 60.070023,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 60.499592,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 60.929161,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 61.35873,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 61.573515,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 61.788299,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 62.003084,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 62.217868,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 62.647438,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 62.862222,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 63.077007,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 63.506576,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 63.721361,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 64.145125,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 64.354104,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 64.568889,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 65.213243,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 65.428027,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 65.642812,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 66.072381,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 66.287166,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 66.50195,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 67.146304,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 67.361088,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 67.790658,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 68.005442,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 68.220227,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 68.435011,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 68.86458,
+      "type": 0,
+      "spawnPointIndex": -1
+    },
+    {
+      "hitTime": 69.079365,
+      "type": 0,
+      "spawnPointIndex": -1
+    }
+  ]
+}

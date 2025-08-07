@@ -17,13 +17,23 @@ namespace Rhythm.GamePlay.OSU.Aimless
             get; private set;
         }
 
+        public bool AutoPlay = false;
 
         public float AudioStartDelay = 3f;
+        [Header("Beatmap Settings")]
         [SerializeField] private BeatmapData beatmap;
+
         [SerializeField] private OSUBeatNote notePrefab;
         [SerializeField] private RectTransform noteParentCanvas;
         [SerializeField] private float audioOffset = 0.0f;
+        
+        [Header("Spawn Settings")]
+        [SerializeField] private bool useCanvasSize = true;
         [SerializeField] private Vector2 spawnRangeOffset = new(50, 50);
+        [SerializeField] private Vector2 customSpawnRange = new(800, 440);
+        [Tooltip("Distance range for spawning enemies")]
+        [SerializeField] private Vector2 distanceRange = new(10f, 50f);
+        [SerializeField] private int virtualSpawnPointCount = 16;
 
         public SFXResource DryShot;
         [SerializeField] private Camera worldCamera = null;
@@ -38,18 +48,15 @@ namespace Rhythm.GamePlay.OSU.Aimless
 
         public bool ShowApproachRing => showApproachRing;
         public bool ShowIndicator => showIndicator;
-        public float indicatorLeadInMultiplier = 1.0f; // 1 × approachTime by default
+        public float indicatorLeadInMultiplier = 1.0f;
 
         private Canvas canvasComponent;
-        private Vector2 spawnRange = new(800, 440);
+        private Vector2 spawnRange;
         private double dspSongStartTime;
         private int spawnIndex = 0;
 
 
-        float minX;
-        float maxX;
-        float minY;
-        float maxY;
+        
         // --- Pooling fields ---
         [Header("Pooling")]
         [SerializeField] private int poolSize = 8;
@@ -71,12 +78,18 @@ namespace Rhythm.GamePlay.OSU.Aimless
             }
             Instance = this;
 
-
-            spawnRange = new Vector2(
-                noteParentCanvas.rect.width - spawnRangeOffset.x,
-                noteParentCanvas.rect.height - spawnRangeOffset.y
-            );
-
+            // Calculate spawn range based on settings
+            if (useCanvasSize && noteParentCanvas != null)
+            {
+                spawnRange = new Vector2(
+                    noteParentCanvas.rect.width - spawnRangeOffset.x,
+                    noteParentCanvas.rect.height - spawnRangeOffset.y
+                );
+            }
+            else
+            {
+                spawnRange = customSpawnRange;
+            }
 
             // Pre-instantiate note pool objects and hide them
             for (int i = 0; i < poolSize; i++)
@@ -115,34 +128,54 @@ namespace Rhythm.GamePlay.OSU.Aimless
             if (countdownText != null)
                 countdownText.SetScheduledStartTime(dspSongStartTime);
 
-            minX = -spawnRange.x / 2f;
-            maxX = spawnRange.x / 2f;
-            minY = -spawnRange.y / 2f;
-            maxY = spawnRange.y / 2f;
+            
 
 
             if (enemySpawnPoints == null || enemySpawnPoints.Length == 0)
             {
-                int virtualCount = 16;
-                float distMin = 10f;   // near plane
-                float distMax = 50f;   // far plane
+
+                float minX = -spawnRange.x / 2f;
+                float maxX = spawnRange.x / 2f;
+                float minY = -spawnRange.y / 2f;
+                float maxY = spawnRange.y / 2f;
+
+
+                int virtualCount = virtualSpawnPointCount;
+                float distMin = distanceRange.x;
+                float distMax = distanceRange.y;
                 
                 enemySpawnPoints = new Transform[virtualCount];
 
                 // Create a grid-like distribution of points
                 int rowCount = Mathf.CeilToInt(Mathf.Sqrt(virtualCount));
                 int colCount = Mathf.CeilToInt((float)virtualCount / rowCount);
-                
+
+                Debug.Log($"{Screen.width}, {Screen.height} | " +
+                          $"Spawn Range: {spawnRange.x}, {spawnRange.y} | " +
+                          $"Virtual Count: {virtualCount} | " +
+                          $"Rows: {rowCount}, Cols: {colCount}");
                 for (int i = 0; i < virtualCount; ++i)
                 {
                     // Calculate grid position (0-1 range)
                     int row = i / colCount;
                     int col = i % colCount;
-                    
+
                     // Add randomness within the cell
-                    float xPercent = ((float)col / (colCount - 1)) * 0.8f + 0.1f + UnityEngine.Random.Range(-0.05f, 0.05f);
-                    float yPercent = ((float)row / (rowCount - 1)) * 0.8f + 0.1f + UnityEngine.Random.Range(-0.05f, 0.05f);
-                    
+                    float marginX = spawnRangeOffset.x / Screen.width;
+                    float marginY = spawnRangeOffset.y / Screen.height;
+
+
+                    marginX = Mathf.Clamp01(marginX);
+                    marginY = Mathf.Clamp01(marginY);
+
+                    // Compute normalized grid position WITHIN margins
+                    float xPercent = Mathf.Lerp(marginX, 1f - marginX, (float)col / (colCount - 1));
+                    float yPercent = Mathf.Lerp(marginY, 1f - marginY, (float)row / (rowCount - 1));
+
+
+                    xPercent += UnityEngine.Random.Range(-0.02f, 0.02f);
+                    yPercent += UnityEngine.Random.Range(-0.02f, 0.02f);
+
                     // Convert to viewport coordinates (0-1, centered at 0.5,0.5)
                     float viewportX = xPercent;
                     float viewportY = yPercent;
@@ -178,18 +211,31 @@ namespace Rhythm.GamePlay.OSU.Aimless
 
             // Spawn all notes whose hitTime is within the lead-in window
             while (spawnIndex < beatmap.notes.Count &&
-                (beatmap.notes[spawnIndex].hitTime) - beatmap.approachTime <= songTime) // <-- FIX HERE
+                (beatmap.notes[spawnIndex].hitTime) - beatmap.approachTime <= songTime)
             {
                 SpawnNote(beatmap.notes[spawnIndex]);
                 spawnIndex++;
             }
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                HandleInput();
-            }
-            activeNotes.RemoveAll(note => note.HasProcessed);
 
-            //Debug.Log($"[Frame] Active Notes: {activeNotes.Count}");
+            if (AutoPlay)
+            {
+                foreach (var note in activeNotes)
+                {
+                    if (!note.HasProcessed && songTime >= note.RelativeHitTime)
+                    {
+                        note.ProcessHit();
+                    }
+                }
+            }
+            else
+            {
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    HandleInput();
+                }
+            }
+
+            activeNotes.RemoveAll(note => note.HasProcessed);
 
             if (showIndicator) UpdateIndicator();
         }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -16,7 +17,7 @@ namespace Rhythm.GamePlay
         public SFXResource shootMissSFXResource;
 
         public SFXResource shootHitSFXResource;
-
+        [SerializeField] private GameObject InjuredScreenEffect;
         public int Score
         {
             get; private set;
@@ -52,7 +53,10 @@ namespace Rhythm.GamePlay
         [Tooltip("± window around hit time for a Good judgment")]
         [SerializeField] private float goodWindow = 0.2f;
 
-
+        private void Start()
+        {
+            InjuredScreenEffect.SetActive(false);
+        }
 
 
         // Events
@@ -116,7 +120,15 @@ namespace Rhythm.GamePlay
             OnScoreChanged?.Invoke(Score, CurrentAccuracy, CurrentCombo);
             OnJudgment?.Invoke("Miss", CurrentCombo);
             OnComboChanged?.Invoke(CurrentCombo);
+
+            StartCoroutine(ToggleInjuredEffect());
             //Debug.Log("[Miss] → CurrentCombo reset");
+        }
+        IEnumerator ToggleInjuredEffect()
+        {
+            InjuredScreenEffect.SetActive(true);
+            yield return new WaitForSeconds(0.2f);
+            InjuredScreenEffect.SetActive(false);
         }
         private void OnDestroy()
         {

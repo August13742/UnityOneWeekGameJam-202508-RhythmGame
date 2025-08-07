@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 63f2d8b02862a7f47944685597c1b5df, type: 3}
-  m_Name: "U1W2025S_BGM1_\u4EEE\u5B8C\u6210_NORMAL"
+  m_Name: "U1W2025S_BGM1_\u4EEE\u5B8C\u6210_EASY"
   m_EditorClassIdentifier: 
   musicTrack: {fileID: 8300000, guid: 5b9b36221bd9e484587b88079034109f, type: 3}
   approachTime: 1
