@@ -1,15 +1,22 @@
+using System;
 using System.Collections.Generic;
 
-[System.Serializable]
-public class BeatNoteDataJson
+[Serializable]
+public class BeatmapDataJsonRoot
 {
-    public double hitTime;
+    public float approachTime;
+    public List<BeatmapDataJson> notes;
 }
 
-[System.Serializable]
+[Serializable]
 public class BeatmapDataJson
 {
-    public string musicTrack;  // Just name; will be linked to actual AudioClip later
-    public float approachTime;
-    public List<BeatNoteDataJson> notes;
+    public double hitTime;
+    public NoteType type;
+    public int spawnPointIndex;
+}
+
+public enum NoteType
+{
+    Tap = 0, Hold = 1, Swipe = 2
 }

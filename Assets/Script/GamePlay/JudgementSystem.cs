@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Rhythm.GamePlay
 {
@@ -12,6 +14,26 @@ namespace Rhythm.GamePlay
         {
             get; private set;
         }
+        public SFXResource shootMissSFXResource;
+
+        public SFXResource shootHitSFXResource;
+        [SerializeField] private GameObject InjuredScreenEffect;
+        public int Score
+        {
+            get; private set;
+        } = 0;
+        public int CurrentMaxPossibleScore
+        {
+            get; private set;
+        } = 0;
+        public int CurrentCombo
+        {
+            get; private set;
+        } = 0;
+        public float CurrentAccuracy
+        {
+            get; private set;
+        } = 1f;
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -21,6 +43,9 @@ namespace Rhythm.GamePlay
             }
             Instance = this;
         }
+        [SerializeField] private int pointsPerPerfect = 20;
+        [SerializeField] private int pointsPerGood = 10;
+
 
         [Header("Timing Windows (seconds)")]
         [Tooltip("± window around hit time for a Perfect judgment")]
@@ -28,14 +53,17 @@ namespace Rhythm.GamePlay
         [Tooltip("± window around hit time for a Good judgment")]
         [SerializeField] private float goodWindow = 0.2f;
 
-        // State
-        private int combo = 0;
-        private int score = 0;
+        private void Start()
+        {
+            InjuredScreenEffect.SetActive(false);
+        }
+
 
         // Events
         public event Action<string, int> OnJudgment;   // (judgmentName, currentCombo)
-        public event Action<int> OnScoreChanged;
+        public event Action<int, float,int> OnScoreChanged; // (score, currentAccuracy)
         public event Action<int> OnComboChanged;
+
 
 
         /// <summary>
@@ -46,31 +74,38 @@ namespace Rhythm.GamePlay
             float absDelta = Mathf.Abs((float)delta);
             string result;
             int points;
+            
 
             if (absDelta <= perfectWindow)
             {
                 result = "Perfect";
-                points = 300;
-                combo++;
+                points = pointsPerPerfect;
+                AudioManager.Instance.PlaySFX(shootHitSFXResource);
+                CurrentCombo++;
             }
             else if (absDelta <= goodWindow)
             {
                 result = "Good";
-                points = 100;
-                combo++;
+                points = pointsPerGood;
+                AudioManager.Instance.PlaySFX(shootHitSFXResource);
+                CurrentCombo++;
             }
             else
             {
                 // Too far off -> treat as miss
+                AudioManager.Instance.PlaySFX(shootMissSFXResource);
                 RegisterMiss();
                 return;
             }
 
-            score += points;
-            OnJudgment?.Invoke(result, combo);
-            OnScoreChanged?.Invoke(score);
-            OnComboChanged?.Invoke(combo);
-            Debug.Log($"[{result}] Δ={delta:F3}s → +{points}pts, combo={combo}");
+            CurrentMaxPossibleScore += pointsPerPerfect;
+            Score += points;
+            CurrentAccuracy = (float)Score / CurrentMaxPossibleScore;
+            OnJudgment?.Invoke(result, CurrentCombo);
+            OnScoreChanged?.Invoke(Score, CurrentAccuracy, CurrentCombo);
+            OnComboChanged?.Invoke(CurrentCombo);
+
+            //Debug.Log($"[{result}] Δ={delta:F3}s → +{points}pts, CurrentCombo={CurrentCombo}");
         }
 
         /// <summary>
@@ -78,10 +113,22 @@ namespace Rhythm.GamePlay
         /// </summary>
         public void RegisterMiss()
         {
-            combo = 0;
-            OnJudgment?.Invoke("Miss", combo);
-            OnComboChanged?.Invoke(combo);
-            Debug.Log("[Miss] → combo reset");
+            CurrentCombo = 0;
+            CurrentMaxPossibleScore += pointsPerPerfect;
+            CurrentAccuracy = (float)Score / CurrentMaxPossibleScore;
+
+            OnScoreChanged?.Invoke(Score, CurrentAccuracy, CurrentCombo);
+            OnJudgment?.Invoke("Miss", CurrentCombo);
+            OnComboChanged?.Invoke(CurrentCombo);
+
+            StartCoroutine(ToggleInjuredEffect());
+            //Debug.Log("[Miss] → CurrentCombo reset");
+        }
+        IEnumerator ToggleInjuredEffect()
+        {
+            InjuredScreenEffect.SetActive(true);
+            yield return new WaitForSeconds(0.2f);
+            InjuredScreenEffect.SetActive(false);
         }
         private void OnDestroy()
         {
