@@ -42,6 +42,8 @@ namespace Rhythm.GamePlay.Player
                     targetPosition,
                     Time.deltaTime * lookAtSmoothing
                 );
+                Vector3 yAxisRotation = new (lookAtTargetObject.transform.position.x,this.transform.position.y , lookAtTargetObject.transform.position.z);
+                this.transform.LookAt(yAxisRotation);
 
             }
         }

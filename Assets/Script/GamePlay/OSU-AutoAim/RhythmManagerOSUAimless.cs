@@ -23,8 +23,8 @@ namespace Rhythm.GamePlay.OSU.Aimless
         [SerializeField] private RectTransform noteParentCanvas;
         [SerializeField] private float audioOffset = 0.0f;
         [SerializeField] private Vector2 spawnRangeOffset = new(50, 50);
-        [SerializeField] private SFXResource shootSFXResource;
 
+        public SFXResource DryShot;
         [SerializeField] private Camera worldCamera = null;
         [SerializeField] private Transform[] enemySpawnPoints;
         [SerializeField] private GameObject enemyPrefab;
@@ -122,9 +122,9 @@ namespace Rhythm.GamePlay.OSU.Aimless
             {
                 int virtualCount = 10;
                 float distMin = 10f;   // near plane
-                float distMax = 30f;   // far plane
-                float halfWidth = 10f;   // +-X spread
-                float heightOffset = 6f;    // +-Y spread
+                float distMax = 50f;   // far plane
+                float halfWidth = 8f;   // +-X spread
+                float heightOffset = 8f;    // +-Y spread
 
                 enemySpawnPoints = new Transform[virtualCount];
 
@@ -224,8 +224,6 @@ namespace Rhythm.GamePlay.OSU.Aimless
         }
 
         public Action ShotFired;
-        public Action ShotHit;
-
         private void HandleInput()
         {
             ShotFired?.Invoke();
@@ -244,13 +242,13 @@ namespace Rhythm.GamePlay.OSU.Aimless
 
             if (noteToHit != null)
             {
-                ShotHit?.Invoke();
-                AudioManager.Instance.PlaySFX(shootSFXResource);
                 noteToHit.ProcessHit();
             }
             else
             {
                 //penalty optional
+                AudioManager.Instance.PlaySFX(DryShot);
+                
             }
         }
 
