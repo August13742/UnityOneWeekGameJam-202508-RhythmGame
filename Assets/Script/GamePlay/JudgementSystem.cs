@@ -57,7 +57,7 @@ namespace Rhythm.GamePlay
 
         // Events
         public event Action<string, int> OnJudgment;   // (judgmentName, currentCombo)
-        public event Action<int, float> OnScoreChanged; // (score, currentAccuracy)
+        public event Action<int, float,int> OnScoreChanged; // (score, currentAccuracy)
         public event Action<int> OnComboChanged;
 
 
@@ -98,7 +98,7 @@ namespace Rhythm.GamePlay
             Score += points;
             CurrentAccuracy = (float)Score / CurrentMaxPossibleScore;
             OnJudgment?.Invoke(result, CurrentCombo);
-            OnScoreChanged?.Invoke(Score, CurrentAccuracy);
+            OnScoreChanged?.Invoke(Score, CurrentAccuracy, CurrentCombo);
             OnComboChanged?.Invoke(CurrentCombo);
 
             //Debug.Log($"[{result}] Δ={delta:F3}s → +{points}pts, CurrentCombo={CurrentCombo}");
@@ -113,7 +113,7 @@ namespace Rhythm.GamePlay
             CurrentMaxPossibleScore += pointsPerPerfect;
             CurrentAccuracy = (float)Score / CurrentMaxPossibleScore;
 
-            OnScoreChanged?.Invoke(Score, CurrentAccuracy);
+            OnScoreChanged?.Invoke(Score, CurrentAccuracy, CurrentCombo);
             OnJudgment?.Invoke("Miss", CurrentCombo);
             OnComboChanged?.Invoke(CurrentCombo);
             //Debug.Log("[Miss] → CurrentCombo reset");

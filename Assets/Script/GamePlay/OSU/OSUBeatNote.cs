@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using Rhythm.UI;
 
 namespace Rhythm.GamePlay.OSU
 {
@@ -9,7 +10,7 @@ namespace Rhythm.GamePlay.OSU
         [Header("Visual References")]
         [SerializeField] private Image hitCircle;
         [SerializeField] private RawImage approachRing;
-
+        private GameObject notificationText;
         // Public property to be read by the input manager
         public double HitTime
         {
@@ -39,6 +40,8 @@ namespace Rhythm.GamePlay.OSU
         private INoteVisualSettings visualSettings;
 
 
+        private NotificationText notificationTextComponent;
+
         public void Initialise(
             double hitTime,
             double relativeHitTime,
@@ -47,7 +50,8 @@ namespace Rhythm.GamePlay.OSU
             System.Action onMiss,
             System.Action<OSUBeatNote> onReturnToPool,
             INoteVisualSettings visualSettings,
-            Vector3 worldPosition)
+            Vector3 worldPosition,
+            GameObject notificationText)
         
         {
             this.HitTime = hitTime;
@@ -58,6 +62,8 @@ namespace Rhythm.GamePlay.OSU
             this.onReturnToPool = onReturnToPool;
             this.visualSettings = visualSettings;
             this.WorldPosition = worldPosition;
+            this.notificationText = notificationText;
+            this.notificationTextComponent = notificationText != null ? notificationText.GetComponent<NotificationText>() : null;
 
             HasProcessed = false;
             hitCircle.color = defaultColour;
@@ -70,6 +76,8 @@ namespace Rhythm.GamePlay.OSU
             }
 
             gameObject.SetActive(true);
+            if (notificationTextComponent != null)
+                notificationTextComponent.gameObject.SetActive(false);
         }
 
 
@@ -110,6 +118,8 @@ namespace Rhythm.GamePlay.OSU
                 _ => Color.blue
             };
 
+            ShowNotification(result);
+
             StartCoroutine(HitFeedbackAndCleanup(feedbackColor));
         }
 
@@ -119,7 +129,25 @@ namespace Rhythm.GamePlay.OSU
                 return;
             HasProcessed = true;
             onMiss?.Invoke();
+            ShowNotification("Miss");
             StartCoroutine(HitFeedbackAndCleanup(new Color(1, 0, 0, 0.35f)));
+        }
+
+        private void ShowNotification(string result)
+        {
+            if (notificationTextComponent != null)
+            {
+                notificationTextComponent.gameObject.SetActive(true);
+                notificationTextComponent.Initialise(
+                    result,
+                    1f,
+                    notif =>
+                    {
+                        // Return to pool via RhythmManagerOSUAimless
+                        Rhythm.GamePlay.OSU.Aimless.RhythmManagerOSUAimless.Instance.ReturnNotificationTextToPool(notif);
+                    }
+                );
+            }
         }
 
         private void AnimateApproachRing(double now)
