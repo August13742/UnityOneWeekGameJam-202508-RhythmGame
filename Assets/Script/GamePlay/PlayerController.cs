@@ -10,8 +10,10 @@ namespace Rhythm.GamePlay.Player
 
         // Add a smoothing factor to control the tween speed
         [SerializeField] private float lookAtSmoothing = 15f;
-        [SerializeField] private Animator animator;
+        [SerializeField] private ParticleSystem muzzleFlash;
+        private Animator animator;
         private RhythmManagerOSUAimless rhythmManager;
+
 
         private void Start()
         {
@@ -29,6 +31,7 @@ namespace Rhythm.GamePlay.Player
         void OnShotFired()
         {
             animator.SetTrigger("Shoot");
+            muzzleFlash.Play();
         }
         private void OnDisable()
         {

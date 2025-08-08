@@ -51,14 +51,16 @@ public class GenerateBeatmapWindow : EditorWindow
             }
 
             string wav = SaveTempWav(clip);
-            string jsonPath = Path.ChangeExtension(wav, ".json");
+            string jsonPath = Path.ChangeExtension(wav, $".{level}.json");
+
 
             UnityEngine.Debug.Log($"Temp WAV file: {wav}");
             UnityEngine.Debug.Log($"Output JSON path: {jsonPath}");
             UnityEngine.Debug.Log($"Python script: {scriptPath}");
             UnityEngine.Debug.Log($"Project root: {projectRoot}");
 
-            string arguments = $"\"{scriptPath}\" \"{wav}\" \"{jsonPath}\" --difficulty {level}";
+            string arguments = $"\"{scriptPath}\" \"{wav}\" \"{jsonPath}\" --difficulty {level} --diag";
+
             UnityEngine.Debug.Log($"Running command: {PY} {arguments}");
 
             var p = new Process
@@ -93,7 +95,12 @@ public class GenerateBeatmapWindow : EditorWindow
                 p.WaitForExit();
 
                 UnityEngine.Debug.Log($"Python process exit code: {p.ExitCode}");
-                
+                if (p.ExitCode != 0)
+                {
+                    UnityEngine.Debug.LogError($"Python non-zero exit: {p.ExitCode}\n{error}");
+                    return;
+                }
+
                 if (!string.IsNullOrEmpty(output))
                     UnityEngine.Debug.Log($"Python output: {output}");
                 
