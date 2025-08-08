@@ -30,6 +30,7 @@ namespace Rhythm.UI
         }
         private void OnDisable()
         {
+            if (JudgementSystem.Instance != null)
             JudgementSystem.Instance.OnScoreChanged -= UpdateScore;
         }
     }

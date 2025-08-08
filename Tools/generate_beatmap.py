@@ -18,7 +18,7 @@ Technically made via Vibe Coding. Functions Surprisingly well
 Pair with GenerateBeatmapWindow.cs tool file in Unity, but You can use CLI if you want.
 - by August, 2025/08/08
 '''
-TOOL_VERSION = "auto-map v0.6"
+TOOL_VERSION = "auto-map v0.61"
 # ---------------- Difficulty: density + spacing per BEAT ----------------
 class Difficulty(enum.Enum):
     EASY   = 0
@@ -29,8 +29,11 @@ class Difficulty(enum.Enum):
 DIFF_CFG = {
     Difficulty.EASY:   dict(target_npb=0.50, space_frac=0.60, phases={0, 6}),            # downbeat + half
     Difficulty.NORMAL: dict(target_npb=1.00, space_frac=0.35, phases={0, 3, 6, 9}),      # quarters
-    Difficulty.HARD:   dict(target_npb=2.00, space_frac=0.20, phases=set(range(12))),    # all tatums
+    Difficulty.HARD:   dict(target_npb=1.50, space_frac=0.30, phases={0,3,6,9, 2,8}),    # all tatums
 }
+BASE_QUANT = {Difficulty.EASY:0.80, Difficulty.NORMAL:0.65, Difficulty.HARD:0.60}
+MIN_QUANT  = {Difficulty.EASY:0.80, Difficulty.NORMAL:0.45, Difficulty.HARD:0.50}
+MAX_PER_BEAT = {Difficulty.EASY:1, Difficulty.NORMAL:2, Difficulty.HARD:2}
 
 # windows (seconds)
 SNAP_WIN_SEC  = 0.040   # snap-to-peak half-window
@@ -169,10 +172,21 @@ def _select_with_relaxation(grid_times, grid_phases, raw_score, beat_times, nove
         if cand_t.size:
             order = np.argsort(-cand_s)
             chosen = []
+            perbeat = {}  # beat index → count
+
+            def beat_index(t):
+                # index of beat whose interval [b_i, b_{i+1}) contains t
+                return max(0, np.searchsorted(beat_times, t) - 1)
+
             for i in order:
                 ti = cand_t[i]
+                bi = beat_index(ti)
+                # skip if this beat already has enough notes
+                if perbeat.get(bi, 0) >= MAX_PER_BEAT.get(diff, 999):
+                    continue
                 if all(abs(ti - tj) >= min_space for tj in chosen):
                     chosen.append(ti)
+                    perbeat[bi] = perbeat.get(bi, 0) + 1
                     if len(chosen) >= target_n:
                         break
 

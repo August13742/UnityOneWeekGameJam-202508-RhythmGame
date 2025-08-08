@@ -8,7 +8,6 @@ namespace Rhythm.GamePlay.Player
 
         [SerializeField] private GameObject lookAtTargetObject;
 
-        // Add a smoothing factor to control the tween speed
         [SerializeField] private float lookAtSmoothing = 15f;
         [SerializeField] private ParticleSystem muzzleFlash;
         private Animator animator;
@@ -22,8 +21,6 @@ namespace Rhythm.GamePlay.Player
             if (lookAtTargetObject == null)
             {
                 lookAtTargetObject = new GameObject("LookAtTarget_Generated");
-                // Parent it to the scene root to avoid position compounding issues.
-                //lookAtTargetObject.transform.SetParent(null);
             }
             rhythmManager.ShotFired += OnShotFired;
         }
@@ -41,7 +38,6 @@ namespace Rhythm.GamePlay.Player
         {
             if (rhythmManager != null)
             {
-                // Get the definitive 3D target position
                 Vector3 targetPosition = rhythmManager.GetCurrentTargetPosition();
 
                 lookAtTargetObject.transform.position = Vector3.Lerp(
@@ -49,7 +45,8 @@ namespace Rhythm.GamePlay.Player
                     targetPosition,
                     Time.deltaTime * lookAtSmoothing
                 );
-                Vector3 yAxisRotation = new (lookAtTargetObject.transform.position.x,this.transform.position.y , lookAtTargetObject.transform.position.z);
+                Vector3 yAxisRotation = new (
+                    lookAtTargetObject.transform.position.x,this.transform.position.y , lookAtTargetObject.transform.position.z);
                 this.transform.LookAt(yAxisRotation);
 
             }

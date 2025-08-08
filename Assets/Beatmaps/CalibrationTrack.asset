@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63f2d8b02862a7f47944685597c1b5df, type: 3}
+  m_Name: CalibrationTrack
+  m_EditorClassIdentifier: 
+  musicTrack: {fileID: 8300000, guid: 1ab29a2260a90514abdbff6f6abcab71, type: 3}
+  approachTime: 1
+  notes:
+  - hitTime: 0
+  - hitTime: 0.8
+  - hitTime: 1.6
+  - hitTime: 2.4
+  - hitTime: 3.2
+  - hitTime: 4
+  - hitTime: 4.8
+  - hitTime: 5.6
+  - hitTime: 6.4
+  - hitTime: 7.2
+  - hitTime: 8
+  - hitTime: 8.8
+  - hitTime: 9.6
+  - hitTime: 10.4
+  - hitTime: 11.2
+  - hitTime: 12
+  - hitTime: 12.8
+  - hitTime: 13.6
+  - hitTime: 14.4
+  - hitTime: 15.2
+  - hitTime: 16
+  - hitTime: 16.8
+  - hitTime: 17.6
+  - hitTime: 18.4
+  - hitTime: 19.2
+  - hitTime: 20
+  - hitTime: 20.8
+  - hitTime: 21.6
+  - hitTime: 22.4
+  - hitTime: 23.2
+  - hitTime: 24
+  - hitTime: 24.8
+  - hitTime: 25.6
+  - hitTime: 26.4
+  - hitTime: 27.2
+  - hitTime: 28
+  - hitTime: 28.8
