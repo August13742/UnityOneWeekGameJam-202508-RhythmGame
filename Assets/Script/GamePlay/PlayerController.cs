@@ -30,6 +30,10 @@ namespace Rhythm.GamePlay.Player
         {
             animator.SetTrigger("Shoot");
         }
+        private void OnDisable()
+        {
+            rhythmManager.ShotFired -= OnShotFired;
+        }
         private void Update()
         {
             if (rhythmManager != null)

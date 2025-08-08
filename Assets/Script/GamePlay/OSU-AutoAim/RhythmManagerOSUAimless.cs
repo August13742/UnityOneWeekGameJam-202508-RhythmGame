@@ -223,6 +223,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
                 {
                     if (!note.HasProcessed && songTime >= note.RelativeHitTime)
                     {
+                        ShotFired?.Invoke();
                         note.ProcessHit();
                     }
                 }
