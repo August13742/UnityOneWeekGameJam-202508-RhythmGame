@@ -85,6 +85,7 @@ public class AudioManager : MonoBehaviour
         source.playOnAwake = false;
         return source;
     }
+
     private void HandlePlayMusicScheduled(AudioClip clip, double dspTime)
     {
         if (musicPlayer == null)
@@ -93,10 +94,51 @@ public class AudioManager : MonoBehaviour
             return;
         }
 
-        //Debug.Log($"[AudioManager] Received event to schedule '{clip.name}' at DSP Time: {dspTime}");
+        if (clip == null)
+        {
+            Debug.LogError("[AudioManager] Trying to play null audio clip!");
+            return;
+        }
+
+        // Stop any currently playing music
+        if (musicPlayer.isPlaying)
+        {
+            musicPlayer.Stop();
+        }
+
+        // Ensure the clip is set and the player is ready
         musicPlayer.clip = clip;
-        musicPlayer.PlayScheduled(dspTime);
+        musicPlayer.volume = currentMusicVolume;
+        
+        // Calculate safe start time with proper buffer
+        double currentDspTime = AudioSettings.dspTime;
+        double safeStartTime;
+        
+        // If the scheduled time is in the past or too close to now, schedule for immediate playback
+        if (dspTime <= currentDspTime + 0.05) // 50ms buffer
+        {
+            safeStartTime = currentDspTime + 0.1; // Start 100ms from now
+            Debug.LogWarning($"[AudioManager] Scheduled time {dspTime} is too close to current time {currentDspTime}. Adjusting to {safeStartTime}");
+        }
+        else
+        {
+            safeStartTime = dspTime;
+        }
+        
+        Debug.Log($"[AudioManager] Scheduling music: {clip.name} at DSP time: {safeStartTime} (requested: {dspTime}, current: {currentDspTime})");
+        
+        // For very immediate playback, use Play() instead of PlayScheduled()
+        if (safeStartTime - currentDspTime < 0.1)
+        {
+            Debug.Log("[AudioManager] Using immediate Play() instead of PlayScheduled()");
+            musicPlayer.Play();
+        }
+        else
+        {
+            musicPlayer.PlayScheduled(safeStartTime);
+        }
     }
+
     public void PlaySFX(SFXResource resource)
     {
         if (resource.loop)
@@ -303,6 +345,3 @@ public class AudioManager : MonoBehaviour
         mixer.SetFloat(busName, dB);
     }
 }
-
-
-

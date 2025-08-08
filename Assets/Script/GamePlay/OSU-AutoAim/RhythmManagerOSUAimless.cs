@@ -87,6 +87,9 @@ namespace Rhythm.GamePlay.OSU.Aimless
         public static event Action OnGameFinished;
         public Action ShotFired;
 
+        // Add this event for UI updates
+        public static event Action<float> OnAudioOffsetChanged;
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -611,6 +614,50 @@ namespace Rhythm.GamePlay.OSU.Aimless
             return beatmap != null ? beatmap.name : "No Beatmap";
         }
 
+        [Header("Calibration Settings")]
+        [SerializeField] private bool isCalibrationMode = false;
+        [SerializeField] private float offsetAdjustmentStep = 0.01f; // 10ms steps
+        [SerializeField] private float maxAudioOffset = 0.5f; // 500ms max
+        [SerializeField] private float minAudioOffset = -0.5f; // -500ms max
+
+        public bool IsCalibrationMode => isCalibrationMode;
+        public float AudioOffset => audioOffset;
+
+        public void StartCalibrationMode(BeatmapData calibrationBeatmap)
+        {
+            // Set calibration-specific settings
+            isCalibrationMode = true;
+            LoopSong = true;
+            AutoPlay = false;
+            beatmap = calibrationBeatmap;
+            
+            // Start the game
+            StartGame();
+        }
+
+        public void ExitCalibrationMode()
+        {
+            isCalibrationMode = false;
+            StopGame();
+        }
+
+        public void IncreaseAudioOffset()
+        {
+            audioOffset = Mathf.Clamp(audioOffset + offsetAdjustmentStep, minAudioOffset, maxAudioOffset);
+            OnAudioOffsetChanged?.Invoke(audioOffset);
+        }
+
+        public void DecreaseAudioOffset()
+        {
+            audioOffset = Mathf.Clamp(audioOffset - offsetAdjustmentStep, minAudioOffset, maxAudioOffset);
+            OnAudioOffsetChanged?.Invoke(audioOffset);
+        }
+
+        public void SetAudioOffset(float newOffset)
+        {
+            audioOffset = Mathf.Clamp(newOffset, minAudioOffset, maxAudioOffset);
+            OnAudioOffsetChanged?.Invoke(audioOffset);
+        }
         #endregion
     }
 }
