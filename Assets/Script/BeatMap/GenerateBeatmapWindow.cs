@@ -10,7 +10,7 @@ public class GenerateBeatmapWindow : EditorWindow
     AudioClip clip;
     enum Difficulty
     {
-        EASY, NORMAL, HARD
+        EASY, NORMAL, HARD, INSANE
     }
     Difficulty level = Difficulty.NORMAL;
     const string PY = "python";                // or absolute path
@@ -221,7 +221,8 @@ public class GenerateBeatmapWindow : EditorWindow
         for (int i = 0; i < samples.Length; i++)
         {
             // Convert float to 16-bit PCM
-            short value = (short)(samples[i] * 32767);
+            float s = Mathf.Clamp(samples[i], -1f, 1f);
+            short value = (short)Mathf.RoundToInt(s * 32767f);
             byte[] bytes = System.BitConverter.GetBytes(value);
             stream.Write(bytes, 0, 2);
         }

@@ -18,22 +18,44 @@ Technically made via Vibe Coding. Functions Surprisingly well
 Pair with GenerateBeatmapWindow.cs tool file in Unity, but You can use CLI if you want.
 - by August, 2025/08/08
 '''
-TOOL_VERSION = "auto-map v0.61"
+TOOL_VERSION = "auto-map v0.7"
 # ---------------- Difficulty: density + spacing per BEAT ----------------
 class Difficulty(enum.Enum):
     EASY   = 0
     NORMAL = 1
     HARD   = 2
+    INSANE = 3
 
-# target_npb: notes per beat; space_frac: min spacing as fraction of median beat period
+# target_npb: notes/beat; space_frac: min spacing as fraction of beat period; phases: allowed tatums
 DIFF_CFG = {
-    Difficulty.EASY:   dict(target_npb=0.50, space_frac=0.60, phases={0, 6}),            # downbeat + half
-    Difficulty.NORMAL: dict(target_npb=1.00, space_frac=0.35, phases={0, 3, 6, 9}),      # quarters
-    Difficulty.HARD:   dict(target_npb=1.50, space_frac=0.30, phases={0,3,6,9, 2,8}),    # all tatums
+    # Very gentle: downbeats only, long spacing, strict cap
+    Difficulty.EASY:   dict(target_npb=0.30, space_frac=0.80, phases={0}),
+    Difficulty.NORMAL: dict(target_npb=0.75, space_frac=0.50, phases={0, 6}),
+    Difficulty.HARD:   dict(target_npb=1.00, space_frac=0.35, phases={0, 3, 6, 9}),
+    Difficulty.INSANE: dict(target_npb=1.50, space_frac=0.30, phases={0, 3, 6, 9, 2, 8}),
 }
-BASE_QUANT = {Difficulty.EASY:0.80, Difficulty.NORMAL:0.65, Difficulty.HARD:0.60}
-MIN_QUANT  = {Difficulty.EASY:0.80, Difficulty.NORMAL:0.45, Difficulty.HARD:0.50}
-MAX_PER_BEAT = {Difficulty.EASY:1, Difficulty.NORMAL:2, Difficulty.HARD:2}
+
+BASE_QUANT = {
+    Difficulty.EASY:   0.85,   # strongest hits only; no relaxation
+    Difficulty.NORMAL: 0.75,   
+    Difficulty.HARD:   0.65,   
+    Difficulty.INSANE: 0.60,   
+}
+
+MIN_QUANT = {
+    Difficulty.EASY:   0.85,   # lock (no relax)
+    Difficulty.NORMAL: 0.60,   # one notch of relax allowed
+    Difficulty.HARD:   0.45,   # moderate relax allowed
+    Difficulty.INSANE: 0.50,   # mild relax (don’t go too permissive)
+}
+
+# Per-beat cap to stop bursts on single-input gameplay
+MAX_PER_BEAT = {
+    Difficulty.EASY:   1,
+    Difficulty.NORMAL: 1,
+    Difficulty.HARD:   2,
+    Difficulty.INSANE: 2,
+}
 
 # windows (seconds)
 SNAP_WIN_SEC  = 0.040   # snap-to-peak half-window
@@ -147,8 +169,10 @@ def _select_with_relaxation(grid_times, grid_phases, raw_score, beat_times, nove
     target_n = int(round(cfg["target_npb"] * n_beats))
     min_space = cfg["space_frac"] * B
 
-    base_q = {Difficulty.EASY:0.80, Difficulty.NORMAL:0.65, Difficulty.HARD:0.45}[diff]
-    q = base_q
+    q = BASE_QUANT[diff]
+    q_min = MIN_QUANT[diff]
+
+
     phases = set(cfg["phases"])   # copy
 
     expand_order = [0,6,3,9,2,4,8,10,1,5,7,11]  # strong→weak; items already in phases will be skipped
@@ -203,8 +227,9 @@ def _select_with_relaxation(grid_times, grid_phases, raw_score, beat_times, nove
         if diff != Difficulty.EASY:
             if expand_order:
                 phases.add(expand_order.pop(0))
-            elif q > 0.10:
-                q = max(0.10, q - 0.10)
+            elif q > q_min:
+                q = max(q_min, q - 0.10)
+
             elif min_space > min_space_floor:
                 min_space = max(min_space_floor, min_space * 0.95)
             else:
@@ -251,7 +276,7 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser(description="Auto-generate beatmap JSON (safe adaptive)")
     ap.add_argument("in_wav")
     ap.add_argument("out_json")
-    ap.add_argument("--difficulty", choices=["EASY","NORMAL","HARD"], default="NORMAL")
+    ap.add_argument("--difficulty", choices=["EASY","NORMAL","HARD","INSANE"], default="NORMAL")
     ap.add_argument("--approach", type=float, default=1.0, help="approachTime in seconds")
     ap.add_argument("--diag", action="store_true", help="print diagnostics")
     args = ap.parse_args()

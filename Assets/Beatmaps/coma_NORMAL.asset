@@ -15,12 +15,6 @@ MonoBehaviour:
   musicTrack: {fileID: 8300000, guid: 992eb09e265405944ae9e5f21161fcb8, type: 3}
   approachTime: 1
   notes:
-  - hitTime: 1.892426
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 2.890884
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 3.215964
     type: 0
     spawnPointIndex: -1
@@ -28,9 +22,6 @@ MonoBehaviour:
     type: 0
     spawnPointIndex: -1
   - hitTime: 3.877732
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 4.051882
     type: 0
     spawnPointIndex: -1
   - hitTime: 4.214422
@@ -52,9 +43,6 @@ MonoBehaviour:
     type: 0
     spawnPointIndex: -1
   - hitTime: 6.211338
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 6.559637
     type: 0
     spawnPointIndex: -1
   - hitTime: 6.884717
@@ -90,19 +78,10 @@ MonoBehaviour:
   - hitTime: 10.21678
     type: 0
     spawnPointIndex: -1
-  - hitTime: 10.4722
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 10.890159
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 11.215238
     type: 0
     spawnPointIndex: -1
   - hitTime: 11.551927
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 11.888617
     type: 0
     spawnPointIndex: -1
   - hitTime: 12.213696
@@ -124,12 +103,6 @@ MonoBehaviour:
     type: 0
     spawnPointIndex: -1
   - hitTime: 14.222222
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 14.384762
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 14.547302
     type: 0
     spawnPointIndex: -1
   - hitTime: 14.883991
@@ -159,9 +132,6 @@ MonoBehaviour:
   - hitTime: 17.554286
     type: 0
     spawnPointIndex: -1
-  - hitTime: 17.716825
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 17.890975
     type: 0
     spawnPointIndex: -1
@@ -180,13 +150,7 @@ MonoBehaviour:
   - hitTime: 19.551202
     type: 0
     spawnPointIndex: -1
-  - hitTime: 19.713741
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 19.887891
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 20.050431
     type: 0
     spawnPointIndex: -1
   - hitTime: 20.22458
@@ -204,19 +168,7 @@ MonoBehaviour:
   - hitTime: 21.548118
     type: 0
     spawnPointIndex: -1
-  - hitTime: 21.803537
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 22.221497
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 22.558186
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 22.883265
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 23.127075
     type: 0
     spawnPointIndex: -1
   - hitTime: 23.382494
@@ -228,13 +180,7 @@ MonoBehaviour:
   - hitTime: 24.880181
     type: 0
     spawnPointIndex: -1
-  - hitTime: 25.228481
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 25.55356
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 25.890249
     type: 0
     spawnPointIndex: -1
   - hitTime: 26.215329
@@ -270,13 +216,7 @@ MonoBehaviour:
   - hitTime: 30.220771
     type: 0
     spawnPointIndex: -1
-  - hitTime: 30.55746
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 30.88254
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 31.219229
     type: 0
     spawnPointIndex: -1
   - hitTime: 31.555918
@@ -286,9 +226,6 @@ MonoBehaviour:
     type: 0
     spawnPointIndex: -1
   - hitTime: 32.217687
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 32.565986
     type: 0
     spawnPointIndex: -1
   - hitTime: 32.879456
@@ -327,9 +264,6 @@ MonoBehaviour:
   - hitTime: 36.884898
     type: 0
     spawnPointIndex: -1
-  - hitTime: 37.209977
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 37.546667
     type: 0
     spawnPointIndex: -1
@@ -355,9 +289,6 @@ MonoBehaviour:
     type: 0
     spawnPointIndex: -1
   - hitTime: 40.216961
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 40.553651
     type: 0
     spawnPointIndex: -1
   - hitTime: 40.87873
@@ -399,9 +330,6 @@ MonoBehaviour:
   - hitTime: 44.884172
     type: 0
     spawnPointIndex: -1
-  - hitTime: 45.220862
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 45.88263
     type: 0
     spawnPointIndex: -1
@@ -441,9 +369,6 @@ MonoBehaviour:
   - hitTime: 49.888073
     type: 0
     spawnPointIndex: -1
-  - hitTime: 50.039002
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 50.213152
     type: 0
     spawnPointIndex: -1
@@ -466,9 +391,6 @@ MonoBehaviour:
     type: 0
     spawnPointIndex: -1
   - hitTime: 52.546757
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 52.720907
     type: 0
     spawnPointIndex: -1
   - hitTime: 52.883447
@@ -507,9 +429,6 @@ MonoBehaviour:
   - hitTime: 56.5522
     type: 0
     spawnPointIndex: -1
-  - hitTime: 56.888889
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 57.213968
     type: 0
     spawnPointIndex: -1
@@ -522,9 +441,6 @@ MonoBehaviour:
   - hitTime: 58.224036
     type: 0
     spawnPointIndex: -1
-  - hitTime: 58.386576
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 58.549116
     type: 0
     spawnPointIndex: -1
@@ -532,9 +448,6 @@ MonoBehaviour:
     type: 0
     spawnPointIndex: -1
   - hitTime: 59.210884
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 59.547574
     type: 0
     spawnPointIndex: -1
   - hitTime: 59.884263
@@ -547,9 +460,6 @@ MonoBehaviour:
     type: 0
     spawnPointIndex: -1
   - hitTime: 60.882721
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 61.056871
     type: 0
     spawnPointIndex: -1
   - hitTime: 61.21941
@@ -573,13 +483,7 @@ MonoBehaviour:
   - hitTime: 63.216327
     type: 0
     spawnPointIndex: -1
-  - hitTime: 63.390476
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 63.553016
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 63.715556
     type: 0
     spawnPointIndex: -1
   - hitTime: 63.878095
@@ -603,31 +507,13 @@ MonoBehaviour:
   - hitTime: 66.211701
     type: 0
     spawnPointIndex: -1
-  - hitTime: 66.38585
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 66.885079
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 67.140499
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 67.546848
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 67.895147
     type: 0
     spawnPointIndex: -1
   - hitTime: 68.220227
     type: 0
     spawnPointIndex: -1
-  - hitTime: 68.382766
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 68.556916
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 68.719456
     type: 0
     spawnPointIndex: -1
   - hitTime: 68.881995
@@ -657,25 +543,13 @@ MonoBehaviour:
   - hitTime: 71.55229
     type: 0
     spawnPointIndex: -1
-  - hitTime: 71.87737
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 72.214059
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 72.550748
     type: 0
     spawnPointIndex: -1
   - hitTime: 72.887438
     type: 0
     spawnPointIndex: -1
   - hitTime: 73.212517
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 73.560816
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 73.897506
     type: 0
     spawnPointIndex: -1
   - hitTime: 74.210975
@@ -696,25 +570,10 @@ MonoBehaviour:
   - hitTime: 75.882812
     type: 0
     spawnPointIndex: -1
-  - hitTime: 76.045351
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 76.382041
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 76.54458
     type: 0
     spawnPointIndex: -1
-  - hitTime: 76.86966
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 77.241179
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 77.543039
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 77.879728
     type: 0
     spawnPointIndex: -1
   - hitTime: 78.216417
@@ -732,9 +591,6 @@ MonoBehaviour:
   - hitTime: 79.551565
     type: 0
     spawnPointIndex: -1
-  - hitTime: 79.888254
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 80.224943
     type: 0
     spawnPointIndex: -1
@@ -742,9 +598,6 @@ MonoBehaviour:
     type: 0
     spawnPointIndex: -1
   - hitTime: 80.886712
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 81.211791
     type: 0
     spawnPointIndex: -1
   - hitTime: 81.548481
@@ -757,12 +610,6 @@ MonoBehaviour:
     type: 0
     spawnPointIndex: -1
   - hitTime: 82.546939
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 82.883628
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 83.220317
     type: 0
     spawnPointIndex: -1
   - hitTime: 83.557007
@@ -778,9 +625,6 @@ MonoBehaviour:
     type: 0
     spawnPointIndex: -1
   - hitTime: 84.892154
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 85.217234
     type: 0
     spawnPointIndex: -1
   - hitTime: 85.553923
@@ -804,22 +648,13 @@ MonoBehaviour:
   - hitTime: 87.550839
     type: 0
     spawnPointIndex: -1
-  - hitTime: 87.887528
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 88.212608
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 88.549297
     type: 0
     spawnPointIndex: -1
   - hitTime: 88.885986
     type: 0
     spawnPointIndex: -1
   - hitTime: 89.222676
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 89.559365
     type: 0
     spawnPointIndex: -1
   - hitTime: 89.884444
@@ -837,21 +672,6 @@ MonoBehaviour:
   - hitTime: 91.219592
     type: 0
     spawnPointIndex: -1
-  - hitTime: 91.556281
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 91.869751
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 92.22966
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 92.554739
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 92.903039
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 93.216508
     type: 0
     spawnPointIndex: -1
@@ -862,12 +682,6 @@ MonoBehaviour:
     type: 0
     spawnPointIndex: -1
   - hitTime: 94.551655
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 94.888345
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 95.225034
     type: 0
     spawnPointIndex: -1
   - hitTime: 95.550113
@@ -882,22 +696,7 @@ MonoBehaviour:
   - hitTime: 96.885261
     type: 0
     spawnPointIndex: -1
-  - hitTime: 97.22195
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 97.558639
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 97.883719
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 98.220408
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 98.545488
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 98.893787
     type: 0
     spawnPointIndex: -1
   - hitTime: 99.218866
@@ -934,9 +733,6 @@ MonoBehaviour:
     type: 0
     spawnPointIndex: -1
   - hitTime: 102.887619
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 103.050159
     type: 0
     spawnPointIndex: -1
   - hitTime: 103.212698
@@ -978,34 +774,16 @@ MonoBehaviour:
   - hitTime: 107.218141
     type: 0
     spawnPointIndex: -1
-  - hitTime: 107.54322
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 107.879909
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 108.216599
     type: 0
     spawnPointIndex: -1
   - hitTime: 108.553288
     type: 0
     spawnPointIndex: -1
-  - hitTime: 108.878367
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 109.215057
     type: 0
     spawnPointIndex: -1
-  - hitTime: 109.377596
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 109.551746
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 109.853605
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 110.225125
     type: 0
     spawnPointIndex: -1
   - hitTime: 110.550204
@@ -1038,9 +816,6 @@ MonoBehaviour:
   - hitTime: 113.557188
     type: 0
     spawnPointIndex: -1
-  - hitTime: 113.719728
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 113.882268
     type: 0
     spawnPointIndex: -1
@@ -1053,13 +828,7 @@ MonoBehaviour:
   - hitTime: 114.880726
     type: 0
     spawnPointIndex: -1
-  - hitTime: 115.217415
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 115.554104
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 115.716644
     type: 0
     spawnPointIndex: -1
   - hitTime: 115.879184
@@ -1080,9 +849,6 @@ MonoBehaviour:
   - hitTime: 117.55102
     type: 0
     spawnPointIndex: -1
-  - hitTime: 117.88771
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 118.212789
     type: 0
     spawnPointIndex: -1
@@ -1092,28 +858,10 @@ MonoBehaviour:
   - hitTime: 118.886168
     type: 0
     spawnPointIndex: -1
-  - hitTime: 119.222857
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 119.547937
     type: 0
     spawnPointIndex: -1
-  - hitTime: 119.884626
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 120.221315
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 120.906304
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 121.219773
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 121.684172
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 121.893152
     type: 0
     spawnPointIndex: -1
   - hitTime: 122.218231
@@ -1125,22 +873,10 @@ MonoBehaviour:
   - hitTime: 122.88
     type: 0
     spawnPointIndex: -1
-  - hitTime: 123.239909
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 123.564989
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 123.878458
     type: 0
     spawnPointIndex: -1
   - hitTime: 124.215147
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 124.551837
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 124.888526
     type: 0
     spawnPointIndex: -1
   - hitTime: 125.213605
@@ -1150,12 +886,6 @@ MonoBehaviour:
     type: 0
     spawnPointIndex: -1
   - hitTime: 126.212063
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 126.513923
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 126.897052
     type: 0
     spawnPointIndex: -1
   - hitTime: 127.222132
@@ -1182,12 +912,6 @@ MonoBehaviour:
   - hitTime: 129.555737
     type: 0
     spawnPointIndex: -1
-  - hitTime: 130.217506
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 130.542585
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 130.879274
     type: 0
     spawnPointIndex: -1
@@ -1203,16 +927,10 @@ MonoBehaviour:
   - hitTime: 132.226032
     type: 0
     spawnPointIndex: -1
-  - hitTime: 132.551111
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 132.8878
     type: 0
     spawnPointIndex: -1
   - hitTime: 133.21288
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 133.561179
     type: 0
     spawnPointIndex: -1
   - hitTime: 133.886259
@@ -1239,9 +957,6 @@ MonoBehaviour:
   - hitTime: 136.219864
     type: 0
     spawnPointIndex: -1
-  - hitTime: 136.544943
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 136.881633
     type: 0
     spawnPointIndex: -1
@@ -1257,9 +972,6 @@ MonoBehaviour:
   - hitTime: 138.21678
     type: 0
     spawnPointIndex: -1
-  - hitTime: 138.553469
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 138.890159
     type: 0
     spawnPointIndex: -1
@@ -1269,37 +981,19 @@ MonoBehaviour:
   - hitTime: 139.551927
     type: 0
     spawnPointIndex: -1
-  - hitTime: 139.888617
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 140.225306
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 140.550385
     type: 0
     spawnPointIndex: -1
   - hitTime: 140.887075
     type: 0
     spawnPointIndex: -1
-  - hitTime: 141.212154
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 141.548844
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 141.885533
     type: 0
     spawnPointIndex: -1
   - hitTime: 142.222222
     type: 0
     spawnPointIndex: -1
   - hitTime: 142.547302
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 142.721451
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 142.883991
     type: 0
     spawnPointIndex: -1
   - hitTime: 143.22068
@@ -1323,13 +1017,7 @@ MonoBehaviour:
   - hitTime: 145.217596
     type: 0
     spawnPointIndex: -1
-  - hitTime: 145.554286
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 145.879365
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 146.227664
     type: 0
     spawnPointIndex: -1
   - hitTime: 146.552744
@@ -1342,9 +1030,6 @@ MonoBehaviour:
     type: 0
     spawnPointIndex: -1
   - hitTime: 147.887891
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 148.22458
     type: 0
     spawnPointIndex: -1
   - hitTime: 148.56127
@@ -1365,13 +1050,7 @@ MonoBehaviour:
   - hitTime: 150.546576
     type: 0
     spawnPointIndex: -1
-  - hitTime: 150.883265
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 151.219955
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 151.556644
     type: 0
     spawnPointIndex: -1
   - hitTime: 151.881723
@@ -1380,22 +1059,7 @@ MonoBehaviour:
   - hitTime: 152.218413
     type: 0
     spawnPointIndex: -1
-  - hitTime: 152.891791
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 153.228481
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 153.55356
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 153.890249
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 154.215329
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 154.552018
     type: 0
     spawnPointIndex: -1
   - hitTime: 154.888707
@@ -1410,9 +1074,6 @@ MonoBehaviour:
   - hitTime: 156.212245
     type: 0
     spawnPointIndex: -1
-  - hitTime: 156.548934
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 156.874014
     type: 0
     spawnPointIndex: -1
@@ -1422,24 +1083,6 @@ MonoBehaviour:
   - hitTime: 157.547392
     type: 0
     spawnPointIndex: -1
-  - hitTime: 158.220771
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 158.55746
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 158.88254
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 159.219229
-    type: 0
-    spawnPointIndex: -1
   - hitTime: 159.544308
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 159.880998
-    type: 0
-    spawnPointIndex: -1
-  - hitTime: 160.217687
     type: 0
     spawnPointIndex: -1
