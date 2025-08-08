@@ -66,7 +66,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "\u3053\u306E\u30B2\u30FC\u30E0\u306F\u97F3\u30B2\u30FC\u3067\u3059.\n\nSpace,
-    Z \u307E\u305F\u306F X \u30AD\u30FC\u3092\n\u30BF\u30A4\u30DF\u30F3\u30B0\u3088\u304F\u62BC\u305B\u3070\n\u5F97\u70B9\u304C\u5897\u3048\u307E\u3059."
+    Z \u307E\u305F\u306F X \u30AD\u30FC\u3092\n\u30BF\u30A4\u30DF\u30F3\u30B0\u3088\u304F\u62BC\u305B\u3070
+    \u5F97\u70B9\u304C\u5897\u3048\u307E\u3059.\n(Wireless\u30A4\u30E4\u30DB\u30F3\u306F\u9045\u5EF6\u304C\n\u4E0D\u5B89\u5B9A\u306A\u305F\u3081,
+    \u304A\u3059\u3059\u3081\u3057\u307E\u305B\u3093)"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 1bb4b93cb2b2aac448f0c1fa6a02b413, type: 2}
   m_sharedMaterial: {fileID: 684512560063497954, guid: 1bb4b93cb2b2aac448f0c1fa6a02b413, type: 2}

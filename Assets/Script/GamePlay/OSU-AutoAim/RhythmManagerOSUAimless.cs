@@ -27,7 +27,8 @@ namespace Rhythm.GamePlay.OSU.Aimless
         [Header("Game State")]
         public GameState CurrentState { get; private set; } = GameState.NotStarted;
         public bool AutoPlay = false;
-
+        [SerializeField] private bool playIndicatorSound = true;
+        [SerializeField ]double leadinWindow = 0f;
         [Header("Audio Settings")]
         public float AudioStartDelay = 3f;
         public bool LoopSong = false;
@@ -54,6 +55,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
         [SerializeField] private GameObject notificationTextPrefab;
 
         [SerializeField] private AimIndicator indicatorPrefab;
+        [SerializeField] private SFXResource noteSpawnIndicationSFX;
         [Header("Gameplay Options")]
         public bool showIndicator = true;
         public bool showApproachRing = true;
@@ -89,7 +91,10 @@ namespace Rhythm.GamePlay.OSU.Aimless
 
         // Add this event for UI updates
         public static event Action<float> OnAudioOffsetChanged;
-
+        public InputSystem_Actions Input
+        {
+            get; private set;
+        }
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -99,13 +104,21 @@ namespace Rhythm.GamePlay.OSU.Aimless
             }
             Instance = this;
 
-            InitializeSpawnRange();
-            InitializePools();
-            InitializeEnemySpawnPoints();
+            Input = new InputSystem_Actions();
+
+            InitialiseSpawnRange();
+            InitialisePools();
+            InitialiseEnemySpawnPoints();
         }
+        void OnEnable() => Input.Enable();
+        void OnDisable() => Input.Disable();
 
         private void Start()
         {
+            if (leadinWindow.Equals(0f))
+            {
+                leadinWindow = JudgementSystem.Instance.PerfectWindow / 2;
+            }
             canvasComponent = noteParentCanvas.GetComponentInParent<Canvas>();
             indicator = Instantiate(indicatorPrefab, noteParentCanvas);
             indicator.gameObject.SetActive(false);
@@ -221,11 +234,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
             if (indicator != null)
                 indicator.gameObject.SetActive(false);
         }
-
-        #endregion
-
-        #region Gameplay Logic
-
+        
         private void UpdateGameplay()
         {
             double dspNow = AudioSettings.dspTime;
@@ -234,7 +243,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
             // Update song progress for UI
             if (beatmap != null && beatmap.notes.Count > 0)
             {
-                float totalSongLength = (float)beatmap.notes[^1].hitTime + beatmap.approachTime;
+                float totalSongLength = (float)beatmap.musicTrack.length;
                 float progress = Mathf.Clamp01((float)songTime / totalSongLength);
                 OnSongProgressChanged?.Invoke(progress);
             }
@@ -247,7 +256,24 @@ namespace Rhythm.GamePlay.OSU.Aimless
                 spawnIndex++;
             }
 
-            // Autoplay
+            if (playIndicatorSound)
+            {
+                //double leadinWindow = JudgementSystem.Instance.PerfectWindow/2;
+                foreach (var note in activeNotes)
+                {
+                    if (!note.HasProcessed && !note.IndicatorSoundPlayed)
+                    {
+                        double timeDelta = songTime - note.RelativeHitTime;
+                        if (Mathf.Abs((float)timeDelta) <= leadinWindow)
+                        {
+                            AudioManager.Instance.PlaySFX(noteSpawnIndicationSFX);
+                            note.IndicatorSoundPlayed = true; // Mark as played
+                            break;
+                        }
+                    }
+                }
+            }
+
             if (AutoPlay)
             {
                 foreach (var note in activeNotes)
@@ -260,7 +286,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
                     }
                 }
             }
-            else if (Input.GetKeyDown(KeyCode.Space))
+            else if (Input.Player.HitNote.triggered)
             {
                 HandleInput();
             }
@@ -270,16 +296,20 @@ namespace Rhythm.GamePlay.OSU.Aimless
             if (showIndicator)
                 UpdateIndicator();
 
-            // Check for song end
-            if (songTime > beatmap.notes[^1].hitTime + beatmap.approachTime + 2.0f)
+            // Check for song end using the actual audio clip length
+            if (beatmap != null && beatmap.musicTrack != null)
             {
-                if (LoopSong)
+                float songEndTime = beatmap.musicTrack.length;
+                if (songTime > songEndTime + 0.5f) // 0.5s buffer after song ends
                 {
-                    RestartGame();
-                }
-                else
-                {
-                    StopGame();
+                    if (LoopSong)
+                    {
+                        RestartGame();
+                    }
+                    else
+                    {
+                        StopGame();
+                    }
                 }
             }
         }
@@ -297,6 +327,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
                 {
                     earliestHitTime = note.HitTime;
                     noteToHit = note;
+                    break;
                 }
             }
 
@@ -313,9 +344,9 @@ namespace Rhythm.GamePlay.OSU.Aimless
 
         #endregion
 
-        #region Initialization Methods
+        #region Initialisation Methods
 
-        private void InitializeSpawnRange()
+        private void InitialiseSpawnRange()
         {
             if (useCanvasSize && noteParentCanvas != null)
             {
@@ -330,7 +361,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
             }
         }
 
-        private void InitializePools()
+        private void InitialisePools()
         {
             for (int i = 0; i < poolSize; i++)
             {
@@ -348,7 +379,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
             }
         }
 
-        private void InitializeEnemySpawnPoints()
+        private void InitialiseEnemySpawnPoints()
         {
             if (enemySpawnPoints == null || enemySpawnPoints.Length == 0)
             {
@@ -422,8 +453,6 @@ namespace Rhythm.GamePlay.OSU.Aimless
         }
 
         #endregion
-
-        #region Existing Methods (unchanged)
 
         private void UpdateIndicator()
         {
@@ -521,7 +550,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
                 spawnPoint.position,
                 notificationText.gameObject
             );
-
+            
             activeNotes.Add(note);
         }
 
@@ -590,7 +619,6 @@ namespace Rhythm.GamePlay.OSU.Aimless
             return worldCamera.transform.position + worldCamera.transform.forward * 20f;
         }
 
-        #endregion
 
         #region Public API for UI
 

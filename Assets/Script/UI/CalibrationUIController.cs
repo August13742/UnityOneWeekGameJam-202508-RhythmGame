@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using DG.Tweening;
 using Rhythm.GamePlay.OSU.Aimless;
 
 namespace Rhythm.UI
@@ -15,6 +16,7 @@ namespace Rhythm.UI
         [SerializeField] private TMP_Text offsetValueText;
         [SerializeField] private TMP_Text instructionsText;
 
+        [SerializeField] private Image fadePanel;
         [Header("Settings")]
         [SerializeField] private BeatmapData calibrationBeatmap;
 
@@ -24,13 +26,22 @@ namespace Rhythm.UI
         {
             rhythmManager = RhythmManagerOSUAimless.Instance;
             SetupUI();
-            StartCoroutine(DelayedCalibration());
+            //StartCoroutine(DelayedCalibration());
+            fadePanel.color = Color.black;
+            fadePanel.DOFade(0f, 1f).
+                SetEase(Ease.InQuint).
+                OnComplete(() =>
+                {
+                    StartCalibration();
+                    Destroy(fadePanel.gameObject);
+                });
+                
         }
-        private System.Collections.IEnumerator DelayedCalibration()
-        {
-            yield return null;                 
-            StartCalibration();
-        }
+        //private System.Collections.IEnumerator DelayedCalibration()
+        //{
+        //    yield return null;                 
+        //    StartCalibration();
+        //}
 
         private void SetupUI()
         {

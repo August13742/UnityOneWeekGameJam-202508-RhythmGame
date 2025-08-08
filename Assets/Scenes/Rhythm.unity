@@ -1940,6 +1940,14 @@ PrefabInstance:
       value: JudgementSystem
       objectReference: {fileID: 0}
     - target: {fileID: 3428809849300817940, guid: e041041579098844ebd5d10ea0484a50, type: 3}
+      propertyPath: GoodWindow
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 3428809849300817940, guid: e041041579098844ebd5d10ea0484a50, type: 3}
+      propertyPath: PerfectWindow
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 3428809849300817940, guid: e041041579098844ebd5d10ea0484a50, type: 3}
       propertyPath: InjuredScreenEffect
       value: 
       objectReference: {fileID: 2097359674}
@@ -2320,7 +2328,7 @@ PrefabInstance:
     - target: {fileID: 29919527144747600, guid: 5669723356c53d9459b0983f98052db6, type: 3}
       propertyPath: beatmap
       value: 
-      objectReference: {fileID: 11400000, guid: 80faa4777a0b0404ba092e046bf6f9c4, type: 2}
+      objectReference: {fileID: 11400000, guid: 00b0d4df4aec0c348b5f0474a50cd1d6, type: 2}
     - target: {fileID: 29919527144747600, guid: 5669723356c53d9459b0983f98052db6, type: 3}
       propertyPath: AutoPlay
       value: 0
@@ -2346,8 +2354,12 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 29919527144747600, guid: 5669723356c53d9459b0983f98052db6, type: 3}
+      propertyPath: noteSpawnIndicationSFX
+      value: 
+      objectReference: {fileID: 11400000, guid: 49d28f09d3aa1a14bb425be4adff1de5, type: 2}
+    - target: {fileID: 29919527144747600, guid: 5669723356c53d9459b0983f98052db6, type: 3}
       propertyPath: virtualSpawnPointCount
-      value: 16
+      value: 32
       objectReference: {fileID: 0}
     - target: {fileID: 2935577010780996966, guid: 5669723356c53d9459b0983f98052db6, type: 3}
       propertyPath: m_LocalPosition.x

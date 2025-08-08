@@ -49,9 +49,9 @@ namespace Rhythm.GamePlay
 
         [Header("Timing Windows (seconds)")]
         [Tooltip("± window around hit time for a Perfect judgment")]
-        [SerializeField] private float perfectWindow = 0.1f;
+        public float PerfectWindow = 0.1f;
         [Tooltip("± window around hit time for a Good judgment")]
-        [SerializeField] private float goodWindow = 0.2f;
+        public float GoodWindow = 0.2f;
 
         private void Start()
         {
@@ -76,14 +76,14 @@ namespace Rhythm.GamePlay
             int points;
             
 
-            if (absDelta <= perfectWindow)
+            if (absDelta <= PerfectWindow)
             {
                 result = "Perfect";
                 points = pointsPerPerfect;
                 AudioManager.Instance.PlaySFX(shootHitSFXResource);
                 CurrentCombo++;
             }
-            else if (absDelta <= goodWindow)
+            else if (absDelta <= GoodWindow)
             {
                 result = "Good";
                 points = pointsPerGood;

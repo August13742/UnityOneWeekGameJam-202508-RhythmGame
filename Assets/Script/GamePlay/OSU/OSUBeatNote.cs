@@ -11,6 +11,10 @@ namespace Rhythm.GamePlay.OSU
         [SerializeField] private Image hitCircle;
         [SerializeField] private RawImage approachRing;
         private GameObject notificationText;
+        public bool IndicatorSoundPlayed
+        {
+            get; set;
+        }
         // Public property to be read by the input manager
         public double HitTime
         {
@@ -66,6 +70,7 @@ namespace Rhythm.GamePlay.OSU
             this.notificationTextComponent = notificationText != null ? notificationText.GetComponent<NotificationText>() : null;
 
             HasProcessed = false;
+            IndicatorSoundPlayed = false; // Add this line
             hitCircle.color = defaultColour;
 
 

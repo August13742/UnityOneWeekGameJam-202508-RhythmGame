@@ -13,9 +13,12 @@ public class GenerateBeatmapWindow : EditorWindow
         EASY, NORMAL, HARD
     }
     Difficulty level = Difficulty.NORMAL;
-    const string PY = "python";                // or absolute path
-    string projectRoot;
+    const string PY = "python";                // or absolute path
+    string projectRoot;
     string scriptPath;
+
+    // Add a toggle for saving the JSON file
+    bool keepJsonFile = false;
 
     void OnEnable()
     {
@@ -23,9 +26,8 @@ public class GenerateBeatmapWindow : EditorWindow
         scriptPath = Path.Combine(projectRoot, "Tools", "generate_beatmap.py");
     }
 
-
     [MenuItem("Tools/Beatmap/Auto-Generate")]
-    static void Open()                          
+    static void Open()
     {
         GetWindow<GenerateBeatmapWindow>("Auto Beatmap");
     }
@@ -35,6 +37,9 @@ public class GenerateBeatmapWindow : EditorWindow
         clip = (AudioClip)EditorGUILayout.ObjectField("AudioClip", clip, typeof(AudioClip), false);
         level = (Difficulty)EditorGUILayout.EnumPopup("Difficulty", level);
 
+        // Draw the toggle for saving JSON
+        keepJsonFile = EditorGUILayout.Toggle("Save JSON to Project", keepJsonFile);
+
         if (GUILayout.Button("Generate ▶"))
         {
             if (!clip)
@@ -43,8 +48,8 @@ public class GenerateBeatmapWindow : EditorWindow
                 return;
             }
 
-            // Debug script path existence
-            if (!File.Exists(scriptPath))
+            // Debug script path existence
+            if (!File.Exists(scriptPath))
             {
                 UnityEngine.Debug.LogError($"Python script not found at: {scriptPath}");
                 return;
@@ -52,7 +57,6 @@ public class GenerateBeatmapWindow : EditorWindow
 
             string wav = SaveTempWav(clip);
             string jsonPath = Path.ChangeExtension(wav, $".{level}.json");
-
 
             UnityEngine.Debug.Log($"Temp WAV file: {wav}");
             UnityEngine.Debug.Log($"Output JSON path: {jsonPath}");
@@ -80,11 +84,13 @@ public class GenerateBeatmapWindow : EditorWindow
             string output = "";
             string error = "";
 
-            p.OutputDataReceived += (sender, args) => { 
-                if (args.Data != null) output += args.Data + "\n"; 
+            p.OutputDataReceived += (sender, args) => {
+                if (args.Data != null)
+                    output += args.Data + "\n";
             };
-            p.ErrorDataReceived += (sender, args) => { 
-                if (args.Data != null) error += args.Data + "\n"; 
+            p.ErrorDataReceived += (sender, args) => {
+                if (args.Data != null)
+                    error += args.Data + "\n";
             };
 
             try
@@ -103,7 +109,7 @@ public class GenerateBeatmapWindow : EditorWindow
 
                 if (!string.IsNullOrEmpty(output))
                     UnityEngine.Debug.Log($"Python output: {output}");
-                
+
                 if (!string.IsNullOrEmpty(error))
                     UnityEngine.Debug.LogError($"Python error: {error}");
             }
@@ -119,10 +125,46 @@ public class GenerateBeatmapWindow : EditorWindow
                 return;
             }
 
-            var jsonAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(MoveIntoProject(jsonPath));
-            Import(jsonAsset, clip);
-            AssetDatabase.Refresh();
-            EditorUtility.DisplayDialog("Done", "Beatmap generated.", "OK");
+            // Only move and import the JSON if the toggle is enabled
+            if (keepJsonFile)
+            {
+                var jsonAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(MoveIntoProject(jsonPath));
+                Import(jsonAsset, clip);
+                AssetDatabase.Refresh();
+                EditorUtility.DisplayDialog("Done", "Beatmap generated (JSON saved to project).", "OK");
+            }
+            else
+            {
+                // Create the ScriptableObject directly from the temp file
+                ImportFromPath(jsonPath, clip);
+                AssetDatabase.Refresh();
+                EditorUtility.DisplayDialog("Done", "Beatmap generated", "OK");
+
+                // Delete the temporary JSON file
+                try
+                {
+                    File.Delete(jsonPath);
+                    UnityEngine.Debug.Log($"Deleted temporary JSON file: {jsonPath}");
+                }
+                catch (System.Exception ex)
+                {
+                    UnityEngine.Debug.LogError($"Failed to delete temporary JSON file: {ex.Message}");
+                }
+            }
+
+            // Always delete the temporary WAV file
+            try
+            {
+                if (File.Exists(wav))
+                {
+                    File.Delete(wav);
+                    UnityEngine.Debug.Log($"Deleted temporary WAV file: {wav}");
+                }
+            }
+            catch (System.Exception ex)
+            {
+                UnityEngine.Debug.LogError($"Failed to delete temporary WAV file: {ex.Message}");
+            }
         }
     }
 
@@ -131,14 +173,14 @@ public class GenerateBeatmapWindow : EditorWindow
         var path = Path.Combine(Path.GetTempPath(), clip.name + ".wav");
         var samples = new float[clip.samples * clip.channels];
         clip.GetData(samples, 0);
-        
+
         try
         {
             using var f = new FileStream(path, FileMode.Create);
-            // Write WAV header
-            WriteWavHeader(f, clip);
-            // Write sample data
-            WriteSampleData(f, samples);
+            // Write WAV header
+            WriteWavHeader(f, clip);
+            // Write sample data
+            WriteSampleData(f, samples);
             UnityEngine.Debug.Log($"WAV file saved successfully at: {path}");
             return path;
         }
@@ -146,7 +188,7 @@ public class GenerateBeatmapWindow : EditorWindow
         {
             UnityEngine.Debug.LogError($"Failed to save WAV file: {ex.Message}");
             return path; // Return path anyway to allow process to continue for debugging
-        }
+        }
     }
 
     static void WriteWavHeader(FileStream stream, AudioClip clip)
@@ -154,32 +196,32 @@ public class GenerateBeatmapWindow : EditorWindow
         int headerSize = 44;
         int fileSize = headerSize + (clip.samples * clip.channels * 2); // 2 bytes per sample (16 bit)
 
-        // RIFF header
-        WriteString(stream, "RIFF");
+        // RIFF header
+        WriteString(stream, "RIFF");
         WriteInt(stream, fileSize - 8); // File size - 8 bytes
-        WriteString(stream, "WAVE");
+        WriteString(stream, "WAVE");
 
-        // Format chunk
-        WriteString(stream, "fmt ");
+        // Format chunk
+        WriteString(stream, "fmt ");
         WriteInt(stream, 16); // Chunk size
-        WriteShort(stream, 1); // Audio format (1 = PCM)
-        WriteShort(stream, (short)clip.channels); // Channels
-        WriteInt(stream, clip.frequency); // Sample rate
-        WriteInt(stream, clip.frequency * clip.channels * 2); // Byte rate
-        WriteShort(stream, (short)(clip.channels * 2)); // Block align
-        WriteShort(stream, 16); // Bits per sample
+        WriteShort(stream, 1); // Audio format (1 = PCM)
+        WriteShort(stream, (short)clip.channels); // Channels
+        WriteInt(stream, clip.frequency); // Sample rate
+        WriteInt(stream, clip.frequency * clip.channels * 2); // Byte rate
+        WriteShort(stream, (short)(clip.channels * 2)); // Block align
+        WriteShort(stream, 16); // Bits per sample
 
-        // Data chunk
-        WriteString(stream, "data");
+        // Data chunk
+        WriteString(stream, "data");
         WriteInt(stream, clip.samples * clip.channels * 2); // Chunk size
-    }
+    }
 
     static void WriteSampleData(FileStream stream, float[] samples)
     {
         for (int i = 0; i < samples.Length; i++)
         {
-            // Convert float to 16-bit PCM
-            short value = (short)(samples[i] * 32767);
+            // Convert float to 16-bit PCM
+            short value = (short)(samples[i] * 32767);
             byte[] bytes = System.BitConverter.GetBytes(value);
             stream.Write(bytes, 0, 2);
         }
@@ -218,22 +260,24 @@ public class GenerateBeatmapWindow : EditorWindow
         {
             UnityEngine.Debug.LogError($"Failed to move JSON file to project: {ex.Message}");
             return target; // Return target path anyway to allow process to continue for debugging
-        }
+        }
     }
 
-    void Import(TextAsset json, AudioClip clip)
+    // New method to import from a file path directly, not a TextAsset
+    void ImportFromPath(string jsonPath, AudioClip clip)
     {
         try
         {
-            if (json == null)
+            if (!File.Exists(jsonPath))
             {
-                UnityEngine.Debug.LogError("JSON asset is null");
+                UnityEngine.Debug.LogError("JSON file not found at path");
                 return;
             }
 
-            UnityEngine.Debug.Log($"Importing JSON content: {json.text}");
-            var parsed = JsonUtility.FromJson<BeatmapDataJsonRoot>(json.text);
-            
+            string jsonContent = File.ReadAllText(jsonPath);
+            UnityEngine.Debug.Log($"Importing JSON content: {jsonContent}");
+            var parsed = JsonUtility.FromJson<BeatmapDataJsonRoot>(jsonContent);
+
             if (parsed == null)
             {
                 UnityEngine.Debug.LogError("Failed to parse JSON data");
@@ -262,6 +306,49 @@ public class GenerateBeatmapWindow : EditorWindow
         {
             UnityEngine.Debug.LogError($"Failed to import beatmap data: {ex.Message}");
         }
-    }   
+    }
+
+    void Import(TextAsset json, AudioClip clip)
+    {
+        try
+        {
+            if (json == null)
+            {
+                UnityEngine.Debug.LogError("JSON asset is null");
+                return;
+            }
+
+            UnityEngine.Debug.Log($"Importing JSON content: {json.text}");
+            var parsed = JsonUtility.FromJson<BeatmapDataJsonRoot>(json.text);
+
+            if (parsed == null)
+            {
+                UnityEngine.Debug.LogError("Failed to parse JSON data");
+                return;
+            }
+
+            var asset = ScriptableObject.CreateInstance<BeatmapData>();
+            asset.musicTrack = clip;
+            asset.approachTime = parsed.approachTime;
+            asset.notes = new List<BeatNoteData>();
+
+            foreach (var n in parsed.notes)
+                asset.notes.Add(new BeatNoteData
+                {
+                    hitTime = n.hitTime,
+                    type = n.type,
+                    spawnPointIndex = n.spawnPointIndex
+                });
+
+            string assetPath = $"Assets/Beatmaps/{clip.name}_{level}.asset";
+            AssetDatabase.CreateAsset(asset, assetPath);
+            AssetDatabase.SaveAssets();
+            UnityEngine.Debug.Log($"Beatmap asset created at: {assetPath}");
+        }
+        catch (System.Exception ex)
+        {
+            UnityEngine.Debug.LogError($"Failed to import beatmap data: {ex.Message}");
+        }
+    }
 }
 #endif
