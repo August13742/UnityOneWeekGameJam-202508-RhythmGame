@@ -1,154 +1,210 @@
-//using System.Collections.Generic;
-//using UnityEngine;
+using System.Collections.Generic;
+using UnityEngine;
 
-//namespace Rhythm.GamePlay.Taiko
-//{
+namespace Rhythm.GamePlay.Taiko
+{
+    public class RhythmManagerTaiko : MonoBehaviour
+    {
+        [Header("External")]
+        [SerializeField] private Canvas canvas;
+        [SerializeField] private RectTransform taikoHitBar;   // assign in inspector
+        [SerializeField] private Rhythm.GamePlay.OSU.Aimless.RhythmManagerOSUAimless osu; // link if not using Instance
 
-//    /// <summary>
-//    /// Singleton
-//    /// </summary>
-//    public class RhythmManagerTaiko : MonoBehaviour
-//    {
+        [Header("Prefabs")]
+        [SerializeField] private TaikoNote prefabA;
+        [SerializeField] private TaikoNote prefabB;
 
-//        public static RhythmManagerTaiko Instance
-//        {
-//            get; private set;
-//        }
+        [Header("Lane Layout")]
+        [SerializeField] private float laneYOffsetFraction = -0.25f; // -0.25 => lower quarter
+        [SerializeField] private float rightMargin = 80f;            // px from right edge (visibility)
+        [SerializeField] private float pixelsPerSecond = 400f;
 
+        [Header("Behaviour")]
+        [SerializeField] private bool enableTaikoVisuals = true;
+        [SerializeField] private float postHitGrace = 0.15f;
 
-//        [Header("Assets and Prefabs")]
-//        [SerializeField] private BeatmapData beatmap;
-//        [SerializeField] private TaikoNote prefabA;
-//        [SerializeField] private TaikoNote prefabB;
-//        [SerializeField] private Canvas canvas;
+        // runtime
+        private float xHit, laneY, xRightVisible;
 
-//        [Header("Gameplay Settings")]
-//        [SerializeField] private float pixelsPerSecond = 400f;
-//        [SerializeField] private float approachTime = 1.0f;
-//        //[SerializeField] private float perfectWindow = 0.1f;
-//        [SerializeField] private float goodWindow = 0.2f;
-//        [SerializeField] private float missWindow = 0.25f;
+        // FIFO container (explicit)
+        private readonly Queue<TaikoNote> fifo = new();
+        private readonly List<TaikoNote> active = new();
 
-//        private double dspSongStartTime;
-//        private int spawnIndex = 0;
+        // separate pools so A/B don’t get mixed
+        private readonly Queue<TaikoNote> poolA = new();
+        private readonly Queue<TaikoNote> poolB = new();
 
-//        private readonly Queue<TaikoNote> pool = new();
-//        private readonly List<TaikoNote> activeNotes = new();
+        [SerializeField] private RectTransform scrolllane; // assign in inspector
 
-//        private AudioSource audioSource;
-//        private void Awake()
-//        {
-//            if (Instance != null && Instance != this)
-//            {
-//                Destroy(gameObject);
-//                return;
-//            }
-//            Instance = this;
-//        }
+        void Awake()
+        {
+            if (!osu)
+                osu = Rhythm.GamePlay.OSU.Aimless.RhythmManagerOSUAimless.Instance;
+            CacheLaneGeometry();
+        }
 
-//        private void Start()
-//        {
-//            audioSource = GetComponent<AudioSource>();
-//            audioSource.clip = beatmap.musicTrack;          // <— 1. guarantee clip
-//            dspSongStartTime = AudioSettings.dspTime + 1.5; // 1.5 s lead-in
-//            audioSource.PlayScheduled(dspSongStartTime);
-//        }
+        void OnRectTransformDimensionsChange() => CacheLaneGeometry();
 
-//        private void Update()
-//        {
-//            double now = AudioSettings.dspTime;
-//            double songTime = now - dspSongStartTime;
+        void CacheLaneGeometry()
+        {
+            var cr = canvas.GetComponent<RectTransform>().rect;
+            // anchored space centered at (0,0)
+            xHit = taikoHitBar.anchoredPosition.x;
+            laneY = cr.height * laneYOffsetFraction;
+            xRightVisible = (cr.width * 0.5f) - rightMargin;
+        }
 
-//            // Spawn notes
-//            while (spawnIndex < beatmap.notes.Count &&
-//                   beatmap.notes[spawnIndex].hitTime - approachTime <= songTime)
-//            {
-//                SpawnNote(beatmap.notes[spawnIndex++]);
-//            }
+        void OnEnable()
+        {
+            // subscribe once to OSU judgments if you want to pop FIFO on any judgment
+            Rhythm.GamePlay.JudgementSystem.Instance.OnJudgment += OnOSUJudgment;
+        }
 
-//            // Move & check notes
-//            for (int i = activeNotes.Count - 1; i >= 0; i--)
-//            {
-//                var note = activeNotes[i];
-//                note.UpdatePosition(now);
-//                note.MissCheck(now, missWindow);
-//            }
+        void OnDisable()
+        {
+            if (Rhythm.GamePlay.JudgementSystem.Instance != null)
+                Rhythm.GamePlay.JudgementSystem.Instance.OnJudgment -= OnOSUJudgment;
+        }
 
-//            // Input
-//            if (Input.GetKeyDown(KeyCode.F))
-//                HandleInput(NoteType.A, now);
-//            if (Input.GetKeyDown(KeyCode.J))
-//                HandleInput(NoteType.B, now);
-//        }
+        void Update()
+        {
+            if (!enableTaikoVisuals || osu == null || osu.CurrentState != Rhythm.GamePlay.OSU.Aimless.GameState.Playing)
+                return;
 
-//        private void SpawnNote(BeatNoteData data)
-//        {
-//            var prefab = data.type == NoteType.A ? prefabA : prefabB;
-//            var note = GetFromPool(prefab);
+            double now = AudioSettings.dspTime;
 
-//            note.transform.SetParent(canvas.transform, false);
+            // spawn to mirror OSU (read from its beatmap/indices)
+            MirrorOSUSpawns(now);
 
-            
-//            double absHit = dspSongStartTime + data.hitTime;
+            // move + cleanup
+            for (int i = active.Count - 1; i >= 0; --i)
+            {
+                var n = active[i];
+                n.UpdatePosition(now);
+                if (n.HasPassedHitZone(now, postHitGrace))
+                {
+                    ReturnToPool(n);
+                    active.RemoveAt(i);
+                    // If it’s still in fifo (e.g., no judgment happened), drop it:
+                    if (fifo.Count > 0 && ReferenceEquals(fifo.Peek(), n))
+                        fifo.Dequeue();
+                }
+            }
+        }
 
-//            note.Initialise(
-//                absHit,
-//                data.type,
-//                pixelsPerSecond,
-//                delta => JudgementSystem.Instance.RegisterHit(delta),
-//                () => JudgementSystem.Instance.RegisterMiss()
-//            );
+        void MirrorOSUSpawns(double dspNow)
+        {
+            var bm = osu.CurrentBeatmap;
+            if (bm == null || bm.notes == null)
+                return;
 
-//            activeNotes.Add(note);
-//        }
+            // track local spawn index separately from OSU if needed
+            // simplest approach: use OSU’s CurrentSpawnIndex as the same point
+            // and spawn any note whose spawn condition is met.
+            while (NeedsTaikoSpawn(osu))
+            {
+                var data = bm.notes[GetTaikoSpawnIndex()];
+                double absHit = osu.CurrentDSPSongStartTime + data.hitTime + osu.AudioOffset;
 
-//        private void HandleInput(NoteType type, double now)
-//        {
-//            float bestDelta = float.MaxValue;
-//            TaikoNote bestNote = null;
+                // Optional: spawn exactly when note becomes visible at right edge
+                double tSpawn = absHit - (xRightVisible - xHit) / pixelsPerSecond;
+                if (AudioSettings.dspTime + 0.001 < tSpawn)
+                    break; // not yet time to show
 
-//            foreach (var note in activeNotes)
-//            {
-//                if (note.Type != type)
-//                    continue;
+                SpawnTaiko(data, absHit);
+                IncTaikoSpawnIndex();
+            }
+        }
 
-//                double delta = now - note.HitTime;
-//                float absDelta = Mathf.Abs((float)delta);
+        // --- implement these however you track Taiko’s own spawn index ---
+        int taikoSpawnIndex = 0;
+        int GetTaikoSpawnIndex() => taikoSpawnIndex;
+        void IncTaikoSpawnIndex() => taikoSpawnIndex++;
 
-//                if (absDelta < bestDelta && absDelta <= goodWindow)
-//                {
-//                    bestDelta = absDelta;
-//                    bestNote = note;
-//                }
-//            }
+        bool NeedsTaikoSpawn(Rhythm.GamePlay.OSU.Aimless.RhythmManagerOSUAimless o)
+        {
+            var bm = o.CurrentBeatmap;
+            if (bm == null)
+                return false;
+            if (taikoSpawnIndex >= bm.notes.Count)
+                return false;
 
-//            if (bestNote != null)
-//            {
-//                bestNote.ProcessHit(now - bestNote.HitTime);
-//                activeNotes.Remove(bestNote);
-//            }
-//            else
-//            {
-//                JudgementSystem.Instance.RegisterMiss();
-//            }
-//        }
+            // same gate OSU uses: note becomes “active” when approach starts
+            double songTime = AudioSettings.dspTime - o.CurrentDSPSongStartTime;
+            var nd = bm.notes[taikoSpawnIndex];
+            return (nd.hitTime - bm.approachTime) <= songTime;
+        }
 
-//        private TaikoNote GetFromPool(TaikoNote prefab)
-//        {
-//            if (pool.Count > 0)
-//            {
-//                var note = pool.Dequeue();
-//                note.gameObject.SetActive(true);
-//                return note;
-//            }
-//            return Instantiate(prefab, transform); // fallback
-//        }
+        void SpawnTaiko(BeatNoteData data, double absHit)
+        {
+            var note = GetFromPool((NoteType)data.type);
+            note.transform.SetParent(scrolllane, false);
 
-//        public void RecycleNote(TaikoNote note)
-//        {
-//            note.ResetNote();
-//            pool.Enqueue(note);
-//            activeNotes.Remove(note);
-//        }
-//    }
-//}
+            note.Initialise(
+                absHit,
+                (NoteType)data.type,
+                pixelsPerSecond,
+                xHit,
+                laneY
+            );
+
+            active.Add(note);
+            fifo.Enqueue(note);
+
+#if UNITY_EDITOR
+            // sanity: ensure append-order is FIFO even when hitTimes tie
+            if (active.Count >= 2)
+            {
+                var a = active[^2].HitTime;
+                var b = active[^1].HitTime;
+                if (b < a - 1e-6)
+                    Debug.LogWarning("Taiko FIFO: spawn order vs HitTime mismatch");
+            }
+#endif
+        }
+
+        void OnOSUJudgment(string _, int __)
+        {
+            // consume the oldest Taiko note visual
+            if (fifo.Count == 0)
+                return;
+            var n = fifo.Dequeue();
+            n.TriggerHitEffect();
+            ReturnToPool(n);
+            active.Remove(n);
+        }
+
+        TaikoNote GetFromPool(NoteType t)
+        {
+            var q = (t == 0) ? poolA : poolB;
+            if (q.Count > 0)
+            {
+                var n = q.Dequeue();
+                n.gameObject.SetActive(true);
+                return n;
+            }
+            var prefab = (t == 0) ? prefabA : prefabB;
+            return Instantiate(prefab, transform);
+        }
+
+        void ReturnToPool(TaikoNote n)
+        {
+            n.ResetNote();
+            var q = (n.Type == 0) ? poolA : poolB;
+            q.Enqueue(n);
+        }
+
+        // optional public toggles
+        public void SetVisualsEnabled(bool enabled)
+        {
+            enableTaikoVisuals = enabled;
+            if (!enabled)
+            {
+                foreach (var n in active)
+                    n.ResetNote();
+                active.Clear();
+                fifo.Clear();
+            }
+        }
+    }
+}

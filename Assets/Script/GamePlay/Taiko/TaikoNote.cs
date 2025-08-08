@@ -1,117 +1,120 @@
-//using System;
-//using UnityEngine;
-//using UnityEngine.UI;
+using UnityEngine;
+using UnityEngine.UI;
+using System.Collections;
 
+namespace Rhythm.GamePlay.Taiko
+{
+    public enum NoteType
+    {
+        A, B
+    }
 
-//namespace Rhythm.GamePlay.Taiko
-//{
-//    public enum NoteType
-//    {
-//        A, B
-//    }
+    public class TaikoNote : MonoBehaviour
+    {
+        [Header("Refs")]
+        [SerializeField] private RectTransform rect;
+        [SerializeField] private Image noteImage;
 
-//    public class TaikoNote : MonoBehaviour
-//    {
-//        private float checkPosX = -256f;
-//        private RectTransform rect;
-//        private double hitTime;         // Absolute DSP time when this note should reach the hit bar
-//        private float speed;            // Pixels per second
-//        private bool hasProcessed = false;
-//        private NoteType type;
+        [Header("Colours")]
+        [SerializeField] private Color typeAColor = Color.red;
+        [SerializeField] private Color typeBColor = Color.blue;
+        [SerializeField] private Color hitEffectColor = Color.yellow;
 
-//        private Image noteImage;
+        [Header("FX")]
+        [SerializeField] private float hitEffectDuration = 0.2f;
 
-//        private Action<double> onHit;   // callback to JudgementSystem.RegisterHit
-//        private Action onMiss;   // callback to JudgementSystem.RegisterMiss
+        public double HitTime
+        {
+            get; private set;
+        }
+        public NoteType Type
+        {
+            get; private set;
+        }
 
-//        public NoteType Type => type;
-//        public double HitTime => hitTime;
+        // cached lane params (assigned at Initialise)
+        private float xHit;           // anchored X of hit-bar center (same space as rect)
+        private float laneY;          // anchored Y for the lane
+        private float v;              // px/s
+        private Color baseColor;
+        private bool fxTriggered;
 
-//        private void Awake()
-//        {
-//            rect = GetComponent<RectTransform>();
-//            noteImage = transform.GetChild(0).GetComponent<Image>();
-//        }
+        void Reset()
+        {
+            rect = GetComponent<RectTransform>();
+            noteImage = GetComponentInChildren<Image>();
+        }
 
-//        public void Initialise(
-//            double hitTime,
-//            NoteType type,
-//            float speed,
-//            Action<double> onHit,
-//            Action onMiss)
-//        {
-//            this.hitTime = hitTime;
-//            this.type = type;
-//            this.speed = speed;
+        public void Initialise(
+            double absHitTime,
+            NoteType type,
+            float pixelsPerSecond,
+            float hitBarAnchoredX,
+            float laneAnchoredY)
+        {
+            HitTime = absHitTime;
+            Type = type;
+            v = pixelsPerSecond;
+            xHit = hitBarAnchoredX;
+            laneY = laneAnchoredY;
+            fxTriggered = false;
 
-//            this.onHit = onHit;   // store callbacks
-//            this.onMiss = onMiss;
+            baseColor = (type == NoteType.A) ? typeAColor : typeBColor;
+            if (noteImage)
+                noteImage.color = baseColor;
 
-//            hasProcessed = false;
-//            noteImage.color = Color.white;
-//            gameObject.SetActive(true);
-//        }
+            if (!rect)
+                rect = GetComponent<RectTransform>();
 
-//        public void UpdatePosition(double dspNow)
-//        {
-//            if (hasProcessed)
-//                return;
+            // place instantly to correct x for current DSP time (no popping/jump)
+            double t = AudioSettings.dspTime;
+            float xNow = xHit + v * (float)(HitTime - t);
+            rect.anchoredPosition = new Vector2(xNow, laneY);
 
-//            double timeUntilHit = hitTime - dspNow;
-//            float newX = checkPosX + (float)(timeUntilHit * speed);
-//            rect.anchoredPosition = new Vector2(newX, 0f);
-//        }
+            gameObject.SetActive(true);
+        }
 
-//        public void MissCheck(double dspNow, float gracePeriod)
-//        {
-//            if (hasProcessed)
-//                return;
+        public void UpdatePosition(double dspNow)
+        {
+            // exact kinematic: x(t) = x_hit + v * (HitTime - t)
+            float xNow = xHit + v * (float)(HitTime - dspNow);
+            rect.anchoredPosition = new Vector2(xNow, laneY);
+        }
 
-//            if (dspNow > hitTime + gracePeriod)
-//            {
-//                hasProcessed = true;
-//                onMiss?.Invoke();                         // <- use injected callback
-//                StartCoroutine(FeedbackAndRecycle(Color.red));
-//            }
-//        }
+        public bool HasPassedHitZone(double dspNow, float postGrace = 0.15f)
+        {
+            return dspNow > HitTime + postGrace; // purely time-based
+        }
 
-//        public void ProcessHit(double delta)
-//        {
-//            if (hasProcessed)
-//                return;
-//            hasProcessed = true;
+        public void TriggerHitEffect()
+        {
+            if (fxTriggered)
+                return;
+            fxTriggered = true;
+            StartCoroutine(HitFX());
+        }
 
-//            string result = null;
-//            void JudgmentHandler(string j, int _) => result = j;
+        IEnumerator HitFX()
+        {
+            if (!noteImage)
+                yield break;
+            var orig = transform.localScale;
+            noteImage.color = hitEffectColor;
+            transform.localScale = orig * 1.2f;
+            yield return new WaitForSeconds(hitEffectDuration * 0.5f);
+            noteImage.color = baseColor;
+            transform.localScale = orig;
+            yield return new WaitForSeconds(hitEffectDuration * 0.5f);
+        }
 
-//            JudgementSystem.Instance.OnJudgment += JudgmentHandler;
-//            onHit?.Invoke(delta);                     // <- call injected RegisterHit
-//            JudgementSystem.Instance.OnJudgment -= JudgmentHandler;
-
-//            Color feedback = result switch
-//            {
-//                "Perfect" => Color.green,
-//                "Good" => Color.yellow,
-//                _ => Color.red
-//            };
-
-//            StartCoroutine(FeedbackAndRecycle(feedback));
-//        }
-
-//        private System.Collections.IEnumerator FeedbackAndRecycle(Color colour, float wait = 0.1f)
-//        {
-//            if (noteImage != null)
-//                noteImage.color = colour;   // show feedback
-//            yield return new WaitForSeconds(wait);             // let player see it
-//            RhythmManagerTaiko.Instance.RecycleNote(this);   // returns to pool, ResetNote() restores white
-//        }
-
-
-//        public void ResetNote()
-//        {
-//            if (noteImage != null)
-//                noteImage.color = Color.white;
-//            gameObject.SetActive(false);
-//        }
-//    }
-//}
+        public void ResetNote()
+        {
+            StopAllCoroutines();
+            fxTriggered = false;
+            if (noteImage)
+                noteImage.color = baseColor;
+            transform.localScale = Vector3.one;
+            gameObject.SetActive(false);
+        }
+    }
+}

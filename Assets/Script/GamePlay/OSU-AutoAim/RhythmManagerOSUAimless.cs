@@ -687,6 +687,10 @@ namespace Rhythm.GamePlay.OSU.Aimless
             OnAudioOffsetChanged?.Invoke(audioOffset);
         }
         #endregion
+
+        public BeatmapData CurrentBeatmap => beatmap;
+        public int CurrentSpawnIndex => spawnIndex;
+        public double CurrentDSPSongStartTime => dspSongStartTime;
     }
 }
 

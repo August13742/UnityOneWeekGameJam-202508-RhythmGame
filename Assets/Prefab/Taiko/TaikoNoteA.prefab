@@ -27,8 +27,8 @@ RectTransform:
   m_GameObject: {fileID: 1797630786462691304}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 7363464258785667028}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -164,3 +164,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29d9b9710d3e19f4a956e42b09fcbac6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rect: {fileID: 0}
+  noteImage: {fileID: 0}
+  typeAColor: {r: 1, g: 0, b: 0, a: 1}
+  typeBColor: {r: 0, g: 0, b: 1, a: 1}
+  hitEffectColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  hitEffectDuration: 0.2
