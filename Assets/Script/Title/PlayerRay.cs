@@ -1,8 +1,11 @@
 using UnityEngine;
+using System;
+using DG.Tweening; // DOTweenの参照（必要に応じて使用）
+using UnityEngine.UI; // UIコンポーネントの参照
 
 public class PlayerRay : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public event Action ClickDoorListener;    // クリックイベントを通知するデリゲート
     void Start()
     {
         
@@ -13,9 +16,22 @@ public class PlayerRay : MonoBehaviour
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-        if (Physics.Raycast(ray,out hit,10.0f))
+        if (Physics.Raycast(ray, out hit, 100.0f))
         {
-            Debug.Log(hit.collider.gameObject.transform.position);
+            //Debug.Log(hit.collider.gameObject.name); // ヒットしたオブジェクトの名前をログに出力
+            if (Input.GetMouseButtonDown(0)) // 左クリックでアクションを実行
+            {
+                // ここにクリック時のアクションを追加
+                switch (hit.collider.gameObject.tag)
+                {
+                    case "Door":
+                        ClickDoorListener?.Invoke(); // クリックイベントを通知 
+                    break;
+                }
+            
+            }
         }
+        
+
     }
 }
