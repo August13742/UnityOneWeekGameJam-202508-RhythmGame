@@ -21,9 +21,9 @@ namespace Rhythm.Control.OSU
                 if (note != null && !note.HasProcessed)
                 {
                     // Find the note that is closest to its hit time
-                    if (note.HitTime < earliestHitTime)
+                    if (note.RelativeHitTime < earliestHitTime)
                     {
-                        earliestHitTime = note.HitTime;
+                        earliestHitTime = note.RelativeHitTime;
                         noteToHit = note;
                     }
                 }

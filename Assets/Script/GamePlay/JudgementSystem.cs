@@ -33,7 +33,7 @@ namespace Rhythm.GamePlay
         {
             get; private set;
         } = 1f;
-
+        public int TotalNotesInSong = 0;
         // --- Note Statistics ---
         public int TotalNotes { get; private set; } = 0;
         public int PerfectCount { get; private set; } = 0;
@@ -74,45 +74,47 @@ namespace Rhythm.GamePlay
         public void RegisterHit(double delta)
         {
             float absDelta = Mathf.Abs((float)delta);
-            string result;
-            int points;
-
-            // Every hit (even if not judged as miss) is a note attempt
-            TotalNotes++;
 
             if (absDelta <= PerfectWindow)
             {
-                result = "Perfect";
-                points = pointsPerPerfect;
-                AudioManager.Instance.PlaySFX(shootHitSFXResource);
-                CurrentCombo++;
+                // count once
+                TotalNotes++;
                 PerfectCount++;
+                CurrentCombo++;
+
+                int points = pointsPerPerfect;
+                CurrentMaxPossibleScore += pointsPerPerfect;
+                Score += points;
+                CurrentAccuracy = (float)Score / CurrentMaxPossibleScore;
+
+                AudioManager.Instance.PlaySFX(shootHitSFXResource);
+                OnJudgement?.Invoke("Perfect", CurrentCombo);
+                OnScoreChanged?.Invoke(Score, CurrentAccuracy, CurrentCombo);
+                OnComboChanged?.Invoke(CurrentCombo);
             }
             else if (absDelta <= GoodWindow)
             {
-                result = "Good";
-                points = pointsPerGood;
-                AudioManager.Instance.PlaySFX(shootHitSFXResource);
-                CurrentCombo++;
+                TotalNotes++;
                 GoodCount++;
+                CurrentCombo++;
+
+                int points = pointsPerGood;
+                CurrentMaxPossibleScore += pointsPerPerfect;
+                Score += points;
+                CurrentAccuracy = (float)Score / CurrentMaxPossibleScore;
+
+                AudioManager.Instance.PlaySFX(shootHitSFXResource);
+                OnJudgement?.Invoke("Good", CurrentCombo);
+                OnScoreChanged?.Invoke(Score, CurrentAccuracy, CurrentCombo);
+                OnComboChanged?.Invoke(CurrentCombo);
             }
             else
             {
-                // Too far off -> treat as miss
-                AudioManager.Instance.PlaySFX(shootMissSFXResource);
+                // out of window -> treat as miss (counts once in RegisterMiss)
                 RegisterMiss();
-                return;
             }
-
-            CurrentMaxPossibleScore += pointsPerPerfect;
-            Score += points;
-            CurrentAccuracy = (float)Score / CurrentMaxPossibleScore;
-            OnJudgement?.Invoke(result, CurrentCombo);
-            OnScoreChanged?.Invoke(Score, CurrentAccuracy, CurrentCombo);
-            OnComboChanged?.Invoke(CurrentCombo);
-
-            //Debug.Log($"[{result}] Δ={delta:F3}s → +{points}pts, CurrentCombo={CurrentCombo}");
         }
+
 
         /// <summary>
         /// Call this when a note times out without being clicked.
@@ -136,10 +138,25 @@ namespace Rhythm.GamePlay
 
         public void ResetStatistics()
         {
+            StartCoroutine(ResetStatisticsCoroutine());
+        }
+
+        private IEnumerator ResetStatisticsCoroutine()
+        {
+            yield return null; // Wait one frame so leftover miss don't mess up stats
+
+            Score = 0;
+            CurrentMaxPossibleScore = 0;
+            CurrentCombo = 0;
+            CurrentAccuracy = 1f;
             TotalNotes = 0;
             PerfectCount = 0;
             GoodCount = 0;
             MissCount = 0;
+            TotalNotesInSong = 0;
+
+            // Notify UI to update
+            OnScoreChanged?.Invoke(Score, CurrentAccuracy, CurrentCombo);
         }
 
         IEnumerator ToggleInjuredEffect()

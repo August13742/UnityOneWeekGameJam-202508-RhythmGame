@@ -7,16 +7,16 @@ namespace Rhythm.GamePlay.Taiko
     {
         [Header("External")]
         [SerializeField] private Canvas canvas;
-        [SerializeField] private RectTransform taikoHitBar;   // assign in inspector
-        [SerializeField] private Rhythm.GamePlay.OSU.Aimless.RhythmManagerOSUAimless osu; // link if not using Instance
+        [SerializeField] private RectTransform taikoHitBar;
+        [SerializeField] private OSU.Aimless.RhythmManagerOSUAimless osu;
 
         [Header("Prefabs")]
         [SerializeField] private TaikoNote prefabA;
         [SerializeField] private TaikoNote prefabB;
 
         [Header("Lane Layout")]
-        [SerializeField] private float laneYOffsetFraction = -0.25f; // -0.25 => lower quarter
-        [SerializeField] private float rightMargin = 80f;            // px from right edge (visibility)
+        [SerializeField] private float laneYOffsetFraction = 0f; // -0.25 is lower quarter, 0 no change
+        [SerializeField] private float rightMargin = 80f;       // px from right edge (visibility)
         [SerializeField] private float pixelsPerSecond = 400f;
 
         [Header("Behaviour")]
@@ -30,16 +30,16 @@ namespace Rhythm.GamePlay.Taiko
         private readonly Queue<TaikoNote> fifo = new();
         private readonly List<TaikoNote> active = new();
 
-        // separate pools so A/B don’t get mixed
+        // separate pools so A/B don't get mixed (currently only using one type though)
         private readonly Queue<TaikoNote> poolA = new();
         private readonly Queue<TaikoNote> poolB = new();
 
-        [SerializeField] private RectTransform scrolllane; // assign in inspector
+        [SerializeField] private RectTransform scrolllane;
 
         void Awake()
         {
             if (!osu)
-                osu = Rhythm.GamePlay.OSU.Aimless.RhythmManagerOSUAimless.Instance;
+                osu = OSU.Aimless.RhythmManagerOSUAimless.Instance;
             CacheLaneGeometry();
         }
 
@@ -54,77 +54,65 @@ namespace Rhythm.GamePlay.Taiko
             xRightVisible = (cr.width * 0.5f) - rightMargin;
         }
 
-        //void OnEnable()
-        //{
-        //    // subscribe once to OSU Judgements if you want to pop FIFO on any Judgement
-        //    Rhythm.GamePlay.JudgementSystem.Instance.OnJudgement += OnOSUJudgement;
-        //}
-
         void OnDisable()
         {
-            if (Rhythm.GamePlay.JudgementSystem.Instance != null)
-                Rhythm.GamePlay.JudgementSystem.Instance.OnJudgement -= OnOSUJudgement;
+            if (JudgementSystem.Instance != null)
+                JudgementSystem.Instance.OnJudgement -= OnOSUJudgement;
         }
+        
         private void Start()
         {
-            Rhythm.GamePlay.JudgementSystem.Instance.OnJudgement += OnOSUJudgement;
+            JudgementSystem.Instance.OnJudgement += OnOSUJudgement;
         }
+
         void Update()
         {
-            if (!enableTaikoVisuals || osu == null || osu.CurrentState != Rhythm.GamePlay.OSU.Aimless.GameState.Playing)
+            if (!enableTaikoVisuals || osu == null || osu.CurrentState != OSU.Aimless.GameState.Playing)
                 return;
 
-            double now = AudioSettings.dspTime;
-
-            // spawn to mirror OSU (read from its beatmap/indices)
-            MirrorOSUSpawns(now);
-
-            // move + cleanup
+            double songNow = osu.SongTimeNow();
+            MirrorOSUSpawns();
             for (int i = active.Count - 1; i >= 0; --i)
             {
                 var n = active[i];
-                n.UpdatePosition(now);
-                if (n.HasPassedHitZone(now, postHitGrace))
+                n.UpdatePosition(songNow);
+                if (n.HasPassedHitZone(songNow, postHitGrace))
                 {
                     ReturnToPool(n);
                     active.RemoveAt(i);
-                    // If it’s still in fifo (e.g., no Judgement happened), drop it:
                     if (fifo.Count > 0 && ReferenceEquals(fifo.Peek(), n))
                         fifo.Dequeue();
                 }
             }
         }
 
-        void MirrorOSUSpawns(double _)
+
+        void MirrorOSUSpawns()
         {
             var bm = osu.CurrentBeatmap;
             if (bm == null || bm.notes == null)
                 return;
 
-            // track local spawn index separately from OSU if needed
-            // simplest approach: use OSU’s CurrentSpawnIndex as the same point
-            // and spawn any note whose spawn condition is met.
             while (NeedsTaikoSpawn(osu))
             {
                 var data = bm.notes[GetTaikoSpawnIndex()];
-                double absHit = osu.CurrentDSPSongStartTime + data.hitTime + osu.AudioOffset;
 
-                // Optional: spawn exactly when note becomes visible at right edge
-                double tSpawn = absHit - (xRightVisible - xHit) / pixelsPerSecond;
-                if (AudioSettings.dspTime + 0.001 < tSpawn)
-                    break; // not yet time to show
+                double lead = (xRightVisible - xHit) / pixelsPerSecond;
+                double songNow = osu.SongTimeNow();
+                if (songNow + 0.001 < (data.hitTime - lead))
+                    break;
 
-                SpawnTaiko(data, absHit);
+                SpawnTaiko(data);
                 IncTaikoSpawnIndex();
             }
         }
 
-        // --- implement these however you track Taiko’s own spawn index ---
+
         int taikoSpawnIndex = 0;
         int GetTaikoSpawnIndex() => taikoSpawnIndex;
         void IncTaikoSpawnIndex() => taikoSpawnIndex++;
 
-        bool NeedsTaikoSpawn(Rhythm.GamePlay.OSU.Aimless.RhythmManagerOSUAimless o)
+        bool NeedsTaikoSpawn(OSU.Aimless.RhythmManagerOSUAimless o)
         {
             var bm = o.CurrentBeatmap;
             if (bm == null)
@@ -132,38 +120,25 @@ namespace Rhythm.GamePlay.Taiko
             if (taikoSpawnIndex >= bm.notes.Count)
                 return false;
 
-            // same gate OSU uses: note becomes “active” when approach starts
-            double songTime = AudioSettings.dspTime - o.CurrentDSPSongStartTime;
+            double songTime = o.SongTimeNow();
             var nd = bm.notes[taikoSpawnIndex];
             return (nd.hitTime - bm.approachTime) <= songTime;
         }
 
-        void SpawnTaiko(BeatNoteData data, double absHit)
+        void SpawnTaiko(BeatNoteData data)
         {
             var note = GetFromPool((NoteType)data.type);
             note.transform.SetParent(scrolllane, false);
 
             note.Initialise(
-                absHit,
+                data.hitTime,         
                 (NoteType)data.type,
                 pixelsPerSecond,
                 xHit,
                 laneY
             );
-
             active.Add(note);
             fifo.Enqueue(note);
-
-#if UNITY_EDITOR
-            // sanity: ensure append-order is FIFO even when hitTimes tie
-            if (active.Count >= 2)
-            {
-                var a = active[^2].HitTime;
-                var b = active[^1].HitTime;
-                if (b < a - 1e-6)
-                    Debug.LogWarning("Taiko FIFO: spawn order vs HitTime mismatch");
-            }
-#endif
         }
 
         void OnOSUJudgement(string result, int __)
@@ -172,10 +147,14 @@ namespace Rhythm.GamePlay.Taiko
                 return;
 
             // Only pop on successful hits
-            if (result == "Perfect" || result == "Good")
+            if (result != "Miss")
             {
                 var n = fifo.Dequeue();
-                n.TriggerHitEffect();
+                // Check if note is still active before triggering effect
+                if (n != null && n.gameObject.activeInHierarchy)
+                {
+                    n.TriggerHitEffect();
+                }
                 ReturnToPool(n);
                 active.Remove(n);
             }
@@ -196,12 +175,14 @@ namespace Rhythm.GamePlay.Taiko
 
         void ReturnToPool(TaikoNote n)
         {
-            n.ResetNote();
-            var q = (n.Type == 0) ? poolA : poolB;
-            q.Enqueue(n);
+            if (n != null)
+            {
+                n.ResetNote();
+                var q = (n.Type == 0) ? poolA : poolB;
+                q.Enqueue(n);
+            }
         }
 
-        // optional public toggles
         public void SetVisualsEnabled(bool enabled)
         {
             enableTaikoVisuals = enabled;
@@ -211,7 +192,19 @@ namespace Rhythm.GamePlay.Taiko
                     n.ResetNote();
                 active.Clear();
                 fifo.Clear();
+                // Reset spawn index when disabling
+                taikoSpawnIndex = 0;
             }
+        }
+
+        // Reset state when game is reset
+        public void ResetTaikoState()
+        {
+            foreach (var n in active)
+                n.ResetNote();
+            active.Clear();
+            fifo.Clear();
+            taikoSpawnIndex = 0;
         }
     }
 }

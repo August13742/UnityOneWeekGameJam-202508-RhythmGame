@@ -16,10 +16,6 @@ namespace Rhythm.GamePlay.OSU
             get; set;
         }
         // Public property to be read by the input manager
-        public double HitTime
-        {
-            get; private set;
-        }
         public Vector3 WorldPosition
         {
             get; private set;
@@ -40,15 +36,14 @@ namespace Rhythm.GamePlay.OSU
         private System.Action onMiss;
         private System.Action<OSUBeatNote> onReturnToPool;
 
-
         private INoteVisualSettings visualSettings;
-
-
         private NotificationText notificationTextComponent;
 
+        private Aimless.RhythmManagerOSUAimless rhythmManager;
+
         public void Initialise(
-            double hitTime,
             double relativeHitTime,
+
             float approachTime,
             System.Action<double> onHit,
             System.Action onMiss,
@@ -58,8 +53,8 @@ namespace Rhythm.GamePlay.OSU
             GameObject notificationText)
         
         {
-            this.HitTime = hitTime;
             this.RelativeHitTime = relativeHitTime;
+
             this.approachTime = approachTime;
             this.onHit = onHit;
             this.onMiss = onMiss;
@@ -68,11 +63,11 @@ namespace Rhythm.GamePlay.OSU
             this.WorldPosition = worldPosition;
             this.notificationText = notificationText;
             this.notificationTextComponent = notificationText != null ? notificationText.GetComponent<NotificationText>() : null;
+            this.rhythmManager = Aimless.RhythmManagerOSUAimless.Instance;
 
             HasProcessed = false;
-            IndicatorSoundPlayed = false; // Add this line
+            IndicatorSoundPlayed = false;
             hitCircle.color = defaultColour;
-
 
             if (approachRing && visualSettings.ShowApproachRing)
             {
@@ -85,21 +80,20 @@ namespace Rhythm.GamePlay.OSU
                 notificationTextComponent.gameObject.SetActive(false);
         }
 
-
         private void Update()
         {
+            if (rhythmManager == null || rhythmManager.CurrentState == Aimless.GameState.Paused)
+                return;
             if (HasProcessed)
                 return;
 
-            double now = AudioSettings.dspTime;
-            AnimateApproachRing(now);
+            double nowSong = rhythmManager.SongTimeNow();
+            AnimateApproachRing(nowSong);
 
-
-            if (now > HitTime + 0.2)
-            {
+            if (nowSong > RelativeHitTime + 0.2)
                 ProcessMiss();
-            }
         }
+
 
         public void ProcessHit()
         {
@@ -107,14 +101,16 @@ namespace Rhythm.GamePlay.OSU
                 return;
             HasProcessed = true;
 
-            double now = AudioSettings.dspTime;
-            double delta = now - HitTime;
+            // Use pause-aware time for hit calculation
+            double nowSong = rhythmManager != null ? rhythmManager.SongTimeNow() : 0.0;
+            double delta = nowSong - RelativeHitTime;
 
             string result = null;
             void JudgementHandler(string ret, int _) => result = ret;
             JudgementSystem.Instance.OnJudgement += JudgementHandler;
             onHit?.Invoke(delta);
             JudgementSystem.Instance.OnJudgement -= JudgementHandler;
+            
             Color feedbackColor = result switch
             {
                 "Perfect" => new Color(0, 1, 0, .35f), // green
@@ -125,7 +121,16 @@ namespace Rhythm.GamePlay.OSU
 
             ShowNotification(result);
 
-            StartCoroutine(HitFeedbackAndCleanup(feedbackColor));
+            // Check if gameObject is still active before starting coroutine
+            if (gameObject.activeInHierarchy)
+            {
+                StartCoroutine(HitFeedbackAndCleanup(feedbackColor));
+            }
+            else
+            {
+                // If inactive, return to pool immediately
+                onReturnToPool?.Invoke(this);
+            }
         }
 
         public void ProcessMiss()
@@ -135,7 +140,17 @@ namespace Rhythm.GamePlay.OSU
             HasProcessed = true;
             onMiss?.Invoke();
             ShowNotification("Miss");
-            StartCoroutine(HitFeedbackAndCleanup(new Color(1, 0, 0, 0.35f)));
+            
+            // Check if gameObject is still active before starting coroutine
+            if (gameObject.activeInHierarchy)
+            {
+                StartCoroutine(HitFeedbackAndCleanup(new Color(1, 0, 0, 0.35f)));
+            }
+            else
+            {
+                // If inactive, return to pool immediately
+                onReturnToPool?.Invoke(this);
+            }
         }
 
         private void ShowNotification(string result)
@@ -155,10 +170,13 @@ namespace Rhythm.GamePlay.OSU
             }
         }
 
-        private void AnimateApproachRing(double now)
+        private void AnimateApproachRing(double nowSong)
         {
-            double elapsed = now - (HitTime - approachTime);
-            float t = Mathf.Clamp01((float)(elapsed / approachTime));
+            if (approachRing == null || !approachRing.gameObject.activeSelf)
+                return;
+
+            double start = RelativeHitTime - approachTime;
+            float t = Mathf.Clamp01((float)((nowSong - start) / approachTime));
             approachRing.rectTransform.localScale = Vector3.Lerp(Vector3.one * 1.5f, Vector3.one * 0.5f, t);
         }
 

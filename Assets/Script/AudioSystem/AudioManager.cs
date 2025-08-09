@@ -26,6 +26,13 @@ public class AudioManager : MonoBehaviour
     private AudioSource musicPlayer;
     private Coroutine activeFadeCoroutine;
     private float currentMusicVolume = 1f;
+    
+    // Music pause state tracking
+    private bool isMusicPaused = false;
+    private double musicPauseTime;
+    private double musicResumeTime;
+    private double scheduledStartTime;
+    private bool wasScheduledToPlay = false;
 
     void Awake()
     {
@@ -106,6 +113,11 @@ public class AudioManager : MonoBehaviour
             musicPlayer.Stop();
         }
 
+        // Reset pause state
+        isMusicPaused = false;
+        wasScheduledToPlay = true;
+        scheduledStartTime = dspTime;
+
         // Ensure the clip is set and the player is ready
         musicPlayer.clip = clip;
         musicPlayer.volume = currentMusicVolume;
@@ -138,6 +150,80 @@ public class AudioManager : MonoBehaviour
             musicPlayer.PlayScheduled(safeStartTime);
         }
     }
+
+    public void PauseMusic()
+    {
+        if (musicPlayer == null || isMusicPaused)
+            return;
+
+        if (musicPlayer.isPlaying)
+        {
+            musicPauseTime = AudioSettings.dspTime;
+            musicPlayer.Pause();
+            isMusicPaused = true;
+            Debug.Log($"[AudioManager] Music paused at DSP time: {musicPauseTime}");
+        }
+        else
+        {
+            // Music was scheduled but not yet playing
+            isMusicPaused = true;
+            musicPauseTime = AudioSettings.dspTime;
+            Debug.Log("[AudioManager] Music scheduled playback paused");
+        }
+    }
+
+    public void ResumeMusic()
+    {
+        if (musicPlayer == null || !isMusicPaused)
+            return;
+
+        musicResumeTime = AudioSettings.dspTime;
+        double pauseDuration = musicResumeTime - musicPauseTime;
+
+        if (musicPlayer.clip != null)
+        {
+            if (wasScheduledToPlay)
+            {
+                // If music was originally scheduled, reschedule it with the pause duration added
+                double newScheduledTime = scheduledStartTime + pauseDuration;
+                double currentTime = AudioSettings.dspTime;
+                
+                if (newScheduledTime <= currentTime + 0.05) // If scheduled time is too close or in the past
+                {
+                    Debug.Log("[AudioManager] Resuming music immediately");
+                    musicPlayer.UnPause();
+                }
+                else
+                {
+                    Debug.Log($"[AudioManager] Rescheduling music to DSP time: {newScheduledTime}");
+                    musicPlayer.Stop(); // Stop any current state
+                    musicPlayer.PlayScheduled(newScheduledTime);
+                }
+            }
+            else
+            {
+                // Music was already playing when paused
+                musicPlayer.UnPause();
+                Debug.Log($"[AudioManager] Music resumed at DSP time: {musicResumeTime} (was paused for {pauseDuration:F3}s)");
+            }
+        }
+
+        isMusicPaused = false;
+    }
+
+    public void StopMusic()
+    {
+        if (musicPlayer != null)
+        {
+            musicPlayer.Stop();
+            isMusicPaused = false;
+            wasScheduledToPlay = false;
+            Debug.Log("[AudioManager] Music stopped");
+        }
+    }
+
+    public bool IsMusicPaused => isMusicPaused;
+    public bool IsMusicPlaying => musicPlayer != null && musicPlayer.isPlaying && !isMusicPaused;
 
     public void PlaySFX(SFXResource resource)
     {

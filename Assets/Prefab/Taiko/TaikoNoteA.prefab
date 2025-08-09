@@ -166,7 +166,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rect: {fileID: 0}
   noteImage: {fileID: 7124122467896512602}
-  typeAColor: {r: 0, g: 0, b: 1, a: 0.7490196}
-  typeBColor: {r: 0.7877358, g: 0.2675329, b: 0.75305563, a: 0.6}
+  typeAColor: {r: 1, g: 1, b: 1, a: 0.5019608}
+  typeBColor: {r: 1, g: 1, b: 1, a: 0.5019608}
   hitEffectColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   hitEffectDuration: 0.2

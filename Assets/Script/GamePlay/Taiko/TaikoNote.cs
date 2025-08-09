@@ -31,7 +31,10 @@ namespace Rhythm.GamePlay.Taiko
         {
             get; private set;
         }
-
+        public double RelHit
+        {
+            get; private set;
+        }
         // cached lane params (assigned at Initialise)
         private float xHit;           // anchored X of hit-bar center (same space as rect)
         private float laneY;          // anchored Y for the lane
@@ -46,13 +49,13 @@ namespace Rhythm.GamePlay.Taiko
         }
 
         public void Initialise(
-            double absHitTime,
+            double relHitTime,
             NoteType type,
             float pixelsPerSecond,
             float hitBarAnchoredX,
             float laneAnchoredY)
         {
-            HitTime = absHitTime;
+            RelHit = relHitTime;
             Type = type;
             v = pixelsPerSecond;
             xHit = hitBarAnchoredX;
@@ -66,24 +69,23 @@ namespace Rhythm.GamePlay.Taiko
             if (!rect)
                 rect = GetComponent<RectTransform>();
 
-            // place instantly to correct x for current DSP time (no popping/jump)
-            double t = AudioSettings.dspTime;
-            float xNow = xHit + v * (float)(HitTime - t);
+            // Use pause-aware time for positioning
+            double song = OSU.Aimless.RhythmManagerOSUAimless.Instance.SongTimeNow();
+            float xNow = xHit + v * (float)(RelHit - song);
             rect.anchoredPosition = new Vector2(xNow, laneY);
-
             gameObject.SetActive(true);
+    
         }
 
-        public void UpdatePosition(double dspNow)
+        public void UpdatePosition(double songNow)
         {
-            // exact kinematic: x(t) = x_hit + v * (HitTime - t)
-            float xNow = xHit + v * (float)(HitTime - dspNow);
+            float xNow = xHit + v * (float)(RelHit - songNow);
             rect.anchoredPosition = new Vector2(xNow, laneY);
         }
 
-        public bool HasPassedHitZone(double dspNow, float postGrace = 0.15f)
+        public bool HasPassedHitZone(double songNow, float postGrace = 0.15f)
         {
-            return dspNow > HitTime + postGrace; // purely time-based
+            return songNow > RelHit + postGrace;
         }
 
         public void TriggerHitEffect()
@@ -91,8 +93,29 @@ namespace Rhythm.GamePlay.Taiko
             if (fxTriggered)
                 return;
             fxTriggered = true;
-            StartCoroutine(HitFX());
+            
+            // Check if gameObject is active before starting coroutine
+            if (gameObject.activeInHierarchy)
+            {
+                StartCoroutine(HitFX());
+            }
+            else
+            {
+                // If inactive, apply effect immediately without coroutine
+                ApplyHitEffectImmediate();
+            }
         }
+
+        private void ApplyHitEffectImmediate()
+        {
+            if (noteImage)
+            {
+                noteImage.color = hitEffectColor;
+                transform.localScale = Vector3.one * 1.2f;
+            }
+        }
+
+
 
         IEnumerator HitFX()
         {
@@ -115,6 +138,12 @@ namespace Rhythm.GamePlay.Taiko
                 noteImage.color = baseColor;
             transform.localScale = Vector3.one;
             gameObject.SetActive(false);
+        }
+
+        private void OnDisable()
+        {
+            // Stop all coroutines when disabled to prevent errors
+            StopAllCoroutines();
         }
     }
 }

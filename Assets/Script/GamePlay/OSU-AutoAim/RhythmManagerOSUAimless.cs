@@ -69,6 +69,10 @@ namespace Rhythm.GamePlay.OSU.Aimless
         private double dspSongStartTime;
         private int spawnIndex = 0;
 
+        // Pause timing fields
+        private double pausedDspTime;
+        private double totalPausedDuration;
+
         // --- Pooling fields ---
         [Header("Pooling")]
         [SerializeField] private int poolSize = 8;
@@ -149,12 +153,14 @@ namespace Rhythm.GamePlay.OSU.Aimless
 
             double startTime = AudioSettings.dspTime + AudioStartDelay;
             dspSongStartTime = startTime;
+            totalPausedDuration = 0.0;
 
             // Announce the intent to play scheduled music via the event system
             GameEvents.Instance.PlayMusicScheduled(beatmap.musicTrack, startTime);
 
+            JudgementSystem.Instance.TotalNotesInSong = beatmap.notes.Count;
             // Synchronise countdown
-            var countdownText = FindFirstObjectByType<Rhythm.UI.CountDownText>();
+            var countdownText = FindFirstObjectByType<CountDownText>();
             if (countdownText != null)
                 countdownText.SetScheduledStartTime(dspSongStartTime);
 
@@ -172,8 +178,13 @@ namespace Rhythm.GamePlay.OSU.Aimless
                 return;
             }
 
+            pausedDspTime = AudioSettings.dspTime;
             SetGameState(GameState.Paused);
-            Time.timeScale = 0f;
+            
+            // Pause the music
+            AudioManager.Instance.PauseMusic();
+            
+            
             OnGamePaused?.Invoke();
         }
 
@@ -185,21 +196,29 @@ namespace Rhythm.GamePlay.OSU.Aimless
                 return;
             }
 
+            // Calculate how long we were paused and adjust timing
+            double pauseDuration = AudioSettings.dspTime - pausedDspTime;
+            totalPausedDuration += pauseDuration;
+            
             SetGameState(GameState.Playing);
-            Time.timeScale = 1f;
+            
+            // Resume the music
+            AudioManager.Instance.ResumeMusic();
+            
             OnGameResumed?.Invoke();
         }
 
         public void StopGame()
         {
             SetGameState(GameState.Finished);
-            Time.timeScale = 1f;
+            AudioManager.Instance.StopMusic();
             OnGameFinished?.Invoke();
         }
 
         public void RestartGame()
         {
             StopGame();
+            JudgementSystem.Instance.ResetStatistics();
             StartGame();
         }
 
@@ -229,6 +248,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
                 ReturnEnemyToPool(enemy.gameObject);
 
             spawnIndex = 0;
+            totalPausedDuration = 0.0;
             CurrentIndicatorTarget = null;
             
             if (indicator != null)
@@ -237,8 +257,8 @@ namespace Rhythm.GamePlay.OSU.Aimless
         
         private void UpdateGameplay()
         {
-            double dspNow = AudioSettings.dspTime;
-            double songTime = dspNow - dspSongStartTime;
+            double songTime = SongTimeNow();
+
 
             // Update song progress for UI
             if (beatmap != null && beatmap.notes.Count > 0)
@@ -258,7 +278,6 @@ namespace Rhythm.GamePlay.OSU.Aimless
 
             if (playIndicatorSound)
             {
-                //double leadinWindow = JudgementSystem.Instance.PerfectWindow/2;
                 foreach (var note in activeNotes)
                 {
                     if (!note.HasProcessed && !note.IndicatorSoundPlayed)
@@ -294,7 +313,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
             activeNotes.RemoveAll(note => note.HasProcessed);
 
             if (showIndicator)
-                UpdateIndicator();
+                UpdateIndicator(songTime);
 
             // Check for song end using the actual audio clip length
             if (beatmap != null && beatmap.musicTrack != null)
@@ -323,9 +342,9 @@ namespace Rhythm.GamePlay.OSU.Aimless
             // Find the oldest note that hasn't been processed yet
             foreach (var note in activeNotes)
             {
-                if (!note.HasProcessed && note.HitTime < earliestHitTime)
+                if (!note.HasProcessed && note.RelativeHitTime < earliestHitTime)
                 {
-                    earliestHitTime = note.HitTime;
+                    earliestHitTime = note.RelativeHitTime;
                     noteToHit = note;
                     break;
                 }
@@ -407,7 +426,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
                 else
                 {
                     int rowCount = Mathf.CeilToInt(Mathf.Sqrt(virtualCount));
-                    int colCount = Mathf.CeilToInt((float)virtualCount / rowCount);
+                    int colCount = Mathf.CeilToInt((float)virtualSpawnPointCount / rowCount);
 
                     for (int i = 0; i < virtualCount; ++i)
                     {
@@ -449,8 +468,11 @@ namespace Rhythm.GamePlay.OSU.Aimless
 
         #endregion
 
-        private void UpdateIndicator()
+        private void UpdateIndicator(double songTime = -1)
         {
+            if (songTime < 0)
+                songTime = AudioSettings.dspTime - dspSongStartTime - totalPausedDuration;
+
             OSUBeatNote nextTarget = null;
             double earliestHitTime = double.MaxValue;
             foreach (var note in activeNotes)
@@ -462,7 +484,6 @@ namespace Rhythm.GamePlay.OSU.Aimless
                 }
             }
 
-            double songTime = AudioSettings.dspTime - dspSongStartTime;
             bool shouldBeActive = false;
             float timeToHit = 0f;
 
@@ -500,7 +521,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
         private void SpawnNote(BeatNoteData data)
         {
             double relativeHitTime = data.hitTime;
-            double absoluteDSPHitTime = dspSongStartTime + relativeHitTime + audioOffset;
+            double absoluteDSPHitTime = dspSongStartTime + relativeHitTime + audioOffset + totalPausedDuration;
 
             int index = (data.spawnPointIndex >= 0 && data.spawnPointIndex < enemySpawnPoints.Length)
                         ? data.spawnPointIndex
@@ -514,7 +535,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
 
             if (enemy.TryGetComponent<EnemyRhythmUnit>(out var rhythmUnit))
             {
-                rhythmUnit.SetHitTime(absoluteDSPHitTime);
+                rhythmUnit.SetRelativeHitTime(relativeHitTime + audioOffset);
                 rhythmUnit.SetReturnToPoolCallback(ReturnEnemyToPool);
             }
 
@@ -535,8 +556,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
             notificationText.gameObject.SetActive(false);
 
             note.Initialise(
-                absoluteDSPHitTime,
-                relativeHitTime,
+                relativeHitTime,                     // ← pass relative
                 beatmap.approachTime,
                 delta => JudgementSystem.Instance.RegisterHit(delta),
                 () => JudgementSystem.Instance.RegisterMiss(),
@@ -545,7 +565,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
                 spawnPoint.position,
                 notificationText.gameObject
             );
-            
+
             activeNotes.Add(note);
         }
 
@@ -627,7 +647,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
             if (beatmap == null || beatmap.notes.Count == 0 || CurrentState != GameState.Playing)
                 return 0f;
                 
-            double songTime = AudioSettings.dspTime - dspSongStartTime;
+            double songTime = AudioSettings.dspTime - dspSongStartTime - totalPausedDuration;
             float totalSongLength = (float)beatmap.notes[^1].hitTime + beatmap.approachTime;
             return Mathf.Clamp01((float)songTime / totalSongLength);
         }
@@ -686,6 +706,13 @@ namespace Rhythm.GamePlay.OSU.Aimless
         public BeatmapData CurrentBeatmap => beatmap;
         public int CurrentSpawnIndex => spawnIndex;
         public double CurrentDSPSongStartTime => dspSongStartTime;
+        public double GetPauseAwareDSPTime()
+        {
+            return AudioSettings.dspTime - totalPausedDuration;
+        }
+        public double SongTimeNow() => AudioSettings.dspTime - dspSongStartTime - totalPausedDuration;
+
+        public double TotalPausedDuration => totalPausedDuration;
     }
 }
 

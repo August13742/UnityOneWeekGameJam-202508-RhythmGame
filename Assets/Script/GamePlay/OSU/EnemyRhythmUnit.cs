@@ -3,16 +3,22 @@ using UnityEngine;
 
 namespace Rhythm.GamePlay.OSU
 {
-
     public class EnemyRhythmUnit : MonoBehaviour
     {
-        private double hitTime;
+        private double relHitTime; // song-time moment this should trigger
         private bool activated;
         private Action<GameObject> returnToPoolCallback;
+        private Aimless.RhythmManagerOSUAimless rhythmManager;
 
-        public void SetHitTime(double absoluteTime)
+        private void Awake()
         {
-            hitTime = absoluteTime;
+            rhythmManager = Aimless.RhythmManagerOSUAimless.Instance;
+        }
+
+        public void SetRelativeHitTime(double t)
+        {
+            relHitTime = t;
+            activated = false;
         }
 
         public void SetReturnToPoolCallback(Action<GameObject> callback)
@@ -22,24 +28,42 @@ namespace Rhythm.GamePlay.OSU
 
         private void Update()
         {
-            if (!activated && AudioSettings.dspTime >= hitTime)
+            if (rhythmManager == null || rhythmManager.CurrentState == Aimless.GameState.Paused)
+                return;
+
+            if (!activated)
             {
-                Activate();
-                activated = true;
+                double songNow = rhythmManager.SongTimeNow();
+                if (songNow >= relHitTime)
+                {
+                    Activate();
+                    activated = true;
+                }
             }
         }
 
         private void Activate()
         {
-            // anim, etc
-            // Example: Return to pool after seconds
-            Invoke(nameof(ReturnToPool), .5f);
+            if (gameObject.activeInHierarchy)
+            {
+                // Play animation, SFX, etc.
+                Invoke(nameof(ReturnToPool), 0.5f); // example lifetime
+            }
+            else
+            {
+                ReturnToPool();
+            }
         }
 
         private void ReturnToPool()
         {
-            returnToPoolCallback?.Invoke(this.gameObject);
+            returnToPoolCallback?.Invoke(gameObject);
             activated = false;
+        }
+
+        private void OnDisable()
+        {
+            CancelInvoke();
         }
     }
 }
