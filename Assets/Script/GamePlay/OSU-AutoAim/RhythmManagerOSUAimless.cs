@@ -383,11 +383,6 @@ namespace Rhythm.GamePlay.OSU.Aimless
         {
             if (enemySpawnPoints == null || enemySpawnPoints.Length == 0)
             {
-                float minX = -spawnRange.x / 2f;
-                float maxX = spawnRange.x / 2f;
-                float minY = -spawnRange.y / 2f;
-                float maxY = spawnRange.y / 2f;
-
                 int virtualCount = virtualSpawnPointCount;
                 float distMin = distanceRange.x;
                 float distMax = distanceRange.y;
@@ -397,7 +392,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
                 if (virtualCount == 1)
                 {
                     float centerDistance = (distMin + distMax) * 0.5f;
-                    Vector3 centerViewport = new Vector3(0.5f, 0.5f, centerDistance);
+                    Vector3 centerViewport = new(0.5f, 0.5f, centerDistance);
                     Vector3 worldPos = worldCamera.ViewportToWorldPoint(centerViewport);
 
                     var go = new GameObject("VirtualSpawnPoint_0");
@@ -436,7 +431,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
                         
                         float distance = UnityEngine.Random.Range(distMin, distMax);
                         
-                        Vector3 viewportPoint = new Vector3(viewportX, viewportY, distance);
+                        Vector3 viewportPoint = new(viewportX, viewportY, distance);
                         Vector3 worldPos = worldCamera.ViewportToWorldPoint(viewportPoint);
                         
                         var go = new GameObject($"VirtualSpawnPoint_{i}");

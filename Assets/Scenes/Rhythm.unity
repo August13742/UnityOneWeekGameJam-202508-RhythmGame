@@ -1572,14 +1572,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Taiko
       objectReference: {fileID: 0}
-    - target: {fileID: 3890895050111711277, guid: 1dc983c36d5e4564bb1adf618b9ac935, type: 3}
-      propertyPath: m_PresetInfoIsWorld
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5529968996172528694, guid: 1dc983c36d5e4564bb1adf618b9ac935, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -350
-      objectReference: {fileID: 0}
     - target: {fileID: 6732420940182905639, guid: 1dc983c36d5e4564bb1adf618b9ac935, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1611,18 +1603,6 @@ PrefabInstance:
     - target: {fileID: 6732420940182905639, guid: 1dc983c36d5e4564bb1adf618b9ac935, type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6732420940182905639, guid: 1dc983c36d5e4564bb1adf618b9ac935, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6732420940182905639, guid: 1dc983c36d5e4564bb1adf618b9ac935, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6732420940182905639, guid: 1dc983c36d5e4564bb1adf618b9ac935, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6732420940182905639, guid: 1dc983c36d5e4564bb1adf618b9ac935, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1680,22 +1660,6 @@ PrefabInstance:
       propertyPath: canvas
       value: 
       objectReference: {fileID: 349511185}
-    - target: {fileID: 8414391862925171777, guid: 1dc983c36d5e4564bb1adf618b9ac935, type: 3}
-      propertyPath: scrolllane
-      value: 
-      objectReference: {fileID: 1816836187}
-    - target: {fileID: 8414391862925171777, guid: 1dc983c36d5e4564bb1adf618b9ac935, type: 3}
-      propertyPath: rightMargin
-      value: -200
-      objectReference: {fileID: 0}
-    - target: {fileID: 8414391862925171777, guid: 1dc983c36d5e4564bb1adf618b9ac935, type: 3}
-      propertyPath: pixelsPerSecond
-      value: 500
-      objectReference: {fileID: 0}
-    - target: {fileID: 8414391862925171777, guid: 1dc983c36d5e4564bb1adf618b9ac935, type: 3}
-      propertyPath: laneYOffsetFraction
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1967,11 +1931,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1695416564}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!224 &1816836187 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 8162953381967176751, guid: 1dc983c36d5e4564bb1adf618b9ac935, type: 3}
-  m_PrefabInstance: {fileID: 1095474327}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2097359674 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3274816658884865486, guid: cb1b1d664cddbfa43a6f9f99a1725087, type: 3}

@@ -54,18 +54,21 @@ namespace Rhythm.GamePlay.Taiko
             xRightVisible = (cr.width * 0.5f) - rightMargin;
         }
 
-        void OnEnable()
-        {
-            // subscribe once to OSU judgments if you want to pop FIFO on any judgment
-            Rhythm.GamePlay.JudgementSystem.Instance.OnJudgment += OnOSUJudgment;
-        }
+        //void OnEnable()
+        //{
+        //    // subscribe once to OSU Judgements if you want to pop FIFO on any Judgement
+        //    Rhythm.GamePlay.JudgementSystem.Instance.OnJudgement += OnOSUJudgement;
+        //}
 
         void OnDisable()
         {
             if (Rhythm.GamePlay.JudgementSystem.Instance != null)
-                Rhythm.GamePlay.JudgementSystem.Instance.OnJudgment -= OnOSUJudgment;
+                Rhythm.GamePlay.JudgementSystem.Instance.OnJudgement -= OnOSUJudgement;
         }
-
+        private void Start()
+        {
+            Rhythm.GamePlay.JudgementSystem.Instance.OnJudgement += OnOSUJudgement;
+        }
         void Update()
         {
             if (!enableTaikoVisuals || osu == null || osu.CurrentState != Rhythm.GamePlay.OSU.Aimless.GameState.Playing)
@@ -85,14 +88,14 @@ namespace Rhythm.GamePlay.Taiko
                 {
                     ReturnToPool(n);
                     active.RemoveAt(i);
-                    // If it’s still in fifo (e.g., no judgment happened), drop it:
+                    // If it’s still in fifo (e.g., no Judgement happened), drop it:
                     if (fifo.Count > 0 && ReferenceEquals(fifo.Peek(), n))
                         fifo.Dequeue();
                 }
             }
         }
 
-        void MirrorOSUSpawns(double dspNow)
+        void MirrorOSUSpawns(double _)
         {
             var bm = osu.CurrentBeatmap;
             if (bm == null || bm.notes == null)
@@ -163,15 +166,19 @@ namespace Rhythm.GamePlay.Taiko
 #endif
         }
 
-        void OnOSUJudgment(string _, int __)
+        void OnOSUJudgement(string result, int __)
         {
-            // consume the oldest Taiko note visual
             if (fifo.Count == 0)
                 return;
-            var n = fifo.Dequeue();
-            n.TriggerHitEffect();
-            ReturnToPool(n);
-            active.Remove(n);
+
+            // Only pop on successful hits
+            if (result == "Perfect" || result == "Good")
+            {
+                var n = fifo.Dequeue();
+                n.TriggerHitEffect();
+                ReturnToPool(n);
+                active.Remove(n);
+            }
         }
 
         TaikoNote GetFromPool(NoteType t)

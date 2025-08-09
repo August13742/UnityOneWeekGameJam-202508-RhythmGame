@@ -15,7 +15,6 @@ namespace Rhythm.GamePlay
             get; private set;
         }
         public SFXResource shootMissSFXResource;
-
         public SFXResource shootHitSFXResource;
         [SerializeField] private GameObject InjuredScreenEffect;
         public int Score
@@ -34,6 +33,13 @@ namespace Rhythm.GamePlay
         {
             get; private set;
         } = 1f;
+
+        // --- Note Statistics ---
+        public int TotalNotes { get; private set; } = 0;
+        public int PerfectCount { get; private set; } = 0;
+        public int GoodCount { get; private set; } = 0;
+        public int MissCount { get; private set; } = 0;
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -46,11 +52,10 @@ namespace Rhythm.GamePlay
         [SerializeField] private int pointsPerPerfect = 20;
         [SerializeField] private int pointsPerGood = 10;
 
-
         [Header("Timing Windows (seconds)")]
-        [Tooltip("± window around hit time for a Perfect judgment")]
+        [Tooltip("± window around hit time for a Perfect Judgement")]
         public float PerfectWindow = 0.1f;
-        [Tooltip("± window around hit time for a Good judgment")]
+        [Tooltip("± window around hit time for a Good Judgement")]
         public float GoodWindow = 0.2f;
 
         private void Start()
@@ -58,13 +63,10 @@ namespace Rhythm.GamePlay
             InjuredScreenEffect.SetActive(false);
         }
 
-
         // Events
-        public event Action<string, int> OnJudgment;   // (judgmentName, currentCombo)
-        public event Action<int, float,int> OnScoreChanged; // (score, currentAccuracy)
+        public event Action<string, int> OnJudgement;   // (JudgementName, currentCombo)
+        public event Action<int, float, int> OnScoreChanged; // (score, currentAccuracy)
         public event Action<int> OnComboChanged;
-
-
 
         /// <summary>
         /// Call this when a note reports a pointer‐click (delta = actualTime − scheduledTime).
@@ -74,7 +76,9 @@ namespace Rhythm.GamePlay
             float absDelta = Mathf.Abs((float)delta);
             string result;
             int points;
-            
+
+            // Every hit (even if not judged as miss) is a note attempt
+            TotalNotes++;
 
             if (absDelta <= PerfectWindow)
             {
@@ -82,6 +86,7 @@ namespace Rhythm.GamePlay
                 points = pointsPerPerfect;
                 AudioManager.Instance.PlaySFX(shootHitSFXResource);
                 CurrentCombo++;
+                PerfectCount++;
             }
             else if (absDelta <= GoodWindow)
             {
@@ -89,6 +94,7 @@ namespace Rhythm.GamePlay
                 points = pointsPerGood;
                 AudioManager.Instance.PlaySFX(shootHitSFXResource);
                 CurrentCombo++;
+                GoodCount++;
             }
             else
             {
@@ -101,7 +107,7 @@ namespace Rhythm.GamePlay
             CurrentMaxPossibleScore += pointsPerPerfect;
             Score += points;
             CurrentAccuracy = (float)Score / CurrentMaxPossibleScore;
-            OnJudgment?.Invoke(result, CurrentCombo);
+            OnJudgement?.Invoke(result, CurrentCombo);
             OnScoreChanged?.Invoke(Score, CurrentAccuracy, CurrentCombo);
             OnComboChanged?.Invoke(CurrentCombo);
 
@@ -113,17 +119,29 @@ namespace Rhythm.GamePlay
         /// </summary>
         public void RegisterMiss()
         {
+            TotalNotes++;
+            MissCount++;
+
             CurrentCombo = 0;
             CurrentMaxPossibleScore += pointsPerPerfect;
             CurrentAccuracy = (float)Score / CurrentMaxPossibleScore;
 
             OnScoreChanged?.Invoke(Score, CurrentAccuracy, CurrentCombo);
-            OnJudgment?.Invoke("Miss", CurrentCombo);
+            OnJudgement?.Invoke("Miss", CurrentCombo);
             OnComboChanged?.Invoke(CurrentCombo);
 
             StartCoroutine(ToggleInjuredEffect());
             //Debug.Log("[Miss] → CurrentCombo reset");
         }
+
+        public void ResetStatistics()
+        {
+            TotalNotes = 0;
+            PerfectCount = 0;
+            GoodCount = 0;
+            MissCount = 0;
+        }
+
         IEnumerator ToggleInjuredEffect()
         {
             InjuredScreenEffect.SetActive(true);
@@ -136,6 +154,4 @@ namespace Rhythm.GamePlay
                 Instance = null;
         }
     }
-
-
 }

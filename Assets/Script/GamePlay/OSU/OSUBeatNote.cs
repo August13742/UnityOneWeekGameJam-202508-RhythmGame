@@ -111,10 +111,10 @@ namespace Rhythm.GamePlay.OSU
             double delta = now - HitTime;
 
             string result = null;
-            void JudgmentHandler(string ret, int _) => result = ret;
-            JudgementSystem.Instance.OnJudgment += JudgmentHandler;
+            void JudgementHandler(string ret, int _) => result = ret;
+            JudgementSystem.Instance.OnJudgement += JudgementHandler;
             onHit?.Invoke(delta);
-            JudgementSystem.Instance.OnJudgment -= JudgmentHandler;
+            JudgementSystem.Instance.OnJudgement -= JudgementHandler;
             Color feedbackColor = result switch
             {
                 "Perfect" => new Color(0, 1, 0, .35f), // green
