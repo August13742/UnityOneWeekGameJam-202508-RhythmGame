@@ -8,6 +8,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2873872404398904567, guid: 669c7a35e800c924cb26ec5fc3d2d464, type: 3}
+      propertyPath: typeAColor.a
+      value: 0.5019608
+      objectReference: {fileID: 0}
     - target: {fileID: 6737941368606766188, guid: 669c7a35e800c924cb26ec5fc3d2d464, type: 3}
       propertyPath: m_Name
       value: TaikoNoteB
@@ -63,6 +67,10 @@ PrefabInstance:
     - target: {fileID: 7363464258785667028, guid: 669c7a35e800c924cb26ec5fc3d2d464, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7363464258785667028, guid: 669c7a35e800c924cb26ec5fc3d2d464, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
