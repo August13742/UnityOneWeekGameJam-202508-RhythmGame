@@ -23,9 +23,9 @@ namespace Rhythm.UI
         }
         void UpdateScore(int score, float accuracy, int combo)
         {
-            ScoreLabel.text = $"Score: {score.ToString()}";
+            ScoreLabel.text = $"Score: {score}";
             AccuracyLabel.text = $"{accuracy * 100:F2}%";
-            ComboLabel.text = $"Combo: {combo.ToString()}";
+            ComboLabel.text = $"Combo: {combo}";
 
         }
         private void OnDisable()

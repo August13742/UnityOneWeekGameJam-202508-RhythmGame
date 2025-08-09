@@ -109,6 +109,12 @@ namespace Rhythm.GamePlay.OSU.Aimless
             }
             Instance = this;
 
+            // Load saved audio offset if present
+            if (PlayerPrefs.HasKey("AudioOffset"))
+            {
+                audioOffset = Mathf.Clamp(PlayerPrefs.GetFloat("AudioOffset"), minAudioOffset, maxAudioOffset);
+            }
+
             Input = new InputSystem_Actions();
 
             InitialiseSpawnRange();

@@ -169,6 +169,7 @@ namespace Rhythm.UI
         private void OnRestartClicked()
         {
             HidePauseMenu();
+            AudioManager.Instance.FadeMusic();
             if (rhythmManager)
             {
                 rhythmManager.RestartGame();
@@ -178,7 +179,7 @@ namespace Rhythm.UI
         private void OnCalibrationClicked()
         {
             HidePauseMenu();
-            
+            AudioManager.Instance.FadeMusic();
             // Load calibration scene
             if (!string.IsNullOrEmpty(calibrationSceneName))
             {

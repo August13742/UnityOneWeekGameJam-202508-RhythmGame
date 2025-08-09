@@ -228,15 +228,17 @@ public class AudioManager : MonoBehaviour
 
     public void PlaySFX(SFXResource resource)
     {
+        if (resource == null || resource.clip == null)
+        {
+            Debug.LogWarning("[AudioManager] PlaySFX called with null resource/clip.");
+            return;
+        }
         if (resource.loop)
-        {
             PlayLoopingSFX(resource);
-        }
         else
-        {
             PlayOneShotSFX(resource.clip, resource.volumeLinear, resource.pitchScale);
-        }
     }
+
 
     void PlayOneShotSFX(AudioClip clip, float volume, float pitch)
     {
