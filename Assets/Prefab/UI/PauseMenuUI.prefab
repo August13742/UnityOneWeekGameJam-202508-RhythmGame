@@ -1577,7 +1577,7 @@ GameObject:
   - component: {fileID: 9150728896704439456}
   - component: {fileID: 6832246552899625769}
   m_Layer: 0
-  m_Name: VerticleContainer
+  m_Name: VerticalContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
