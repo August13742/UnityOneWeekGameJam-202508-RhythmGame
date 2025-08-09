@@ -94,7 +94,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
         public static event Action OnGameFinished;
         public Action ShotFired;
 
-        // Add this event for UI updates
+        // event for calibration UI updates
         public static event Action<float> OnAudioOffsetChanged;
         public InputSystem_Actions Input
         {
@@ -121,8 +121,22 @@ namespace Rhythm.GamePlay.OSU.Aimless
             InitialisePools();
             InitialiseEnemySpawnPoints();
         }
-        void OnEnable() => Input.Enable();
-        void OnDisable() => Input.Disable();
+
+        private void OnEnable()
+        {
+            Input?.Enable();
+            AudioManager.OnMusicStartConfirmed += HandleMusicStartConfirmed;
+        }
+        private void OnDisable()
+        {
+            Input?.Disable();
+            AudioManager.OnMusicStartConfirmed -= HandleMusicStartConfirmed;
+        }
+
+        private void HandleMusicStartConfirmed(double actualDspStart)
+        {
+            dspSongStartTime = actualDspStart; // authoritative
+        }
 
         private void Start()
         {
@@ -159,8 +173,10 @@ namespace Rhythm.GamePlay.OSU.Aimless
             SetGameState(GameState.CountingDown);
 
             double startTime = AudioSettings.dspTime + AudioStartDelay;
-            dspSongStartTime = startTime;
+            dspSongStartTime = startTime; // provisional; will be overwritten by confirmation
             totalPausedDuration = 0.0;
+            GameEvents.Instance.PlayMusicScheduled(beatmap.musicTrack, startTime);
+
 
             // Announce the intent to play scheduled music via the event system
             GameEvents.Instance.PlayMusicScheduled(beatmap.musicTrack, startTime);
@@ -188,7 +204,6 @@ namespace Rhythm.GamePlay.OSU.Aimless
             pausedDspTime = AudioSettings.dspTime;
             SetGameState(GameState.Paused);
             
-            // Pause the music
             AudioManager.Instance.PauseMusic();
             
             
@@ -209,7 +224,6 @@ namespace Rhythm.GamePlay.OSU.Aimless
             
             SetGameState(GameState.Playing);
             
-            // Resume the music
             AudioManager.Instance.ResumeMusic();
             
             OnGameResumed?.Invoke();

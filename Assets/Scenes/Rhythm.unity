@@ -3348,7 +3348,7 @@ PrefabInstance:
     - target: {fileID: 29919527144747600, guid: 5669723356c53d9459b0983f98052db6, type: 3}
       propertyPath: beatmap
       value: 
-      objectReference: {fileID: 11400000, guid: 3c1c9ab2f83278f4bb26495c6160eae7, type: 2}
+      objectReference: {fileID: 11400000, guid: 0471c7ebf642dcb40bb2783d89c9bbe1, type: 2}
     - target: {fileID: 29919527144747600, guid: 5669723356c53d9459b0983f98052db6, type: 3}
       propertyPath: AutoPlay
       value: 1

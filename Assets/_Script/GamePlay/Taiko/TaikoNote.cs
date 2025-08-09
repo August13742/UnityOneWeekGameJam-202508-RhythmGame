@@ -129,15 +129,31 @@ namespace Rhythm.GamePlay.Taiko
             transform.localScale = orig;
             yield return new WaitForSeconds(hitEffectDuration * 0.5f);
         }
+        public void ResetNoteSafe()
+        {
+            if (!this)
+                return; // destroyed
+            try
+            {
+                ResetNote();
+            }
+            catch { /* swallow if scene is tearing down */ }
+        }
+
 
         public void ResetNote()
         {
-            StopAllCoroutines();
+            // Guard: if object is being destroyed, bail
+            if (!this)
+                return;
+
+            StopAllCoroutines();              // OK when alive
             fxTriggered = false;
             if (noteImage)
                 noteImage.color = baseColor;
             transform.localScale = Vector3.one;
-            gameObject.SetActive(false);
+            if (gameObject)
+                gameObject.SetActive(false);
         }
 
         private void OnDisable()
@@ -145,5 +161,6 @@ namespace Rhythm.GamePlay.Taiko
             // Stop all coroutines when disabled to prevent errors
             StopAllCoroutines();
         }
+
     }
 }

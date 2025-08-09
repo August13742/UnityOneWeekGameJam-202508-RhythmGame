@@ -34,7 +34,6 @@ namespace Rhythm.Core
         public void PlayMusicScheduled(AudioClip clip, double dspTime)
         {
             OnPlayMusicScheduled?.Invoke(clip, dspTime);
-            Debug.Log($"{clip},{dspTime}");
         }
 
 

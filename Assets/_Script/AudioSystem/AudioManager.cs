@@ -10,6 +10,7 @@ public class AudioManager : MonoBehaviour
     {
         get; private set;
     }
+    public static event System.Action<double> OnMusicStartConfirmed;
 
     [Header("Mixer Groups")]
     public AudioMixer mixer;
@@ -25,7 +26,6 @@ public class AudioManager : MonoBehaviour
     private List<AudioSource> pausedSfxPlayers = new List<AudioSource>();
 
     private AudioSource musicPlayer;
-    private Coroutine activeFadeCoroutine;
     private float currentMusicVolume = 1f;
     
     // Music pause state tracking
@@ -34,7 +34,22 @@ public class AudioManager : MonoBehaviour
     private double musicResumeTime;
     private double scheduledStartTime;
     private bool wasScheduledToPlay = false;
+    private float duckFactor = 1f;        
+    private Coroutine duckCoroutine;
+    public float MusicVolume
+    {
+        get
+        {
+            return currentMusicVolume * duckFactor;
+        }
+    }
 
+    // Always compute: applied = currentMusicVolume * duckFactor
+    private void ApplyMusicVolume()
+    {
+        if (musicPlayer != null)
+            musicPlayer.volume = currentMusicVolume * duckFactor;
+    }
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -47,29 +62,26 @@ public class AudioManager : MonoBehaviour
         InitializeAudioPool();
         CreateMusicPlayer();
     }
-    private void OnEnable()
+    private IEnumerator TryBindGameEvents()
     {
-        
+        while (GameEvents.Instance == null)
+            yield return null;
+        GameEvents.Instance.OnPlayMusicScheduled += HandlePlayMusicScheduled;
     }
     private void Start()
     {
         if (GameEvents.Instance != null)
-        {
-
             GameEvents.Instance.OnPlayMusicScheduled += HandlePlayMusicScheduled;
-        }
         else
-            Debug.Log("no game event");
-
+            StartCoroutine(TryBindGameEvents());
     }
     private void OnDisable()
     {
         if (GameEvents.Instance != null)
-        {
             GameEvents.Instance.OnPlayMusicScheduled -= HandlePlayMusicScheduled;
-        }
     }
-    
+
+
     void InitializeAudioPool()
     {
         for (int i = 0; i < sfxPoolSize; i++)
@@ -119,37 +131,28 @@ public class AudioManager : MonoBehaviour
         wasScheduledToPlay = true;
         scheduledStartTime = dspTime;
 
-        // Ensure the clip is set and the player is ready
         musicPlayer.clip = clip;
-        musicPlayer.volume = currentMusicVolume;
-        
-        // Calculate safe start time with proper buffer
+        ApplyMusicVolume();
+
         double currentDspTime = AudioSettings.dspTime;
-        double safeStartTime;
-        
-        // If the scheduled time is in the past or too close to now, schedule for immediate playback
-        if (dspTime <= currentDspTime + 0.05) // 50ms buffer
-        {
-            safeStartTime = currentDspTime + 0.1; // Start 100ms from now
-            Debug.LogWarning($"[AudioManager] Scheduled time {dspTime} is too close to current time {currentDspTime}. Adjusting to {safeStartTime}");
-        }
-        else
-        {
-            safeStartTime = dspTime;
-        }
-        
-        Debug.Log($"[AudioManager] Scheduling music: {clip.name} at DSP time: {safeStartTime} (requested: {dspTime}, current: {currentDspTime})");
-        
-        // For very immediate playback, use Play() instead of PlayScheduled()
-        if (safeStartTime - currentDspTime < 0.1)
-        {
-            Debug.Log("[AudioManager] Using immediate Play() instead of PlayScheduled()");
-            musicPlayer.Play();
-        }
-        else
-        {
-            musicPlayer.PlayScheduled(safeStartTime);
-        }
+
+        // Never play "now". If requested time is too soon, push both sides forward.
+        double minLead = 0.20; // 200 ms guard so scheduling is reliable on all machines
+        double safeStartTime = (dspTime <= currentDspTime + minLead)
+            ? currentDspTime + minLead
+            : dspTime;
+
+        wasScheduledToPlay = true;
+        scheduledStartTime = safeStartTime;
+
+        musicPlayer.clip = clip;
+        ApplyMusicVolume();
+        musicPlayer.PlayScheduled(safeStartTime);
+
+        Debug.Log($"[AudioManager] Scheduled '{clip.name}' @ {safeStartTime:F6} (req {dspTime:F6}, now {currentDspTime:F6})");
+
+        // Tell gameplay the *actual* start time to lock onto.
+        OnMusicStartConfirmed?.Invoke(safeStartTime);
     }
 
     public void PauseMusic()
@@ -219,8 +222,12 @@ public class AudioManager : MonoBehaviour
             musicPlayer.Stop();
             isMusicPaused = false;
             wasScheduledToPlay = false;
-            Debug.Log("[AudioManager] Music stopped");
         }
+        // reset duck
+        if (duckCoroutine != null)
+            StopCoroutine(duckCoroutine);
+        duckFactor = 1f;
+        ApplyMusicVolume();
     }
 
     public bool IsMusicPaused => isMusicPaused;
@@ -339,55 +346,80 @@ public class AudioManager : MonoBehaviour
 
     IEnumerator CrossFadeMusic(AudioClip newClip, float duration)
     {
-        // Fade out current music
-        float halfDuration = duration * 0.5f;
+        float half = duration * 0.5f;
+
         if (musicPlayer.isPlaying)
         {
-            yield return FadeAudioSource(musicPlayer, musicPlayer.volume, 0f, halfDuration);
+            yield return FadeAudioSource(musicPlayer, musicPlayer.volume, 0f, half);
             musicPlayer.Stop();
         }
 
-        // Switch and fade in new music
         musicPlayer.clip = newClip;
         musicPlayer.Play();
-        yield return FadeAudioSource(musicPlayer, 0f, currentMusicVolume, halfDuration);
+
+        // live duck-aware fade-in
+        float t = 0f;
+        while (t < half)
+        {
+            t += Time.unscaledDeltaTime;
+            float target = currentMusicVolume * duckFactor;
+            musicPlayer.volume = Mathf.Lerp(0f, target, t / half);
+            yield return null;
+        }
+        ApplyMusicVolume();
     }
+
 
     IEnumerator FadeAudioSource(AudioSource source, float startVol, float endVol, float duration)
     {
-        float elapsed = 0f;
-        source.volume = startVol;
-
-        while (elapsed < duration)
+        float t = 0f;
+        while (t < duration)
         {
-            elapsed += Time.deltaTime;
-            source.volume = Mathf.Lerp(startVol, endVol, elapsed / duration);
+            t += Time.unscaledDeltaTime;
+            source.volume = Mathf.Lerp(startVol, endVol, t / duration);
             yield return null;
         }
-
         source.volume = endVol;
     }
+
 
     public void SetMusicVolume(float volumeLinear)
     {
         currentMusicVolume = volumeLinear;
-        musicPlayer.volume = volumeLinear;
+        ApplyMusicVolume();
     }
+
 
     public void FadeMusic(float lowerThreshold = 0.2f, float fadeDuration = 0.5f)
     {
-        if (activeFadeCoroutine != null)
-            StopCoroutine(activeFadeCoroutine);
-        activeFadeCoroutine = StartCoroutine(FadeAudioSource(musicPlayer, musicPlayer.volume, lowerThreshold, fadeDuration));
+        StartDuck(Mathf.Clamp01(lowerThreshold), fadeDuration);
     }
 
     public void UnfadeMusic(float fadeDuration = 0.5f)
     {
-        if (activeFadeCoroutine != null)
-            StopCoroutine(activeFadeCoroutine);
-        activeFadeCoroutine = StartCoroutine(FadeAudioSource(musicPlayer, musicPlayer.volume, currentMusicVolume, fadeDuration));
+        StartDuck(1f, fadeDuration);
     }
-
+    private void StartDuck(float target, float duration)
+    {
+        if (duckCoroutine != null)
+            StopCoroutine(duckCoroutine);
+        duckCoroutine = StartCoroutine(DuckRoutine(target, duration));
+    }
+    private IEnumerator DuckRoutine(float target, float duration)
+    {
+        float start = duckFactor;
+        float t = 0f;
+        while (t < duration)
+        {
+            t += Time.unscaledDeltaTime;          // unaffected by Time.timeScale
+            duckFactor = Mathf.Lerp(start, target, t / duration);
+            ApplyMusicVolume();
+            yield return null;
+        }
+        duckFactor = target;
+        ApplyMusicVolume();
+        duckCoroutine = null;
+    }
     public void PauseSFX()
     {
         pausedSfxPlayers.Clear();
