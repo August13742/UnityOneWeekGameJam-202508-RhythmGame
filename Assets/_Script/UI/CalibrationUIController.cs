@@ -19,7 +19,7 @@ namespace Rhythm.UI
 
         [Header("Settings")]
         [SerializeField] private BeatmapData calibrationBeatmap;
-
+        [SerializeField] private string nextSceneName;
         private RhythmManagerOSUAimless rhythmManager;
 
         private void Start()
@@ -35,11 +35,13 @@ namespace Rhythm.UI
                     StartCalibration();
                     Destroy(fadePanel.gameObject);
                 });
+            
 
         }
 
         private void SetupUI()
         {
+            
             // Setup slider
             if (offsetSlider != null)
             {
@@ -66,7 +68,12 @@ namespace Rhythm.UI
                 //                      "Use SPACE to hit notes or the +/- buttons to adjust timing.";
             }
 
-            // Subscribe to offset changes
+            Debug.Log("setup");
+            if (offsetValueText != null)
+            {
+                Debug.Log("offset" + rhythmManager.AudioOffset);
+                offsetValueText.text = $"{rhythmManager.AudioOffset * 1000} MS";
+            }
             RhythmManagerOSUAimless.OnAudioOffsetChanged += UpdateOffsetDisplay;
         }
 
@@ -99,13 +106,12 @@ namespace Rhythm.UI
         private void ExitCalibration()
         {
             rhythmManager.ExitCalibrationMode();
-            
-            // Save the calibrated offset (you might want to use PlayerPrefs or a settings system)
+
+
             PlayerPrefs.SetFloat("AudioOffset", rhythmManager.AudioOffset);
             PlayerPrefs.Save();
-            
-            // Return to main menu (implement based on your scene management)
-            UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
+
+            UnityEngine.SceneManagement.SceneManager.LoadScene(nextSceneName);
         }
 
         private void OnDestroy()

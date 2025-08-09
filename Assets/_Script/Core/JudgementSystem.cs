@@ -33,6 +33,10 @@ namespace Rhythm.Core
         {
             get; private set;
         } = 1f;
+        public int MaxComboAchieved
+        {
+            get; private set;
+        } = 0;
         public int TotalNotesInSong = 0;
         // --- Note Statistics ---
         public int TotalNotes { get; private set; } = 0;
@@ -100,6 +104,7 @@ namespace Rhythm.Core
 
                 int points = pointsPerGood;
                 CurrentMaxPossibleScore += pointsPerPerfect;
+                if (CurrentCombo>MaxComboAchieved) MaxComboAchieved = CurrentCombo;
                 Score += points;
                 CurrentAccuracy = (float)Score / CurrentMaxPossibleScore;
 
@@ -154,6 +159,7 @@ namespace Rhythm.Core
             GoodCount = 0;
             MissCount = 0;
             TotalNotesInSong = 0;
+            MaxComboAchieved = 0;
 
             // Notify UI to update
             OnScoreChanged?.Invoke(Score, CurrentAccuracy, CurrentCombo);
