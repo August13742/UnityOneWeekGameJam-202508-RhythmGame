@@ -64,7 +64,7 @@ namespace Rhythm.UI
         }
 
 
-        public void Init(string songKey, Dictionary<Difficulty, BeatmapData> diffs, SongRecordsDB recordsDB, bool startCollapsed = true)
+        public void Init(string songKey, Dictionary<Difficulty, BeatmapData> diffs, SongRecordsDB recordsDB, JukeboxUIController jukeboxController, bool startCollapsed = true) // MODIFIED
         {
             SongKey = songKey;
             this.diffs = diffs;
@@ -76,8 +76,7 @@ namespace Rhythm.UI
                 return;
             }
 
-
-            LinkToggles();
+            WireUpToggles(jukeboxController);
 
             view.songName.text = songKey.Replace("_", " ");
             WireDifficulty(view.easyBtn, Difficulty.Easy);
@@ -111,6 +110,46 @@ namespace Rhythm.UI
                 });
             }
         }
+        private void WireUpToggles(JukeboxUIController jukebox)
+        {
+            if (jukebox == null)
+                return;
+
+            if (view.autoPlayToggle)
+            {
+                view.autoPlayToggle.onValueChanged.RemoveAllListeners();
+                // seed UI from controller so prefab/defaults don’t fight
+                view.autoPlayToggle.SetIsOnWithoutNotify(jukebox.AutoPlayState);
+                view.autoPlayToggle.onValueChanged.AddListener(jukebox.SetAutoPlay);
+                // push current UI state into controller once
+                jukebox.SetAutoPlay(view.autoPlayToggle.isOn);
+            }
+
+            if (view.indicatorToggle)
+            {
+                view.indicatorToggle.onValueChanged.RemoveAllListeners();
+                view.indicatorToggle.SetIsOnWithoutNotify(jukebox.ShowIndicatorState);  
+                view.indicatorToggle.onValueChanged.AddListener(jukebox.SetShowIndicator);
+                jukebox.SetShowIndicator(view.indicatorToggle.isOn);
+            }
+
+            if (view.approachRingToggle)
+            {
+                view.approachRingToggle.onValueChanged.RemoveAllListeners();
+                view.approachRingToggle.SetIsOnWithoutNotify(jukebox.ShowApproachRingState);
+                view.approachRingToggle.onValueChanged.AddListener(jukebox.SetShowApproachRing);
+                jukebox.SetShowApproachRing(view.approachRingToggle.isOn);
+            }
+            if (view.perfectSFXToggle)
+            {
+                view.perfectSFXToggle.onValueChanged.RemoveAllListeners();
+                view.perfectSFXToggle.SetIsOnWithoutNotify(jukebox.ShowPerfectSFXState);
+                view.perfectSFXToggle.onValueChanged.AddListener(jukebox.SetPerfectSFXState);
+                jukebox.SetShowIndicator(view.perfectSFXToggle.isOn);
+
+            }
+        }
+
         private void ExpandRow(bool autoPickDifficulty = true)
         {
             OnExpandRequested?.Invoke(this);
@@ -158,33 +197,6 @@ namespace Rhythm.UI
             }
         }
 
-        private void LinkToggles()
-        {
-            var manager = RhythmManagerOSUAimless.Instance;
-            if (manager == null)
-                return;
-
-            if (view.autoPlayToggle)
-            {
-                view.autoPlayToggle.isOn = manager.AutoPlay;
-                view.autoPlayToggle.onValueChanged.RemoveAllListeners();
-                view.autoPlayToggle.onValueChanged.AddListener(isOn => manager.AutoPlay = isOn);
-            }
-
-            if (view.indicatorToggle)
-            {
-                view.indicatorToggle.isOn = manager.showIndicator;
-                view.indicatorToggle.onValueChanged.RemoveAllListeners();
-                view.indicatorToggle.onValueChanged.AddListener(isOn => manager.showIndicator = isOn);
-            }
-
-            if (view.approachRingToggle)
-            {
-                view.approachRingToggle.isOn = manager.showApproachRing;
-                view.approachRingToggle.onValueChanged.RemoveAllListeners();
-                view.approachRingToggle.onValueChanged.AddListener(isOn => manager.showApproachRing = isOn);
-            }
-        }
 
         private Difficulty? GetPreferredAvailableDifficulty()
         {

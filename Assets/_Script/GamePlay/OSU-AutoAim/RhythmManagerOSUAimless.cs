@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using Rhythm.Core;
 using Rhythm.UI;
 using UnityEngine;
@@ -29,8 +28,8 @@ namespace Rhythm.GamePlay.OSU.Aimless
         [Header("Game State")]
         public GameState CurrentState { get; private set; } = GameState.NotStarted;
         public bool AutoPlay = false;
-        [SerializeField] private bool playIndicatorSound = true;
-        [SerializeField ]double leadinWindow = 0f;
+
+        
         [Header("Audio Settings")]
         public float AudioStartDelay = 3f;
         public bool LoopSong = false;
@@ -64,9 +63,12 @@ namespace Rhythm.GamePlay.OSU.Aimless
         [Header("Gameplay Options")]
         public bool showIndicator = true;
         public bool showApproachRing = true;
+        public bool showPerfectSFX = true;
 
+        [SerializeField] double leadinWindow = 0f;
         public bool ShowApproachRing => showApproachRing;
         public bool ShowIndicator => showIndicator;
+        public bool ShowPerfectSFX => showPerfectSFX;
         public float indicatorLeadInMultiplier = 1.0f;
 
         private Canvas canvasComponent;
@@ -113,6 +115,40 @@ namespace Rhythm.GamePlay.OSU.Aimless
             }
             Instance = this;
 
+            // Check for parameters from jukebox scene
+            if (GameStartParameters.TryGetParameters(
+                out BeatmapData paramBeatmap,
+                out string paramSongKey,
+                out Difficulty paramDifficulty,
+                out bool paramAutoPlay,
+                out bool paramShowIndicator,
+                out bool paramShowApproachRing,
+                out bool paramShowPerfectSFX))
+            {
+                beatmap = paramBeatmap;
+                songKey = paramSongKey;
+                difficulty = paramDifficulty;
+                AutoPlay = paramAutoPlay;
+                showIndicator = paramShowIndicator;
+                showApproachRing = paramShowApproachRing;
+                showPerfectSFX = paramShowPerfectSFX;
+                
+                Debug.Log($"[RhythmManager] Loaded parameters from jukebox: Song='{songKey}', Difficulty='{difficulty}'");
+                
+                // Clear parameters after use
+                GameStartParameters.ClearParameters();
+            }
+            else
+            {
+                Debug.LogWarning("[RhythmManager] No parameters from jukebox found, using default beatmap settings");
+                
+                // Set default song key from beatmap name if empty
+                if (string.IsNullOrEmpty(songKey) && beatmap != null)
+                {
+                    songKey = beatmap.name;
+                }
+            }
+
             // Load saved audio offset if present
             if (PlayerPrefs.HasKey("AudioOffset"))
             {
@@ -125,7 +161,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
             InitialisePools();
             InitialiseEnemySpawnPoints();
 
-            // Initialize records database if not assigned
+            // Initialise records database if not assigned
             if (recordsDB == null)
             {
                 // Try to find existing SongRecordsDB in Resources or create one
@@ -134,12 +170,6 @@ namespace Rhythm.GamePlay.OSU.Aimless
                 {
                     Debug.LogWarning("No SongRecordsDB found. Records will not be saved.");
                 }
-            }
-
-            // Set default song key from beatmap name if empty
-            if (string.IsNullOrEmpty(songKey) && beatmap != null)
-            {
-                songKey = beatmap.name;
             }
         }
 
@@ -161,6 +191,14 @@ namespace Rhythm.GamePlay.OSU.Aimless
 
         private void Start()
         {
+
+            if (!beatmap || !beatmap.musicTrack || !noteParentCanvas || !indicatorPrefab || !notePrefab || !enemyPrefab || !notificationTextPrefab || !worldCamera)
+            {
+                Debug.LogError("[RhythmManager] Missing required references.");
+                enabled = false;
+                return;
+            }
+
             if (leadinWindow.Equals(0f))
             {
                 leadinWindow = JudgementSystem.Instance.PerfectWindow / 2;
@@ -170,8 +208,20 @@ namespace Rhythm.GamePlay.OSU.Aimless
             indicator.gameObject.SetActive(false);
             
             SetGameState(GameState.NotStarted);
+            
+            Debug.Log($"[RhythmManager] Initialised with beatmap: '{beatmap.name}', Song: '{songKey}', Difficulty: '{difficulty}'");
+            StartCoroutine(StartGameSequence());
         }
+        private System.Collections.IEnumerator StartGameSequence()
+        {
 
+            float fadeInDuration = 1.0f;
+            CrossfadeManager.Instance.FadeFromBlack();
+
+            yield return new WaitForSeconds(fadeInDuration);
+
+            StartGame();
+        }
         private void Update()
         {
             if (CurrentState == GameState.Playing)
@@ -190,16 +240,18 @@ namespace Rhythm.GamePlay.OSU.Aimless
                 return;
             }
 
+            if (beatmap == null || beatmap.musicTrack == null)
+            {
+                Debug.LogError("[RhythmManager] Cannot start game: No valid beatmap or music track!");
+                return;
+            }
+
             ResetGame();
             SetGameState(GameState.CountingDown);
 
             double startTime = AudioSettings.dspTime + AudioStartDelay;
             dspSongStartTime = startTime; // provisional; will be overwritten by confirmation
             totalPausedDuration = 0.0;
-            GameEvents.Instance.PlayMusicScheduled(beatmap.musicTrack, startTime);
-
-
-            // Announce the intent to play scheduled music via the event system
             GameEvents.Instance.PlayMusicScheduled(beatmap.musicTrack, startTime);
 
             JudgementSystem.Instance.TotalNotesInSong = beatmap.notes.Count;
@@ -340,7 +392,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
                 spawnIndex++;
             }
 
-            if (playIndicatorSound)
+            if (showPerfectSFX)
             {
                 foreach (var note in activeNotes)
                 {

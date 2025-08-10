@@ -11,22 +11,30 @@ public class JukeboxUIController : MonoBehaviour
     private readonly List<SongRowController> rows = new();
     private SongRowController expandedRow;
 
+    private bool autoPlayState = false;
+    private bool showIndicatorState = true;
+    private bool showApproachRingState = true;
+    private bool showPerfectSFXState = true;
+
     private void OnEnable() => Rebuild();
     private void OnDisable() => ClearRows();
 
+    private void Start()
+    {
+        CrossfadeManager.Instance.FadeFromBlack();
+    }
     public void Rebuild()
     {
         ClearRows();
 
-        var db = BeatmapIndex.Build(); // songKey -> {diff->BeatmapData}
+        var db = BeatmapIndex.Build();
         foreach (var kv in db)
         {
             SongRowController controller = Instantiate(rowPrefab, contentRoot);
-
-            controller.Init(kv.Key, kv.Value, recordsDB);
+            controller.Init(kv.Key, kv.Value, recordsDB, this);
 
             controller.OnExpandRequested += HandleExpandRequest;
-            controller.OnStartRequested += HandleStartRequest;
+            controller.OnStartRequested += InitiateGameStart;
 
             rows.Add(controller);
         }
@@ -43,15 +51,32 @@ public class JukeboxUIController : MonoBehaviour
         // Track the newly expanded row.
         expandedRow = requestedRow;
     }
-
     // This method is called when a row's start button is pressed
-    private void HandleStartRequest(BeatmapData beatmap, string songKey, Difficulty difficulty)
+    public void InitiateGameStart(BeatmapData beatmap, string songKey, Difficulty difficulty)
     {
-        Debug.Log($"Starting song '{songKey}' on difficulty '{difficulty}'.");
-        // TODO: Add your scene loading or game start logic here.
-        UnityEngine.SceneManagement.SceneManager.LoadScene("RhythmGunman");
-        // GameManager.Instance.StartSong(beatmap);
+        StartCoroutine(StartRequestCoroutine(beatmap, songKey, difficulty));
     }
+
+    private System.Collections.IEnumerator StartRequestCoroutine(BeatmapData beatmap, string songKey, Difficulty difficulty)
+    {
+        Debug.Log($"Starting song '{songKey}' with AutoPlay: {autoPlayState}, Indicator: {showIndicatorState}, SFX: {showPerfectSFXState}");
+
+        Rhythm.Core.GameStartParameters.SetParameters(
+            beatmap,
+            songKey,
+            difficulty,
+            this.autoPlayState,
+            this.showIndicatorState,
+            this.showApproachRingState,
+            this.showPerfectSFXState
+        );
+
+        AudioManager.Instance.StopMusic();
+        CrossfadeManager.Instance.FadeToBlack();
+        yield return new WaitForSeconds(1f);
+        UnityEngine.SceneManagement.SceneManager.LoadScene("RhythmGunman");
+    }
+
 
     private void ClearRows()
     {
@@ -60,11 +85,35 @@ public class JukeboxUIController : MonoBehaviour
             if (r)
             {
                 r.OnExpandRequested -= HandleExpandRequest;
-                r.OnStartRequested -= HandleStartRequest;
+                r.OnStartRequested -= InitiateGameStart;
                 Destroy(r.gameObject);
             }
         }
         rows.Clear();
         expandedRow = null;
     }
+
+    public void SetAutoPlay(bool isOn)
+    {
+        this.autoPlayState = isOn;
+    }
+
+    public void SetShowIndicator(bool isOn)
+    {
+        this.showIndicatorState = isOn;
+    }
+
+    public void SetShowApproachRing(bool isOn)
+    {
+        this.showApproachRingState = isOn;
+    }
+    public void SetPerfectSFXState(bool isOn)
+    {
+        this.showPerfectSFXState = isOn;
+    }
+    public bool AutoPlayState => autoPlayState;
+    public bool ShowIndicatorState => showIndicatorState;
+    public bool ShowApproachRingState => showApproachRingState;
+    public bool ShowPerfectSFXState => showPerfectSFXState;
+
 }

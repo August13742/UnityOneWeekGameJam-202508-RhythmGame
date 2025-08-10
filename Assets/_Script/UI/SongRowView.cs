@@ -20,6 +20,7 @@ public class SongRowView : MonoBehaviour
     public Toggle autoPlayToggle;
     public Toggle indicatorToggle;
     public Toggle approachRingToggle;
+    public Toggle perfectSFXToggle;
 
     [Header("Stats Texts in PreviousResultsGroup")]
     public TMP_Text bestScore;
