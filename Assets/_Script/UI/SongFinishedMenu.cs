@@ -64,7 +64,7 @@ namespace Rhythm.UI
             UpdateStatisticsDisplay();
             menuPanel.SetActive(true);
 
-            Time.timeScale = 0f;
+
 
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
@@ -76,8 +76,6 @@ namespace Rhythm.UI
                 menuPanel.SetActive(false);
 
 
-            // Resume normal time scale
-            Time.timeScale = 1f;
         }
 
         private void UpdateStatisticsDisplay()

@@ -1,0 +1,1611 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63f2d8b02862a7f47944685597c1b5df, type: 3}
+  m_Name: "\u30EA\u30B7\u30E5\u30EA\u30E5\u30FC\uFF5E\u5B64\u72EC\u306A\u6B63\u7FA9\uFF5E
+    - \u7530\u4E2D\u82B3\u5178_INSANE"
+  m_EditorClassIdentifier: 
+  musicTrack: {fileID: 8300000, guid: 935aae19617d28b4abc3302eef29c7d1, type: 3}
+  approachTime: 1
+  notes:
+  - hitTime: 0.10449
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 0.615329
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 1.114558
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 1.613787
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 2.113016
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 2.612245
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 2.983764
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 3.111474
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 3.610703
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 3.854512
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 4.109932
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 4.609161
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 5.12
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 5.607619
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 6.118458
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 6.362268
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 6.617687
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 6.989206
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 7.233016
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 7.616145
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 7.859955
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 8.103764
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 8.614603
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 9.113832
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 9.613061
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 10.11229
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 10.611519
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 11.110748
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 11.609977
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 11.853787
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 12.109206
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 12.620045
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 13.072834
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 13.606893
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 14.117732
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 14.361542
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 14.616961
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 14.988481
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 15.23229
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 15.61542
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 15.859229
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 16.114649
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 16.486168
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 16.613878
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 17.113107
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 17.612336
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 18.111565
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 18.239274
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 18.610794
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 18.982313
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 19.609252
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 19.853061
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 20.108481
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 20.61932
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 21.118549
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 21.606168
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 22.117007
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 22.360816
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 22.616236
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 22.987755
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 23.115465
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 23.243175
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 23.614694
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 23.858503
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 24.113923
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 24.613152
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 25.112381
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 25.61161
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 26.110839
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 26.610068
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 27.109297
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 27.608526
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 27.863946
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 28.107755
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 28.618594
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 28.990113
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 29.605442
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 30.116281
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 30.360091
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 30.61551
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 30.987029
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 31.242449
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 31.613968
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 31.857778
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 32.101587
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 32.612426
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 32.856236
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 33.111655
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 33.610884
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 34.110113
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 34.609342
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 34.853152
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 35.108571
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 35.6078
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 35.86322
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 36.107029
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 36.617868
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 36.861678
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 37.117098
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 37.616327
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 38.103946
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 38.614785
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 38.858594
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 39.114014
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 39.613243
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 40.112472
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 40.611701
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 40.85551
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 41.11093
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 41.610159
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 42.109388
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 42.608617
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 42.852426
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 43.107846
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 43.607075
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 43.862494
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 44.106304
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 44.617143
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 44.860952
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 45.116372
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 45.615601
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 46.10322
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 46.614059
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 46.857868
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 47.113288
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 47.612517
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 48.111746
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 48.610975
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 48.854785
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 49.110204
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 49.609433
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 50.108662
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 50.607891
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 50.863311
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 51.10712
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 51.617959
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 51.861769
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 52.105578
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 52.616417
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 52.860227
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 53.115646
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 53.614875
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 54.114104
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 54.613333
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 54.857143
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 55.112562
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 55.611791
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 56.11102
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 56.610249
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 56.854059
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 57.109478
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 57.608707
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 58.107937
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 58.618776
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 58.862585
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 59.106395
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 59.605624
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 59.861043
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 60.104853
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 60.615692
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 60.859501
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 61.114921
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 61.61415
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 62.113379
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 62.484898
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 62.612608
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 62.856417
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 63.111837
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 63.611066
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 63.866485
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 64.110295
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 64.481814
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 64.609524
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 64.853333
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 65.108753
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 65.364172
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 65.607982
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 65.851791
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 66.107211
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 66.35102
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 66.73415
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 66.861859
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 67.233379
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 67.361088
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 67.604898
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 67.860317
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 68.104127
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 68.359546
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 68.487256
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 68.858776
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 69.114195
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 69.358005
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 69.729524
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 69.857234
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 70.112653
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 70.356463
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 70.611882
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 70.855692
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 71.227211
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 71.354921
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 71.61034
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 71.85415
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 72.109569
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 72.481088
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 72.852608
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 73.108027
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 73.363447
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 73.607256
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 73.862676
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 74.106485
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 74.361905
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 74.733424
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 74.861134
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 75.232653
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 75.360363
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 75.604172
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 75.859592
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 76.103401
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 76.358821
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 76.486531
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 76.85805
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 77.113469
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 77.357279
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 77.728798
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 77.856508
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 78.111927
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 78.355737
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 78.611156
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 78.854966
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 78.982676
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 79.238095
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 79.354195
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 79.609615
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 79.853424
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 80.108844
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 80.480363
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 80.608073
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 80.851882
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 81.107302
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 81.235011
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 81.606531
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 81.86195
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 82.10576
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 82.361179
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 82.604989
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 82.860408
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 82.988118
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 83.243537
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 83.603447
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 83.858866
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 84.114286
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 84.485805
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 84.613515
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 84.857324
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 84.985034
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 85.228844
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 85.611973
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 85.983492
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 86.111202
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 86.355011
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 86.610431
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 86.98195
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 87.23737
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 87.608889
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 87.736599
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 88.108118
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 88.479637
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 88.607347
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 88.978866
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 89.106576
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 89.605805
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 89.861224
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 90.105034
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 90.360454
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 90.604263
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 90.859683
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 91.103492
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 91.358912
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 91.602721
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 91.858141
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 92.11356
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 92.485079
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 92.612789
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 92.856599
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 92.984308
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 93.228118
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 93.611247
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 93.982766
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 94.110476
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 94.354286
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 94.609705
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 94.981224
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 95.236644
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 95.608163
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 96.107392
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 96.478912
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 96.606621
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 96.862041
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 97.10585
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 97.605079
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 98.115918
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 98.615147
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 98.858957
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 98.986667
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 99.601995
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 99.857415
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 100.112834
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 100.612063
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 101.111293
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 101.610522
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 102.109751
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 102.35356
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 102.60898
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 102.980499
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 103.108209
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 103.235918
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 103.607438
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 103.735147
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 104.106667
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 104.617506
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 105.116735
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 105.615964
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 106.115193
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 106.614422
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 106.985941
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 107.113651
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 107.61288
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 107.856689
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 108.088889
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 108.611338
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 109.110567
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 109.609796
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 110.109025
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 110.352834
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 110.608254
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 111.107483
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 111.235193
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 111.606712
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 111.862132
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 112.105941
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 112.61678
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 113.116009
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 113.615238
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 114.114467
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 114.613696
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 114.985215
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 115.240635
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 115.612154
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 115.855964
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 116.111383
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 116.610612
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 117.109841
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 117.60907
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 118.108299
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 118.352109
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 118.607528
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 119.106757
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 119.234467
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 119.605986
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 119.861406
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 120.105215
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 120.616054
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 121.115283
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 121.614512
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 122.113741
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 122.612971
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 122.98449
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 123.1122
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 123.611429
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 123.855238
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 124.110658
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 124.609887
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 124.981406
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 125.608345
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 126.107574
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 126.362993
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 126.618413
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 127.106032
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 127.605261
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 127.86068
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 128.10449
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 128.487619
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 128.859138
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 129.114558
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 129.613787
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 130.113016
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 130.612245
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 130.856054
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 131.111474
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 131.610703
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 131.866122
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 132.109932
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 132.609161
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 132.852971
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 133.10839
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 133.607619
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 134.106848
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 134.617687
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 134.861497
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 135.105306
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 135.616145
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 136.103764
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 136.614603
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 136.858413
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 137.113832
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 137.613061
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 138.11229
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 138.611519
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 138.855329
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 139.110748
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 139.609977
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 139.865397
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 140.109206
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 140.620045
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 140.863855
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 141.107664
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 141.618503
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 142.106122
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 142.616961
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 142.860771
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 143.10458
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 143.61542
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 143.859229
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 144.103039
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 144.613878
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 144.857687
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 145.113107
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 145.612336
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 146.111565
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 146.610794
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 146.854603
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 147.110023
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 147.609252
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 147.864671
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 148.108481
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 148.60771
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 148.863129
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 149.106939
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 149.617778
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 150.105397
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 150.616236
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 150.860045
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 151.103855
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 151.614694
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 152.113923
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 152.613152
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 152.856961
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 153.112381
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 153.61161
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 154.110839
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 154.610068
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 154.853878
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 155.109297
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 155.608526
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 155.863946
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 156.107755
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 156.618594
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 156.862404
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 157.117823
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 157.617052
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 158.104671
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 158.61551
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 158.85932
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 159.114739
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 159.613968
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 159.857778
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 160.113197
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 160.484717
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 160.612426
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 160.856236
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 161.111655
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 161.367075
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 161.610884
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 161.854694
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 162.110113
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 162.353923
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 162.609342
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 162.853152
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 163.224671
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 163.352381
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 163.6078
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 163.85161
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 164.107029
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 164.362449
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 164.617868
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 164.861678
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 165.105488
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 165.360907
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 165.732426
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 165.860136
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 166.103946
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 166.359365
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 166.614785
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 166.858594
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 167.230113
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 167.357823
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 167.485533
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 167.857052
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 168.100862
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 168.483991
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 168.85551
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 169.11093
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 169.366349
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 169.610159
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 169.853968
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 170.109388
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 170.353197
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 170.608617
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 170.852426
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 170.980136
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 171.363265
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 171.607075
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 171.850884
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 172.106304
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 172.361723
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 172.489433
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 172.860952
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 173.104762
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 173.360181
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 173.731701
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 173.85941
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 174.11483
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 174.358639
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 174.614059
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 174.857868
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 174.985578
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 175.229388
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 175.357098
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 175.612517
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 175.856327
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 176.100136
+    type: 0
+    spawnPointIndex: -1

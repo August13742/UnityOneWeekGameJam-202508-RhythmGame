@@ -9,31 +9,34 @@ namespace Rhythm.GamePlay.OSU
         [SerializeField] private Animator animator;
         [SerializeField] private string spawnTrigger = "Spawn";
         [SerializeField] private string deathTrigger = "Death";
-        private GameObject playerObj;
+        private Vector3 lookAtTarget;
+        
         private void Start()
         {
-              
-              playerObj = RhythmManagerOSUAimless.Instance.PlayerObject;
+            GameObject playerObj = RhythmManagerOSUAimless.Instance.PlayerObject;
+            if (playerObj != null)
+            {
+                lookAtTarget = transform.position * 2 - playerObj.transform.position;
+            }
         }
 
         private void Awake()
         {
             if (animator == null)
                 animator = GetComponent<Animator>();
-
         }
 
         private void OnEnable()
         {
-
             PlaySpawnAnimation();
-            
         }
 
         void Update()
         {
-            transform.LookAt(transform.position * 2 - playerObj.transform.position);
-                Debug.Log("Playerを向く!");
+            if (lookAtTarget != Vector3.zero)
+            {
+                transform.LookAt(lookAtTarget);
+            }
         }
         
         public void PlaySpawnAnimation()
