@@ -2,6 +2,9 @@
 
 # Unity一週間プロジェクト：「ひく」 -> Rhythm Gunman for WebBuild
 
+https://unityroom.com/games/rhythm-revolver
+
+
 ## 概要
 本リポジトリは、Unityで開発されたOSU!ライクなリズムゲームのソースコードである。自動譜面生成、動的なビジュアル、精密なタイミング判定を特徴とし、プレイヤーは音楽に同期してノートを処理することでハイスコアを目指す。
 
