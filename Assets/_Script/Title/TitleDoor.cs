@@ -40,8 +40,8 @@ public class TitleDoor : MonoBehaviour, IClickable
         Debug.Log("TitleDoor clicked!"); // クリック時のアクションをここに追加
 
         // 左ドアと右ドアを同時に回転アニメーション開始
-        Tween leftDoorTween = DoRotateAroundDoor(90f, 1f, LeftDoor, leftOrigin, 1f);
-        Tween rightDoorTween = DoRotateAroundDoor(90f, 1f, RightDoor, rightOrigin, -1f);
+        Tween leftDoorTween = DoRotateAroundDoor(60f, 1f, LeftDoor, leftOrigin, 1f);
+        Tween rightDoorTween = DoRotateAroundDoor(60f, 1f, RightDoor, rightOrigin, -1f);
 
         // 待機（
         yield return new WaitForSeconds(0.5f);

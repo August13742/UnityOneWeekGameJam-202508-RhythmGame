@@ -16,7 +16,7 @@ public class PlayerRay : MonoBehaviour
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, 100.0f))
+        if (Physics.Raycast(ray, out hit, 150.0f))
         {
             //Debug.Log(hit.collider.gameObject.name); // ヒットしたオブジェクトの名前をログに出力
             if (Input.GetMouseButtonDown(0)) // 左クリックでアクションを実行
