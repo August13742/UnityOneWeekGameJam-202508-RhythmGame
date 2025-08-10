@@ -1,5 +1,5 @@
 # Unity One-Week Project: 「ひく」 -> Rhythm Gunman for WebBuild
-
+[🇬🇧 English](README.md) | [🇯🇵 日本語](README.ja.md)
 
 ## Overview
 This repository contains the source code for a rhythm-based game inspired by OSU! gameplay mechanics. The project is built using Unity and focuses on delivering an engaging experience with beatmaps, dynamic visuals, and precise timing-based gameplay. Players interact with notes and enemies in sync with the music, aiming for high scores and accuracy.
