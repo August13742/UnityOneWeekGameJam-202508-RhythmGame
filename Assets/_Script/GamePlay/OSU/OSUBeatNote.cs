@@ -12,6 +12,7 @@ namespace Rhythm.GamePlay.OSU
         [SerializeField] private Image hitCircle;
         [SerializeField] private RawImage approachRing;
         private GameObject notificationText;
+        private GameObject associatedEnemy;
         public bool IndicatorSoundPlayed
         {
             get; set;
@@ -51,7 +52,9 @@ namespace Rhythm.GamePlay.OSU
             System.Action<OSUBeatNote> onReturnToPool,
             INoteVisualSettings visualSettings,
             Vector3 worldPosition,
-            GameObject notificationText)
+            GameObject notificationText,
+            GameObject associatedEnemy = null
+            )
         
         {
             this.RelativeHitTime = relativeHitTime;
@@ -65,6 +68,7 @@ namespace Rhythm.GamePlay.OSU
             this.notificationText = notificationText;
             this.notificationTextComponent = notificationText != null ? notificationText.GetComponent<NotificationText>() : null;
             this.rhythmManager = Aimless.RhythmManagerOSUAimless.Instance;
+            this.associatedEnemy = associatedEnemy;
 
             HasProcessed = false;
             IndicatorSoundPlayed = false;
@@ -101,6 +105,11 @@ namespace Rhythm.GamePlay.OSU
             if (HasProcessed)
                 return;
             HasProcessed = true;
+
+            if (associatedEnemy != null && associatedEnemy.TryGetComponent<EnemyAnimation>(out var enemyAnim))
+            {
+                enemyAnim.PlayDeathAnimation();
+            }
 
             // Use pause-aware time for hit calculation
             double nowSong = rhythmManager != null ? rhythmManager.SongTimeNow() : 0.0;

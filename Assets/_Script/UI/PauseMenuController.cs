@@ -10,6 +10,7 @@ namespace Rhythm.UI
     {
         [Header("Menu Panel")]
         [SerializeField] private GameObject pauseMenuPanel;
+        [SerializeField] private GameObject volumeConfigPanel;
         
         [Header("Buttons")]
         [SerializeField] private Button restartButton;
@@ -48,6 +49,7 @@ namespace Rhythm.UI
 
             if (pauseMenuPanel)
                 pauseMenuPanel.SetActive(false);
+            if(volumeConfigPanel) volumeConfigPanel.SetActive(false);
                 
             isPauseMenuActive = false;
         }
@@ -72,13 +74,18 @@ namespace Rhythm.UI
         {
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                if (rhythmManager && rhythmManager.IsGameActive)
+                if (!rhythmManager) return;
+                
+                if (isPauseMenuActive)
                 {
-                    TogglePauseMenu();
+                    HidePauseMenu();
+                    return;
                 }
-                else if (rhythmManager && rhythmManager.CurrentState == GameState.Paused)
+                
+                // If game is playing, show pause menu
+                if (rhythmManager.CurrentState == GameState.Playing && rhythmManager.IsGameActive)
                 {
-                    TogglePauseMenu();
+                    ShowPauseMenu();
                 }
             }
             
@@ -113,7 +120,10 @@ namespace Rhythm.UI
             if (!rhythmManager || !rhythmManager.CanPauseGame)
                 return;
                 
-            rhythmManager.PauseGame();
+            if (rhythmManager.CurrentState == GameState.Playing)
+            {
+                rhythmManager.PauseGame();
+            }
             
             if (pauseMenuPanel)
                 pauseMenuPanel.SetActive(true);
@@ -129,7 +139,8 @@ namespace Rhythm.UI
                 
             isPauseMenuActive = false;
             
-            if (rhythmManager && rhythmManager.CanResumeGame)
+            // Only resume if the game is currently paused
+            if (rhythmManager && rhythmManager.CurrentState == GameState.Paused && rhythmManager.CanResumeGame)
             {
                 rhythmManager.ResumeGame();
             }
@@ -175,7 +186,7 @@ namespace Rhythm.UI
             HidePauseMenu();
             AudioManager.Instance.FadeMusic();
             CrossfadeManager.Instance.FadeToBlack();
-;           yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(1);
             if (rhythmManager)
             {
                 CrossfadeManager.Instance.FadeFromBlack();
