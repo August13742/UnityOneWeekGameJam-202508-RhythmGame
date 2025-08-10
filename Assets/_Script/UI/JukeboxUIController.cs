@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DG.Tweening;
 using Rhythm.UI;
 using UnityEngine;
 
@@ -59,22 +60,50 @@ public class JukeboxUIController : MonoBehaviour
 
     private System.Collections.IEnumerator StartRequestCoroutine(BeatmapData beatmap, string songKey, Difficulty difficulty)
     {
-        Debug.Log($"Starting song '{songKey}' with AutoPlay: {autoPlayState}, Indicator: {showIndicatorState}, SFX: {showPerfectSFXState}");
-
+        Debug.Log($"Starting song '{songKey}' with AutoPlay: {AutoPlayState}, Indicator: {ShowIndicatorState}, SFX: {ShowPerfectSFXState}");
+        
+        // Set game parameters
         Rhythm.Core.GameStartParameters.SetParameters(
-            beatmap,
-            songKey,
-            difficulty,
-            this.autoPlayState,
-            this.showIndicatorState,
-            this.showApproachRingState,
-            this.showPerfectSFXState
+            beatmap, 
+            songKey, 
+            difficulty, 
+            AutoPlayState, 
+            ShowIndicatorState, 
+            ShowApproachRingState, 
+            ShowPerfectSFXState
         );
 
-        AudioManager.Instance.StopMusic();
-        CrossfadeManager.Instance.FadeToBlack();
-        yield return new WaitForSeconds(1f);
-        UnityEngine.SceneManagement.SceneManager.LoadScene("RhythmGunman");
+        // Add diagnostic logging
+        Debug.Log("About to start crossfade to black...");
+        
+        if (CrossfadeManager.Instance == null)
+        {
+            Debug.LogError("CrossfadeManager.Instance is null!");
+            yield break;
+        }
+
+        var fadeToBlackTween = CrossfadeManager.Instance.FadeToBlack(1f);
+        
+        if (fadeToBlackTween == null)
+        {
+            Debug.LogError("FadeToBlack returned null tween!");
+            yield break;
+        }
+
+        Debug.Log("Waiting for crossfade to complete...");
+        yield return fadeToBlackTween.WaitForCompletion();
+        
+        Debug.Log("Crossfade complete, about to load scene...");
+        
+        try
+        {
+            UnityEngine.SceneManagement.SceneManager.LoadScene("RhythmRevolver");
+            Debug.Log("Scene load initiated successfully");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Failed to load GameScene: {e.Message}");
+        }
     }
 
 
