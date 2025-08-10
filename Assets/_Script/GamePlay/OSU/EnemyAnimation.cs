@@ -1,4 +1,5 @@
 using UnityEngine;
+using Rhythm.GamePlay.OSU.Aimless;
 
 namespace Rhythm.GamePlay.OSU
 {
@@ -8,17 +9,31 @@ namespace Rhythm.GamePlay.OSU
         [SerializeField] private Animator animator;
         [SerializeField] private string spawnTrigger = "Spawn";
         [SerializeField] private string deathTrigger = "Death";
-        
+        private GameObject playerObj;
+        private void Start()
+        {
+              
+              playerObj = RhythmManagerOSUAimless.Instance.PlayerObject;
+        }
+
         private void Awake()
         {
             if (animator == null)
                 animator = GetComponent<Animator>();
+
         }
-        
+
         private void OnEnable()
         {
-            // Play spawn animation when enemy is activated from pool
+
             PlaySpawnAnimation();
+            
+        }
+
+        void Update()
+        {
+            transform.LookAt(transform.position * 2 - playerObj.transform.position);
+                Debug.Log("Playerを向く!");
         }
         
         public void PlaySpawnAnimation()
@@ -34,6 +49,7 @@ namespace Rhythm.GamePlay.OSU
             if (animator != null && !string.IsNullOrEmpty(deathTrigger))
             {
                 animator.SetTrigger(deathTrigger);
+                //Debug.Log("DEATHアニメーション再生");
             }
         }
     }

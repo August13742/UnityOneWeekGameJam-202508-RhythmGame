@@ -20,6 +20,9 @@ namespace Rhythm.GamePlay.OSU.Aimless
     /// </summary>
     public class RhythmManagerOSUAimless : MonoBehaviour, INoteVisualSettings
     {
+
+        public GameObject PlayerObject { get; private set; }
+        [SerializeField] private GameObject playerObj;
         public static RhythmManagerOSUAimless Instance
         {
             get; private set;
@@ -29,21 +32,21 @@ namespace Rhythm.GamePlay.OSU.Aimless
         public GameState CurrentState { get; private set; } = GameState.NotStarted;
         public bool AutoPlay = false;
 
-        
+
         [Header("Audio Settings")]
         public float AudioStartDelay = 3f;
         public bool LoopSong = false;
 
         [Header("Beatmap Settings")]
         [SerializeField] private BeatmapData beatmap;
-        [SerializeField] private string songKey = ""; 
-        [SerializeField] private Difficulty difficulty = Difficulty.Normal; 
+        [SerializeField] private string songKey = "";
+        [SerializeField] private Difficulty difficulty = Difficulty.Normal;
         [SerializeField] private SongRecordsDB recordsDB;
 
         [SerializeField] private OSUBeatNote notePrefab;
         [SerializeField] private RectTransform noteParentCanvas;
         [SerializeField] private float audioOffset = 0.0f;
-        
+
         [Header("Spawn Settings")]
         [SerializeField] private bool useCanvasSize = true;
         [SerializeField] private Vector2 spawnRangeOffset = new(50, 50);
@@ -114,6 +117,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
                 return;
             }
             Instance = this;
+            PlayerObject = playerObj;
 
             // Check for parameters from jukebox scene
             if (GameStartParameters.TryGetParameters(
@@ -132,16 +136,16 @@ namespace Rhythm.GamePlay.OSU.Aimless
                 showIndicator = paramShowIndicator;
                 showApproachRing = paramShowApproachRing;
                 showPerfectSFX = paramShowPerfectSFX;
-                
+
                 Debug.Log($"[RhythmManager] Loaded parameters from jukebox: Song='{songKey}', Difficulty='{difficulty}'");
-                
+
                 // Clear parameters after use
                 GameStartParameters.ClearParameters();
             }
             else
             {
                 Debug.LogWarning("[RhythmManager] No parameters from jukebox found, using default beatmap settings");
-                
+
                 // Set default song key from beatmap name if empty
                 if (string.IsNullOrEmpty(songKey) && beatmap != null)
                 {
@@ -206,9 +210,9 @@ namespace Rhythm.GamePlay.OSU.Aimless
             canvasComponent = noteParentCanvas.GetComponentInParent<Canvas>();
             indicator = Instantiate(indicatorPrefab, noteParentCanvas);
             indicator.gameObject.SetActive(false);
-            
+
             SetGameState(GameState.NotStarted);
-            
+
             Debug.Log($"[RhythmManager] Initialised with beatmap: '{beatmap.name}', Song: '{songKey}', Difficulty: '{difficulty}'");
             StartCoroutine(StartGameSequence());
         }
@@ -276,10 +280,10 @@ namespace Rhythm.GamePlay.OSU.Aimless
 
             pausedDspTime = AudioSettings.dspTime;
             SetGameState(GameState.Paused);
-            
+
             AudioManager.Instance.PauseMusic();
-            
-            
+
+
             OnGamePaused?.Invoke();
         }
 
@@ -294,11 +298,11 @@ namespace Rhythm.GamePlay.OSU.Aimless
             // Calculate how long we were paused and adjust timing
             double pauseDuration = AudioSettings.dspTime - pausedDspTime;
             totalPausedDuration += pauseDuration;
-            
+
             SetGameState(GameState.Playing);
-            
+
             AudioManager.Instance.ResumeMusic();
-            
+
             OnGameResumed?.Invoke();
         }
 
@@ -312,13 +316,13 @@ namespace Rhythm.GamePlay.OSU.Aimless
             if (!AutoPlay && recordsDB != null && JudgementSystem.Instance != null && !string.IsNullOrEmpty(songKey))
             {
                 recordsDB.SaveRecord(
-                    songKey, 
+                    songKey,
                     difficulty,
                     score: JudgementSystem.Instance.Score,
                     accuracy: JudgementSystem.Instance.CurrentAccuracy,
                     combo: JudgementSystem.Instance.MaxComboAchieved
                 );
-                
+
                 Debug.Log($"Record saved for {songKey} ({difficulty}): Score={JudgementSystem.Instance.Score}, Accuracy={JudgementSystem.Instance.CurrentAccuracy:P2}, Combo={JudgementSystem.Instance.MaxComboAchieved}");
             }
             else if (AutoPlay)
@@ -366,11 +370,11 @@ namespace Rhythm.GamePlay.OSU.Aimless
             spawnIndex = 0;
             totalPausedDuration = 0.0;
             CurrentIndicatorTarget = null;
-            
+
             if (indicator != null)
                 indicator.gameObject.SetActive(false);
         }
-        
+
         private void UpdateGameplay()
         {
             double songTime = SongTimeNow();
@@ -509,8 +513,8 @@ namespace Rhythm.GamePlay.OSU.Aimless
         {
             var currentRecord = GetCurrentRecord();
             if (currentRecord == null) return true; // First time playing
-            
-            return JudgementSystem.Instance != null && 
+
+            return JudgementSystem.Instance != null &&
                    JudgementSystem.Instance.Score > currentRecord.highScore;
         }
 
@@ -558,7 +562,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
                 int virtualCount = virtualSpawnPointCount;
                 float distMin = distanceRange.x;
                 float distMax = distanceRange.y;
-                
+
                 enemySpawnPoints = new Transform[virtualCount];
 
                 if (virtualCount == 1)
@@ -600,18 +604,18 @@ namespace Rhythm.GamePlay.OSU.Aimless
 
                         float viewportX = xPercent;
                         float viewportY = yPercent;
-                        
+
                         float distance = UnityEngine.Random.Range(distMin, distMax);
-                        
+
                         Vector3 viewportPoint = new(viewportX, viewportY, distance);
                         Vector3 worldPos = worldCamera.ViewportToWorldPoint(viewportPoint);
-                        
+
                         var go = new GameObject($"VirtualSpawnPoint_{i}");
                         go.transform.position = worldPos;
-                        
+
                         Vector3 dirToCam = (worldCamera.transform.position - worldPos).normalized;
                         go.transform.rotation = Quaternion.LookRotation(dirToCam, Vector3.up);
-                        
+
                         go.transform.SetParent(transform);
                         enemySpawnPoints[i] = go.transform;
                     }
@@ -795,12 +799,12 @@ namespace Rhythm.GamePlay.OSU.Aimless
         public bool CanStartGame => CurrentState == GameState.NotStarted || CurrentState == GameState.Finished;
         public bool CanPauseGame => CurrentState == GameState.Playing;
         public bool CanResumeGame => CurrentState == GameState.Paused;
-        
+
         public float GetSongProgress()
         {
             if (beatmap == null || beatmap.notes.Count == 0 || CurrentState != GameState.Playing)
                 return 0f;
-                
+
             double songTime = AudioSettings.dspTime - dspSongStartTime - totalPausedDuration;
             float totalSongLength = (float)beatmap.notes[^1].hitTime + beatmap.approachTime;
             return Mathf.Clamp01((float)songTime / totalSongLength);
@@ -827,7 +831,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
             LoopSong = true;
             AutoPlay = false;
             beatmap = calibrationBeatmap;
-            
+
             // Start the game
             StartGame();
         }
