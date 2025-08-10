@@ -49,7 +49,7 @@ public class JukeboxUIController : MonoBehaviour
     {
         Debug.Log($"Starting song '{songKey}' on difficulty '{difficulty}'.");
         // TODO: Add your scene loading or game start logic here.
-        // Example:
+        UnityEngine.SceneManagement.SceneManager.LoadScene("RhythmGunman");
         // GameManager.Instance.StartSong(beatmap);
     }
 
@@ -59,7 +59,6 @@ public class JukeboxUIController : MonoBehaviour
         {
             if (r)
             {
-                // Unsubscribe from events to prevent memory leaks
                 r.OnExpandRequested -= HandleExpandRequest;
                 r.OnStartRequested -= HandleStartRequest;
                 Destroy(r.gameObject);

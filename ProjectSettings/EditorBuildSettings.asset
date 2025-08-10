@@ -5,15 +5,15 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/RhythmTest.unity
-    guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
-    path: Assets/Scenes/Rhythm.unity
-    guid: ba8549d0c9c4d5641a15f6cfbcb1fe0d
+    path: Assets/Scenes/JukeboxScene.unity
+    guid: 43ed86f8d7d584dd0a273e8be5f87abd
   - enabled: 1
     path: Assets/Scenes/CalibrationScene.unity
     guid: 1e5f52884aa94514083067697dd666a3
+  - enabled: 1
+    path: Assets/Scenes/RhythmGunman.unity
+    guid: bc749910dfacb4732bce6bfa9d71e767
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

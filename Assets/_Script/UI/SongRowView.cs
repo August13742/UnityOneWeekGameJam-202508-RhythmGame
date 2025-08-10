@@ -16,7 +16,6 @@ public class SongRowView : MonoBehaviour
 
     public Button startButton;
 
-    // ADDED: References to the toggles
     [Header("Gameplay Toggles")]
     public Toggle autoPlayToggle;
     public Toggle indicatorToggle;
