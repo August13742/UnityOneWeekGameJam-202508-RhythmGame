@@ -14,7 +14,7 @@ public class TitleDoor : MonoBehaviour, IClickable
     [SerializeField] private Transform leftOrigin;    // 左ドアの回転の基準点
     [SerializeField] private Transform rightOrigin;   // 右ドアの回転の基準点
 
-    [SerializeField] private Image fadePanelImage;
+    [SerializeField] private Canvas uiCanvas;
     private bool RunDoorCorutine = false;
     
     // ドアごとの前回角度を管理する辞書
@@ -31,6 +31,8 @@ public class TitleDoor : MonoBehaviour, IClickable
         RunDoorCorutine = true; // 実行中フラグを立てる
         playerRay.ClickDoorListener -= () => OnClick();  // クリックイベントの登録を解除
         Debug.Log("TitleDoor clicked!"); // クリック時のアクションをここに追加
+        uiCanvas.gameObject.SetActive(false);
+
         StartCoroutine(OnClickCoroutine());
     }
 
@@ -52,8 +54,9 @@ public class TitleDoor : MonoBehaviour, IClickable
         // 待機
         yield return new WaitForSeconds(0.5f);
 
-        // フェードインの処理
-        fadePanelImage.DOFade(1f, 1f);
+        CrossfadeManager.Instance.FadeToBlack();
+        yield return new WaitForSeconds(1f);
+        UnityEngine.SceneManagement.SceneManager.LoadScene("CalibrationScene");
         
     }
 

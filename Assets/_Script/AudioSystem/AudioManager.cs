@@ -178,32 +178,39 @@ public class AudioManager : MonoBehaviour
 
     public void ResumeMusic()
     {
-        if (!isMusicPaused) return;
+        if (!isMusicPaused)
+            return;
 
-        double resumeTime = AudioSettings.dspTime;
-        double pauseDuration = resumeTime - musicPauseTime;
+        double now = AudioSettings.dspTime;
+        double pauseDuration = now - musicPauseTime;
 
-        if (wasScheduledToPlay)
+        bool started = activeMusicPlayer != null &&
+                       activeMusicPlayer.clip != null &&
+                       activeMusicPlayer.timeSamples > 0;   // has begun
+
+        if (wasScheduledToPlay && !started)
         {
-            // Reschedule the track to maintain timing relative to the pause.
-            double newScheduledTime = scheduledStartTime + pauseDuration;
-            activeMusicPlayer.Stop(); // Stop to override the previous schedule.
-            activeMusicPlayer.PlayScheduled(newScheduledTime);
-            scheduledStartTime = newScheduledTime; // Update the schedule time
-            Debug.Log($"[AudioManager] Rescheduling music to DSP time: {newScheduledTime}");
+            // Paused during countdown: push the schedule forward
+            double minLead = 0.020;
+            double newScheduled = System.Math.Max(now + minLead, scheduledStartTime + pauseDuration);
+            activeMusicPlayer.Stop();
+            activeMusicPlayer.PlayScheduled(newScheduled);
+            scheduledStartTime = newScheduled;
+            // still "scheduled"
         }
         else
         {
-            // Music was playing when paused, so just unpause it.
+            // Playback already started (or was never just scheduled): just unpause
+            wasScheduledToPlay = false;
             activeMusicPlayer.UnPause();
-            Debug.Log($"[AudioManager] Music resumed at DSP time: {resumeTime}");
         }
 
         isMusicPaused = false;
     }
 
+
     // --- Event Handlers ---
-    
+
     private void HandlePlayMusicScheduled(AudioClip clip, double dspTime)
     {
         if (clip == null)
@@ -244,8 +251,7 @@ public class AudioManager : MonoBehaviour
 
     private IEnumerator DoScheduledCrossfade(AudioClip newClip, double dspTime, float duration)
     {
-        // Determine which player to use for the new track
-        // Always use the player that's NOT currently active to avoid conflicts
+
         AudioSource fadeInPlayer = (activeMusicPlayer == musicPlayerA) ? musicPlayerB : musicPlayerA;
         AudioSource fadeOutPlayer = activeMusicPlayer;
 
@@ -263,11 +269,10 @@ public class AudioManager : MonoBehaviour
         fadeInPlayer.volume = 0f;
         fadeInPlayer.PlayScheduled(safeStartTime);
 
-        // Store the current fade-out player volume before we change active player
+
         float fadeOutStartVolume = fadeOutPlayer.isPlaying ? fadeOutPlayer.volume : 0f;
 
-        // IMPORTANT: Only update the active player reference AFTER we've captured the old state
-        // and are committed to this fade
+    
         activeMusicPlayer = fadeInPlayer;
         isMusicPaused = false;
         wasScheduledToPlay = true;
@@ -278,7 +283,8 @@ public class AudioManager : MonoBehaviour
 
         // Wait until the new track is supposed to start playing
         yield return new WaitUntil(() => AudioSettings.dspTime >= safeStartTime);
-
+        yield return new WaitUntil(() => fadeInPlayer.timeSamples > 0);
+        wasScheduledToPlay = false;
         // Check if this coroutine is still the active one (hasn't been interrupted)
         if (musicFadeCoroutine == null)
         {
@@ -337,6 +343,23 @@ public class AudioManager : MonoBehaviour
             musicFadeCoroutine = null;
         }
     }
+    public void PlayMusicImmediate(AudioClip clip, float volume = 1f, float fadeDuration = -1f)
+    {
+        if (clip == null)
+            return;
+
+        // Create a simple MusicResource-like structure for immediate playback
+        var tempResource = new MusicResource { clip = clip, volumeLinear = volume };
+        PlayMusic(tempResource, fadeDuration);
+    }
+
+
+    [System.Serializable]
+    public class MusicResource
+    {
+        public AudioClip clip;
+        public float volumeLinear = 1f;
+    }
 
     private IEnumerator DoImmediateCrossfade(AudioClip newClip, float duration)
     {
@@ -383,7 +406,7 @@ public class AudioManager : MonoBehaviour
         musicFadeCoroutine = null;
     }
 
-    private IEnumerator FadeOutAndStop(AudioSource source, float duration)
+    public IEnumerator FadeOutAndStop(AudioSource source, float duration)
     {
         if (!source.isPlaying) yield break;
         

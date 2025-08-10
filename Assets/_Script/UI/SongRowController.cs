@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Rhythm.GamePlay.OSU.Aimless;
 using Rhythm.Core;
+using UnityEngine.Audio;
 
 namespace Rhythm.UI
 {
@@ -152,6 +153,24 @@ namespace Rhythm.UI
 
         private void ExpandRow(bool autoPickDifficulty = true)
         {
+            // Get music track from any available difficulty
+            AudioClip musicTrack = null;
+            foreach (var kvp in diffs)
+            {
+                if (kvp.Value?.musicTrack != null)
+                {
+                    musicTrack = kvp.Value.musicTrack;
+                    break;
+                }
+            }
+
+            // Play music immediately when row is expanded, regardless of difficulty selection
+            if (musicTrack != null)
+            {
+                GameEvents.Instance?.PlayMusicScheduled(musicTrack, AudioSettings.dspTime);
+                PlayingSongSample?.Invoke();
+            }
+
             OnExpandRequested?.Invoke(this);
             view.SetExpanded(true);
 
@@ -165,10 +184,6 @@ namespace Rhythm.UI
                 {
                     SelectedDifficulty = pref.Value;
                     SelectedBeatmap = bm;
-
-                    GameEvents.Instance?.PlayMusicScheduled(bm.musicTrack, AudioSettings.dspTime);
-                    PlayingSongSample?.Invoke();
-
                     UpdateDifficultyButtonColors();
                 }
             }

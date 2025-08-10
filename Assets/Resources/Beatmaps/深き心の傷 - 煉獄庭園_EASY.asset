@@ -1,0 +1,77 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63f2d8b02862a7f47944685597c1b5df, type: 3}
+  m_Name: "\u6DF1\u304D\u5FC3\u306E\u50B7 - \u7149\u7344\u5EAD\u5712_EASY"
+  m_EditorClassIdentifier: 
+  musicTrack: {fileID: 8300000, guid: d159a589f45d5254e801d1e8be78252c, type: 3}
+  approachTime: 1
+  notes:
+  - hitTime: 98.475828
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 100.728163
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 103.723537
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 104.478186
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 106.730522
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 113.475918
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 115.728254
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 118.723628
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 119.478277
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 124.725986
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 125.480635
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 128.476009
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 130.728345
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 131.482993
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 134.478367
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 136.730703
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 139.726077
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 140.480726
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 142.721451
+    type: 0
+    spawnPointIndex: -1
+  - hitTime: 143.4761
+    type: 0
+    spawnPointIndex: -1
