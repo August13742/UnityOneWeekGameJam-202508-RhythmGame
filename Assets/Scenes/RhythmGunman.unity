@@ -19850,7 +19850,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8f3b2dbae2029243a2a320b5098bc13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menuPanel: {fileID: 8663341319051875360}
+  menuPanel: {fileID: 8732041463441120488}
   restartButton: {fileID: 5781669299386698179}
   mainMenuButton: {fileID: 3279471543867340381}
   exitButton: {fileID: 0}

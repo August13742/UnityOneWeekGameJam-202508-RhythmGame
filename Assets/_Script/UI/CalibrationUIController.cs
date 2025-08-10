@@ -1,4 +1,3 @@
-using DG.Tweening;
 using Rhythm.GamePlay.OSU.Aimless;
 using TMPro;
 using UnityEngine;
@@ -21,7 +20,7 @@ namespace Rhythm.UI
         [SerializeField] private string nextSceneName;
         private RhythmManagerOSUAimless rhythmManager;
 
-        private void Awake()
+        private void Start()
         {
 
             StartCoroutine(DelayedStart());
@@ -31,9 +30,11 @@ namespace Rhythm.UI
         {
             rhythmManager = RhythmManagerOSUAimless.Instance;
             SetupUI();
-            StartCalibration();
+            PlayerPrefs.SetFloat("AudioOffset", rhythmManager.AudioOffset);
+            PlayerPrefs.Save();
             CrossfadeManager.Instance.FadeFromBlack(1f);
             yield return new WaitForSeconds(1f);
+            StartCalibration();
 
         }
         private void SetupUI()

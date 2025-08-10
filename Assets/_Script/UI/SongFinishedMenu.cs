@@ -142,12 +142,6 @@ namespace Rhythm.UI
         private void ExitGame()
         {
             HideSongFinishedMenu();
-
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-#else
-            Application.Quit();
-#endif
         }
 
         private void OnDestroy()

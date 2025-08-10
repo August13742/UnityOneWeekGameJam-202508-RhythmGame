@@ -1,20 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-[System.Serializable]
-public class SongRecord
-{
-    public int highScore;
-    public float bestAccuracy; // 0..1
-    public int maxCombo;
-
-    // optional breakdown for the panel
-    public int notesHit;    // perfect+good
-    public int totalNotes;
-    public int bestPerfect;
-    public int bestGood;
-    public int bestMiss;
-}
-
 
 [CreateAssetMenu(menuName = "Rhythm/SongRecordsDB")]
 public class SongRecordsDB : ScriptableObject

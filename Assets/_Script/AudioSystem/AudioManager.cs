@@ -54,7 +54,7 @@ public class AudioManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
-        InitializeAudioPool();
+        InitialiseAudioPool();
         CreateMusicPlayers();
     }
 
@@ -76,7 +76,7 @@ public class AudioManager : MonoBehaviour
         GameEvents.Instance.OnPlayMusicScheduled += HandlePlayMusicScheduled;
     }
 
-    private void InitializeAudioPool()
+    private void InitialiseAudioPool()
     {
         for (int i = 0; i < sfxPoolSize; i++)
         {
@@ -218,39 +218,56 @@ public class AudioManager : MonoBehaviour
             return;
         }
 
-        // Avoid fading to the same clip if it's already the active one.
-        if (activeMusicPlayer.clip == clip)
+        // If we're trying to schedule the same clip that's already active, just reschedule it
+        if (activeMusicPlayer.clip == clip && activeMusicPlayer.isPlaying)
         {
             Debug.LogWarning($"[AudioManager] Told to schedule the same clip '{clip.name}'. Re-scheduling without crossfade.");
-            // A simple reschedule might be better here depending on game logic,
-            // but for now we just ensure it plays at the right time.
             activeMusicPlayer.Stop();
             activeMusicPlayer.PlayScheduled(dspTime);
             OnMusicStartConfirmed?.Invoke(dspTime);
             return;
         }
         
-        if (musicFadeCoroutine != null) StopCoroutine(musicFadeCoroutine);
+        // Stop any ongoing fade and clean up state
+        if (musicFadeCoroutine != null) 
+        {
+            StopCoroutine(musicFadeCoroutine);
+            musicFadeCoroutine = null;
+        }
+        
+        // Ensure both players are in a clean state before starting new fade
+        musicPlayerA.Stop();
+        musicPlayerB.Stop();
+        
         musicFadeCoroutine = StartCoroutine(DoScheduledCrossfade(clip, dspTime, musicCrossfadeDuration));
     }
-    
-    // --- Coroutines for Fading ---
 
     private IEnumerator DoScheduledCrossfade(AudioClip newClip, double dspTime, float duration)
     {
+        // Determine which player to use for the new track
+        // Always use the player that's NOT currently active to avoid conflicts
         AudioSource fadeInPlayer = (activeMusicPlayer == musicPlayerA) ? musicPlayerB : musicPlayerA;
         AudioSource fadeOutPlayer = activeMusicPlayer;
 
-        // 1. Schedule the new track
+        // Ensure the fade-in player is clean
+        fadeInPlayer.Stop();
+        fadeInPlayer.clip = null;
+        fadeInPlayer.volume = 0f;
+
+        // Schedule new track
         double currentDspTime = AudioSettings.dspTime;
-        double minLead = 0.20; // 200ms guard for reliable scheduling
+        double minLead = 0.20;
         double safeStartTime = (dspTime <= currentDspTime + minLead) ? currentDspTime + minLead : dspTime;
 
         fadeInPlayer.clip = newClip;
         fadeInPlayer.volume = 0f;
         fadeInPlayer.PlayScheduled(safeStartTime);
 
-        // 2. Update state immediately
+        // Store the current fade-out player volume before we change active player
+        float fadeOutStartVolume = fadeOutPlayer.isPlaying ? fadeOutPlayer.volume : 0f;
+
+        // IMPORTANT: Only update the active player reference AFTER we've captured the old state
+        // and are committed to this fade
         activeMusicPlayer = fadeInPlayer;
         isMusicPaused = false;
         wasScheduledToPlay = true;
@@ -258,29 +275,67 @@ public class AudioManager : MonoBehaviour
 
         Debug.Log($"[AudioManager] Scheduling crossfade. New clip '{newClip.name}' @ {safeStartTime:F6}. Fading out '{fadeOutPlayer.clip?.name ?? "nothing"}'.");
         OnMusicStartConfirmed?.Invoke(safeStartTime);
-        
-        // 3. Start the fade-out on the old player in parallel
-        if (fadeOutPlayer.isPlaying)
+
+        // Wait until the new track is supposed to start playing
+        yield return new WaitUntil(() => AudioSettings.dspTime >= safeStartTime);
+
+        // Check if this coroutine is still the active one (hasn't been interrupted)
+        if (musicFadeCoroutine == null)
         {
-            StartCoroutine(FadeOutAndStop(fadeOutPlayer, duration));
+            Debug.Log("[AudioManager] Crossfade was interrupted, cleaning up...");
+            yield break;
         }
 
-        // 4. Wait until the new track is supposed to start playing
-        yield return new WaitUntil(() => AudioSettings.dspTime >= safeStartTime);
-        
-        // 5. Fade in the new track
+        // Perform consolidated fade IN and fade OUT in one loop
         float t = 0f;
+
         while (t < duration)
         {
+            // Check again if we've been interrupted
+            if (musicFadeCoroutine == null)
+            {
+                Debug.Log("[AudioManager] Crossfade interrupted during fade loop");
+                yield break;
+            }
+
             t += Time.unscaledDeltaTime;
             float progress = Mathf.Clamp01(t / duration);
-            float targetVolume = currentMusicVolume * duckFactor; // Live ducking
-            fadeInPlayer.volume = Mathf.Lerp(0f, targetVolume, progress);
+            float targetVolume = currentMusicVolume * duckFactor;
+
+            // Fade in the new track (only if it's still the active player)
+            if (activeMusicPlayer == fadeInPlayer)
+            {
+                fadeInPlayer.volume = Mathf.Lerp(0f, targetVolume, progress);
+            }
+
+            // Fade out the old track (only if it's still playing and valid)
+            if (fadeOutPlayer != null && fadeOutPlayer.isPlaying && fadeOutPlayer != activeMusicPlayer)
+            {
+                fadeOutPlayer.volume = Mathf.Lerp(fadeOutStartVolume, 0f, progress);
+            }
+
             yield return null;
         }
 
-        ApplyMusicVolume(); // Ensure final volume is correct
-        musicFadeCoroutine = null;
+        // Final cleanup - only if this coroutine completed naturally
+        if (musicFadeCoroutine != null)
+        {
+            // Ensure final volume is correct on the active player
+            if (activeMusicPlayer == fadeInPlayer)
+            {
+                ApplyMusicVolume();
+            }
+
+            // Stop and clean up old player only if it's not the current active player
+            if (fadeOutPlayer != activeMusicPlayer && fadeOutPlayer != null)
+            {
+                fadeOutPlayer.Stop();
+                fadeOutPlayer.volume = 0;
+                fadeOutPlayer.clip = null;
+            }
+
+            musicFadeCoroutine = null;
+        }
     }
 
     private IEnumerator DoImmediateCrossfade(AudioClip newClip, float duration)
@@ -288,36 +343,46 @@ public class AudioManager : MonoBehaviour
         AudioSource fadeInPlayer = (activeMusicPlayer == musicPlayerA) ? musicPlayerB : musicPlayerA;
         AudioSource fadeOutPlayer = activeMusicPlayer;
 
-        // Start fading out the old track
-        if (fadeOutPlayer.isPlaying)
-        {
-            StartCoroutine(FadeOutAndStop(fadeOutPlayer, duration));
-        }
-        
+        fadeInPlayer.Stop();
+
         // Set up and play the new track immediately
         fadeInPlayer.clip = newClip;
         fadeInPlayer.volume = 0f;
         fadeInPlayer.Play();
-        
+
         // The new track is now the active one
         activeMusicPlayer = fadeInPlayer;
         wasScheduledToPlay = false;
 
-        // Fade in the new track
+        // Fade both tracks in a single, controlled loop
         float t = 0f;
+        float startVolume = fadeOutPlayer.isPlaying ? fadeOutPlayer.volume : 0f;
+
         while (t < duration)
         {
             t += Time.unscaledDeltaTime;
             float progress = Mathf.Clamp01(t / duration);
             float targetVolume = currentMusicVolume * duckFactor;
+
             fadeInPlayer.volume = Mathf.Lerp(0f, targetVolume, progress);
+
+            if (fadeOutPlayer.isPlaying)
+            {
+                fadeOutPlayer.volume = Mathf.Lerp(startVolume, 0f, progress);
+            }
+
             yield return null;
         }
 
         ApplyMusicVolume();
+
+        fadeOutPlayer.Stop();
+        fadeOutPlayer.volume = 0;
+        fadeOutPlayer.clip = null;
+
         musicFadeCoroutine = null;
     }
-    
+
     private IEnumerator FadeOutAndStop(AudioSource source, float duration)
     {
         if (!source.isPlaying) yield break;
