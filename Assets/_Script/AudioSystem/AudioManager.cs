@@ -6,10 +6,8 @@ using Rhythm.Core;
 
 public class AudioManager : MonoBehaviour
 {
-    public static AudioManager Instance
-    {
-        get; private set;
-    }
+    public static AudioManager Instance { get; private set; }
+    public static event System.Action<double> OnMusicStartConfirmed;
 
     [Header("Mixer Groups")]
     public AudioMixer mixer;
@@ -19,23 +17,35 @@ public class AudioManager : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField] private int sfxPoolSize = 10;
+    [SerializeField] private float musicCrossfadeDuration = 2.0f;
 
+    // SFX Players
     private List<AudioSource> sfxPlayerPool = new List<AudioSource>();
     private Dictionary<string, AudioSource> loopingSfxPlayers = new Dictionary<string, AudioSource>();
     private List<AudioSource> pausedSfxPlayers = new List<AudioSource>();
 
-    private AudioSource musicPlayer;
-    private Coroutine activeFadeCoroutine;
+    // Music Players (A/B system for crossfading)
+    private AudioSource musicPlayerA;
+    private AudioSource musicPlayerB;
+    private AudioSource activeMusicPlayer;
+    private Coroutine musicFadeCoroutine;
+
+    // Music State
     private float currentMusicVolume = 1f;
+    private float duckFactor = 1f;
+    private Coroutine duckCoroutine;
     
-    // Music pause state tracking
+    // Pause/Resume State
     private bool isMusicPaused = false;
     private double musicPauseTime;
-    private double musicResumeTime;
     private double scheduledStartTime;
     private bool wasScheduledToPlay = false;
+    
+    public float MusicVolume => currentMusicVolume * duckFactor;
+    public bool IsMusicPaused => isMusicPaused;
+    public bool IsMusicPlaying => activeMusicPlayer != null && activeMusicPlayer.isPlaying && !isMusicPaused;
 
-    void Awake()
+    private void Awake()
     {
         if (Instance != null && Instance != this)
         {
@@ -44,33 +54,29 @@ public class AudioManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
-        InitializeAudioPool();
-        CreateMusicPlayer();
+        InitialiseAudioPool();
+        CreateMusicPlayers();
     }
-    private void OnEnable()
-    {
-        
-    }
+
     private void Start()
     {
-        if (GameEvents.Instance != null)
-        {
-
-            GameEvents.Instance.OnPlayMusicScheduled += HandlePlayMusicScheduled;
-        }
-        else
-            Debug.Log("no game event");
-
+        StartCoroutine(TryBindGameEvents());
     }
+
     private void OnDisable()
     {
         if (GameEvents.Instance != null)
-        {
             GameEvents.Instance.OnPlayMusicScheduled -= HandlePlayMusicScheduled;
-        }
     }
-    
-    void InitializeAudioPool()
+
+    private IEnumerator TryBindGameEvents()
+    {
+        while (GameEvents.Instance == null)
+            yield return null;
+        GameEvents.Instance.OnPlayMusicScheduled += HandlePlayMusicScheduled;
+    }
+
+    private void InitialiseAudioPool()
     {
         for (int i = 0; i < sfxPoolSize; i++)
         {
@@ -78,14 +84,20 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    void CreateMusicPlayer()
+    private void CreateMusicPlayers()
     {
-        musicPlayer = CreateAudioSource("Music Player");
-        musicPlayer.loop = true;
-        musicPlayer.outputAudioMixerGroup = musicGroup;
+        musicPlayerA = CreateAudioSource("Music Player A");
+        musicPlayerA.loop = true;
+        musicPlayerA.outputAudioMixerGroup = musicGroup;
+
+        musicPlayerB = CreateAudioSource("Music Player B");
+        musicPlayerB.loop = true;
+        musicPlayerB.outputAudioMixerGroup = musicGroup;
+
+        activeMusicPlayer = musicPlayerA;
     }
 
-    AudioSource CreateAudioSource(string name)
+    private AudioSource CreateAudioSource(string name)
     {
         GameObject child = new GameObject(name);
         child.transform.SetParent(transform);
@@ -94,138 +106,343 @@ public class AudioManager : MonoBehaviour
         return source;
     }
 
-    private void HandlePlayMusicScheduled(AudioClip clip, double dspTime)
+    /// <summary>
+    /// Applies the current base volume and ducking factor to the active music player.
+    /// </summary>
+    private void ApplyMusicVolume()
     {
-        if (musicPlayer == null)
-        {
-            Debug.LogError("[AudioManager] Music Player is not initialized!");
-            return;
-        }
+        if (activeMusicPlayer != null)
+            activeMusicPlayer.volume = currentMusicVolume * duckFactor;
+    }
+    
+    // --- Public Music Control ---
 
-        if (clip == null)
-        {
-            Debug.LogError("[AudioManager] Trying to play null audio clip!");
-            return;
-        }
+    public void PlayMusic(MusicResource resource, float fadeDuration = -1f)
+    {
+        if (resource == null || resource.clip == null) return;
+        if (activeMusicPlayer.clip == resource.clip && activeMusicPlayer.isPlaying) return;
 
-        // Stop any currently playing music
-        if (musicPlayer.isPlaying)
-        {
-            musicPlayer.Stop();
-        }
-
-        // Reset pause state
-        isMusicPaused = false;
-        wasScheduledToPlay = true;
-        scheduledStartTime = dspTime;
-
-        // Ensure the clip is set and the player is ready
-        musicPlayer.clip = clip;
-        musicPlayer.volume = currentMusicVolume;
+        float duration = (fadeDuration >= 0) ? fadeDuration : musicCrossfadeDuration;
         
-        // Calculate safe start time with proper buffer
-        double currentDspTime = AudioSettings.dspTime;
-        double safeStartTime;
-        
-        // If the scheduled time is in the past or too close to now, schedule for immediate playback
-        if (dspTime <= currentDspTime + 0.05) // 50ms buffer
-        {
-            safeStartTime = currentDspTime + 0.1; // Start 100ms from now
-            Debug.LogWarning($"[AudioManager] Scheduled time {dspTime} is too close to current time {currentDspTime}. Adjusting to {safeStartTime}");
-        }
-        else
-        {
-            safeStartTime = dspTime;
-        }
-        
-        Debug.Log($"[AudioManager] Scheduling music: {clip.name} at DSP time: {safeStartTime} (requested: {dspTime}, current: {currentDspTime})");
-        
-        // For very immediate playback, use Play() instead of PlayScheduled()
-        if (safeStartTime - currentDspTime < 0.1)
-        {
-            Debug.Log("[AudioManager] Using immediate Play() instead of PlayScheduled()");
-            musicPlayer.Play();
-        }
-        else
-        {
-            musicPlayer.PlayScheduled(safeStartTime);
-        }
+        if (musicFadeCoroutine != null) StopCoroutine(musicFadeCoroutine);
+        musicFadeCoroutine = StartCoroutine(DoImmediateCrossfade(resource.clip, duration));
     }
 
+    public void StopMusic()
+    {
+        if (musicFadeCoroutine != null)
+        {
+            StopCoroutine(musicFadeCoroutine);
+            musicFadeCoroutine = null;
+        }
+
+        musicPlayerA.Stop();
+        musicPlayerB.Stop();
+        
+        isMusicPaused = false;
+        wasScheduledToPlay = false;
+
+        // Reset ducking
+        if (duckCoroutine != null) StopCoroutine(duckCoroutine);
+        duckFactor = 1f;
+        ApplyMusicVolume();
+    }
+    
     public void PauseMusic()
     {
-        if (musicPlayer == null || isMusicPaused)
-            return;
+        if (isMusicPaused) return;
 
-        if (musicPlayer.isPlaying)
+        // If a fade is in progress, cancel it.
+        if (musicFadeCoroutine != null)
+        {
+            StopCoroutine(musicFadeCoroutine);
+            musicFadeCoroutine = null;
+        }
+
+        if (activeMusicPlayer.isPlaying)
         {
             musicPauseTime = AudioSettings.dspTime;
-            musicPlayer.Pause();
+            activeMusicPlayer.Pause();
             isMusicPaused = true;
             Debug.Log($"[AudioManager] Music paused at DSP time: {musicPauseTime}");
         }
-        else
+        else if (wasScheduledToPlay)
         {
             // Music was scheduled but not yet playing
             isMusicPaused = true;
             musicPauseTime = AudioSettings.dspTime;
-            Debug.Log("[AudioManager] Music scheduled playback paused");
+            // The scheduled play on the source is implicitly paused. We just need to track state.
+            Debug.Log("[AudioManager] Music scheduled playback paused.");
         }
     }
 
     public void ResumeMusic()
     {
-        if (musicPlayer == null || !isMusicPaused)
-            return;
+        if (!isMusicPaused) return;
 
-        musicResumeTime = AudioSettings.dspTime;
-        double pauseDuration = musicResumeTime - musicPauseTime;
+        double resumeTime = AudioSettings.dspTime;
+        double pauseDuration = resumeTime - musicPauseTime;
 
-        if (musicPlayer.clip != null)
+        if (wasScheduledToPlay)
         {
-            if (wasScheduledToPlay)
-            {
-                // If music was originally scheduled, reschedule it with the pause duration added
-                double newScheduledTime = scheduledStartTime + pauseDuration;
-                double currentTime = AudioSettings.dspTime;
-                
-                if (newScheduledTime <= currentTime + 0.05) // If scheduled time is too close or in the past
-                {
-                    Debug.Log("[AudioManager] Resuming music immediately");
-                    musicPlayer.UnPause();
-                }
-                else
-                {
-                    Debug.Log($"[AudioManager] Rescheduling music to DSP time: {newScheduledTime}");
-                    musicPlayer.Stop(); // Stop any current state
-                    musicPlayer.PlayScheduled(newScheduledTime);
-                }
-            }
-            else
-            {
-                // Music was already playing when paused
-                musicPlayer.UnPause();
-                Debug.Log($"[AudioManager] Music resumed at DSP time: {musicResumeTime} (was paused for {pauseDuration:F3}s)");
-            }
+            // Reschedule the track to maintain timing relative to the pause.
+            double newScheduledTime = scheduledStartTime + pauseDuration;
+            activeMusicPlayer.Stop(); // Stop to override the previous schedule.
+            activeMusicPlayer.PlayScheduled(newScheduledTime);
+            scheduledStartTime = newScheduledTime; // Update the schedule time
+            Debug.Log($"[AudioManager] Rescheduling music to DSP time: {newScheduledTime}");
+        }
+        else
+        {
+            // Music was playing when paused, so just unpause it.
+            activeMusicPlayer.UnPause();
+            Debug.Log($"[AudioManager] Music resumed at DSP time: {resumeTime}");
         }
 
         isMusicPaused = false;
     }
 
-    public void StopMusic()
+    // --- Event Handlers ---
+    
+    private void HandlePlayMusicScheduled(AudioClip clip, double dspTime)
     {
-        if (musicPlayer != null)
+        if (clip == null)
         {
-            musicPlayer.Stop();
-            isMusicPaused = false;
-            wasScheduledToPlay = false;
-            Debug.Log("[AudioManager] Music stopped");
+            Debug.LogError("[AudioManager] Trying to schedule a null audio clip!");
+            return;
+        }
+
+        if (musicPlayerA == null || musicPlayerB == null)
+        {
+            Debug.LogError("[AudioManager] Music Players are not initialized!");
+            return;
+        }
+
+        // If we're trying to schedule the same clip that's already active, just reschedule it
+        if (activeMusicPlayer.clip == clip && activeMusicPlayer.isPlaying)
+        {
+            Debug.LogWarning($"[AudioManager] Told to schedule the same clip '{clip.name}'. Re-scheduling without crossfade.");
+            activeMusicPlayer.Stop();
+            activeMusicPlayer.PlayScheduled(dspTime);
+            OnMusicStartConfirmed?.Invoke(dspTime);
+            return;
+        }
+        
+        // Stop any ongoing fade and clean up state
+        if (musicFadeCoroutine != null) 
+        {
+            StopCoroutine(musicFadeCoroutine);
+            musicFadeCoroutine = null;
+        }
+        
+        // Ensure both players are in a clean state before starting new fade
+        musicPlayerA.Stop();
+        musicPlayerB.Stop();
+        
+        musicFadeCoroutine = StartCoroutine(DoScheduledCrossfade(clip, dspTime, musicCrossfadeDuration));
+    }
+
+    private IEnumerator DoScheduledCrossfade(AudioClip newClip, double dspTime, float duration)
+    {
+        // Determine which player to use for the new track
+        // Always use the player that's NOT currently active to avoid conflicts
+        AudioSource fadeInPlayer = (activeMusicPlayer == musicPlayerA) ? musicPlayerB : musicPlayerA;
+        AudioSource fadeOutPlayer = activeMusicPlayer;
+
+        // Ensure the fade-in player is clean
+        fadeInPlayer.Stop();
+        fadeInPlayer.clip = null;
+        fadeInPlayer.volume = 0f;
+
+        // Schedule new track
+        double currentDspTime = AudioSettings.dspTime;
+        double minLead = 0.20;
+        double safeStartTime = (dspTime <= currentDspTime + minLead) ? currentDspTime + minLead : dspTime;
+
+        fadeInPlayer.clip = newClip;
+        fadeInPlayer.volume = 0f;
+        fadeInPlayer.PlayScheduled(safeStartTime);
+
+        // Store the current fade-out player volume before we change active player
+        float fadeOutStartVolume = fadeOutPlayer.isPlaying ? fadeOutPlayer.volume : 0f;
+
+        // IMPORTANT: Only update the active player reference AFTER we've captured the old state
+        // and are committed to this fade
+        activeMusicPlayer = fadeInPlayer;
+        isMusicPaused = false;
+        wasScheduledToPlay = true;
+        scheduledStartTime = safeStartTime;
+
+        Debug.Log($"[AudioManager] Scheduling crossfade. New clip '{newClip.name}' @ {safeStartTime:F6}. Fading out '{fadeOutPlayer.clip?.name ?? "nothing"}'.");
+        OnMusicStartConfirmed?.Invoke(safeStartTime);
+
+        // Wait until the new track is supposed to start playing
+        yield return new WaitUntil(() => AudioSettings.dspTime >= safeStartTime);
+
+        // Check if this coroutine is still the active one (hasn't been interrupted)
+        if (musicFadeCoroutine == null)
+        {
+            Debug.Log("[AudioManager] Crossfade was interrupted, cleaning up...");
+            yield break;
+        }
+
+        // Perform consolidated fade IN and fade OUT in one loop
+        float t = 0f;
+
+        while (t < duration)
+        {
+            // Check again if we've been interrupted
+            if (musicFadeCoroutine == null)
+            {
+                Debug.Log("[AudioManager] Crossfade interrupted during fade loop");
+                yield break;
+            }
+
+            t += Time.unscaledDeltaTime;
+            float progress = Mathf.Clamp01(t / duration);
+            float targetVolume = currentMusicVolume * duckFactor;
+
+            // Fade in the new track (only if it's still the active player)
+            if (activeMusicPlayer == fadeInPlayer)
+            {
+                fadeInPlayer.volume = Mathf.Lerp(0f, targetVolume, progress);
+            }
+
+            // Fade out the old track (only if it's still playing and valid)
+            if (fadeOutPlayer != null && fadeOutPlayer.isPlaying && fadeOutPlayer != activeMusicPlayer)
+            {
+                fadeOutPlayer.volume = Mathf.Lerp(fadeOutStartVolume, 0f, progress);
+            }
+
+            yield return null;
+        }
+
+        // Final cleanup - only if this coroutine completed naturally
+        if (musicFadeCoroutine != null)
+        {
+            // Ensure final volume is correct on the active player
+            if (activeMusicPlayer == fadeInPlayer)
+            {
+                ApplyMusicVolume();
+            }
+
+            // Stop and clean up old player only if it's not the current active player
+            if (fadeOutPlayer != activeMusicPlayer && fadeOutPlayer != null)
+            {
+                fadeOutPlayer.Stop();
+                fadeOutPlayer.volume = 0;
+                fadeOutPlayer.clip = null;
+            }
+
+            musicFadeCoroutine = null;
         }
     }
 
-    public bool IsMusicPaused => isMusicPaused;
-    public bool IsMusicPlaying => musicPlayer != null && musicPlayer.isPlaying && !isMusicPaused;
+    private IEnumerator DoImmediateCrossfade(AudioClip newClip, float duration)
+    {
+        AudioSource fadeInPlayer = (activeMusicPlayer == musicPlayerA) ? musicPlayerB : musicPlayerA;
+        AudioSource fadeOutPlayer = activeMusicPlayer;
 
+        fadeInPlayer.Stop();
+
+        // Set up and play the new track immediately
+        fadeInPlayer.clip = newClip;
+        fadeInPlayer.volume = 0f;
+        fadeInPlayer.Play();
+
+        // The new track is now the active one
+        activeMusicPlayer = fadeInPlayer;
+        wasScheduledToPlay = false;
+
+        // Fade both tracks in a single, controlled loop
+        float t = 0f;
+        float startVolume = fadeOutPlayer.isPlaying ? fadeOutPlayer.volume : 0f;
+
+        while (t < duration)
+        {
+            t += Time.unscaledDeltaTime;
+            float progress = Mathf.Clamp01(t / duration);
+            float targetVolume = currentMusicVolume * duckFactor;
+
+            fadeInPlayer.volume = Mathf.Lerp(0f, targetVolume, progress);
+
+            if (fadeOutPlayer.isPlaying)
+            {
+                fadeOutPlayer.volume = Mathf.Lerp(startVolume, 0f, progress);
+            }
+
+            yield return null;
+        }
+
+        ApplyMusicVolume();
+
+        fadeOutPlayer.Stop();
+        fadeOutPlayer.volume = 0;
+        fadeOutPlayer.clip = null;
+
+        musicFadeCoroutine = null;
+    }
+
+    private IEnumerator FadeOutAndStop(AudioSource source, float duration)
+    {
+        if (!source.isPlaying) yield break;
+        
+        float startVolume = source.volume;
+        float t = 0f;
+
+        while (t < duration)
+        {
+            t += Time.unscaledDeltaTime;
+            source.volume = Mathf.Lerp(startVolume, 0f, t / duration);
+            yield return null;
+        }
+
+        source.Stop();
+        source.volume = 0;
+        source.clip = null; // Free up memory
+    }
+    
+    // --- Volume Controls & Ducking ---
+    
+    public void SetMusicVolume(float volumeLinear)
+    {
+        currentMusicVolume = Mathf.Clamp01(volumeLinear);
+        ApplyMusicVolume();
+    }
+
+    public void FadeMusic(float lowerThreshold = 0.2f, float fadeDuration = 0.5f) => StartDuck(Mathf.Clamp01(lowerThreshold), fadeDuration);
+    public void UnfadeMusic(float fadeDuration = 0.5f) => StartDuck(1f, fadeDuration);
+    
+    private void StartDuck(float target, float duration)
+    {
+        if (duckCoroutine != null) StopCoroutine(duckCoroutine);
+        duckCoroutine = StartCoroutine(DuckRoutine(target, duration));
+    }
+    
+    private IEnumerator DuckRoutine(float target, float duration)
+    {
+        float start = duckFactor;
+        float t = 0f;
+        while (t < duration)
+        {
+            t += Time.unscaledDeltaTime;
+            duckFactor = Mathf.Lerp(start, target, t / duration);
+            ApplyMusicVolume();
+            yield return null;
+        }
+        duckFactor = target;
+        ApplyMusicVolume();
+        duckCoroutine = null;
+    }
+    
+    public void SetBusVolume(string busName, float volumeLinear)
+    {
+        if (mixer == null) return;
+        float dB = volumeLinear > 0.001f ? 20f * Mathf.Log10(volumeLinear) : -80f;
+        mixer.SetFloat(busName, dB);
+    }
+
+    // --- SFX Section ---
     public void PlaySFX(SFXResource resource)
     {
         if (resource == null || resource.clip == null)
@@ -239,8 +456,7 @@ public class AudioManager : MonoBehaviour
             PlayOneShotSFX(resource.clip, resource.volumeLinear, resource.pitchScale);
     }
 
-
-    void PlayOneShotSFX(AudioClip clip, float volume, float pitch)
+    private void PlayOneShotSFX(AudioClip clip, float volume, float pitch)
     {
         AudioSource player = GetAvailableSFXPlayer();
 
@@ -252,7 +468,7 @@ public class AudioManager : MonoBehaviour
         player.Play();
     }
 
-    AudioSource GetAvailableSFXPlayer()
+    private AudioSource GetAvailableSFXPlayer()
     {
         foreach (AudioSource player in sfxPlayerPool)
         {
@@ -267,7 +483,7 @@ public class AudioManager : MonoBehaviour
         return newPlayer;
     }
 
-    void PlayLoopingSFX(SFXResource resource)
+    private void PlayLoopingSFX(SFXResource resource)
     {
         string eventName = resource.eventName;
 
@@ -314,7 +530,7 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    IEnumerator FadeOutAndDestroy(AudioSource player, float duration)
+    private IEnumerator FadeOutAndDestroy(AudioSource player, float duration)
     {
         float startVolume = player.volume;
         float elapsed = 0f;
@@ -327,65 +543,6 @@ public class AudioManager : MonoBehaviour
         }
 
         Destroy(player.gameObject);
-    }
-
-    public void PlayMusic(MusicResource resource, float fadeDuration = 2f)
-    {
-        if (musicPlayer.clip == resource.clip && musicPlayer.isPlaying)
-            return;
-
-        StartCoroutine(CrossFadeMusic(resource.clip, fadeDuration));
-    }
-
-    IEnumerator CrossFadeMusic(AudioClip newClip, float duration)
-    {
-        // Fade out current music
-        float halfDuration = duration * 0.5f;
-        if (musicPlayer.isPlaying)
-        {
-            yield return FadeAudioSource(musicPlayer, musicPlayer.volume, 0f, halfDuration);
-            musicPlayer.Stop();
-        }
-
-        // Switch and fade in new music
-        musicPlayer.clip = newClip;
-        musicPlayer.Play();
-        yield return FadeAudioSource(musicPlayer, 0f, currentMusicVolume, halfDuration);
-    }
-
-    IEnumerator FadeAudioSource(AudioSource source, float startVol, float endVol, float duration)
-    {
-        float elapsed = 0f;
-        source.volume = startVol;
-
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            source.volume = Mathf.Lerp(startVol, endVol, elapsed / duration);
-            yield return null;
-        }
-
-        source.volume = endVol;
-    }
-
-    public void SetMusicVolume(float volumeLinear)
-    {
-        currentMusicVolume = volumeLinear;
-        musicPlayer.volume = volumeLinear;
-    }
-
-    public void FadeMusic(float lowerThreshold = 0.2f, float fadeDuration = 0.5f)
-    {
-        if (activeFadeCoroutine != null)
-            StopCoroutine(activeFadeCoroutine);
-        activeFadeCoroutine = StartCoroutine(FadeAudioSource(musicPlayer, musicPlayer.volume, lowerThreshold, fadeDuration));
-    }
-
-    public void UnfadeMusic(float fadeDuration = 0.5f)
-    {
-        if (activeFadeCoroutine != null)
-            StopCoroutine(activeFadeCoroutine);
-        activeFadeCoroutine = StartCoroutine(FadeAudioSource(musicPlayer, musicPlayer.volume, currentMusicVolume, fadeDuration));
     }
 
     public void PauseSFX()
@@ -418,19 +575,5 @@ public class AudioManager : MonoBehaviour
             player.UnPause();
         }
         pausedSfxPlayers.Clear();
-    }
-
-    // Volume control
-    public void SetBusVolume(string busName, float volumeLinear)
-    {
-        if (mixer == null)
-            return;
-
-        // Convert to dB (-80dB is silence)
-        float dB = volumeLinear > 0.001f ?
-            20f * Mathf.Log10(volumeLinear) :
-            -80f;
-
-        mixer.SetFloat(busName, dB);
     }
 }

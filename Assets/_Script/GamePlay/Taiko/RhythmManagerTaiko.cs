@@ -55,16 +55,38 @@ namespace Rhythm.GamePlay.Taiko
             xRightVisible = (cr.width * 0.5f) - rightMargin;
         }
 
+        void OnEnable()
+        {
+            Rhythm.GamePlay.OSU.Aimless.RhythmManagerOSUAimless.OnGameStarted += OnGameStarted;
+            Rhythm.GamePlay.OSU.Aimless.RhythmManagerOSUAimless.OnGameFinished += OnGameFinished;
+        }
         void OnDisable()
         {
-            if (JudgementSystem.Instance != null)
-                JudgementSystem.Instance.OnJudgement -= OnOSUJudgement;
+            Rhythm.GamePlay.OSU.Aimless.RhythmManagerOSUAimless.OnGameStarted -= OnGameStarted;
+            Rhythm.GamePlay.OSU.Aimless.RhythmManagerOSUAimless.OnGameFinished -= OnGameFinished;
+
+            // Prevent cross-scene stale refs
+            HardClearAll();
         }
-        
+        private void OnGameStarted() => ResetTaikoState();
+        private void OnGameFinished() => ResetTaikoState();
         private void Start()
         {
             JudgementSystem.Instance.OnJudgement += OnOSUJudgement;
+            Rhythm.GamePlay.OSU.Aimless.RhythmManagerOSUAimless.OnGameStarted += OnGameStarted;
+            Rhythm.GamePlay.OSU.Aimless.RhythmManagerOSUAimless.OnGameFinished += OnGameFinished;
+
         }
+        private void OnDestroy()
+        {
+            var osu = OSU.Aimless.RhythmManagerOSUAimless.Instance;
+            if (osu != null)
+            {
+                OSU.Aimless.RhythmManagerOSUAimless.OnGameStarted -= OnGameStarted;
+                OSU.Aimless.RhythmManagerOSUAimless.OnGameFinished -= OnGameFinished;
+            }
+        }
+
 
         void Update()
         {
@@ -160,7 +182,61 @@ namespace Rhythm.GamePlay.Taiko
                 active.Remove(n);
             }
         }
+        public void ResetTaikoState()
+        {
+            // Drop destroyed and stop effects safely
+            for (int i = active.Count - 1; i >= 0; --i)
+            {
+                var n = active[i];
+                if (n == null)
+                {
+                    active.RemoveAt(i);
+                    continue;
+                }
+                n.ResetNoteSafe(); // see extension below
+            }
+            active.Clear();
+            fifo.Clear();
+            taikoSpawnIndex = 0;
 
+            // Purge pools of destroyed objects
+            PurgePool(poolA);
+            PurgePool(poolB);
+        }
+
+        private static void PurgePool(Queue<TaikoNote> q)
+        {
+            if (q.Count == 0)
+                return;
+            var tmp = new Queue<TaikoNote>(q.Count);
+            while (q.Count > 0)
+            {
+                var n = q.Dequeue();
+                if (n != null)
+                    tmp.Enqueue(n);
+            }
+            while (tmp.Count > 0)
+                q.Enqueue(tmp.Dequeue());
+        }
+
+        // For safety across scene unloads (called from OnDisable)
+        private void HardClearAll()
+        {
+            active.Clear();
+            fifo.Clear();
+            poolA.Clear();
+            poolB.Clear();
+            taikoSpawnIndex = 0;
+        }
+
+        void ReturnToPool(TaikoNote n)
+        {
+            if (n == null)
+                return; // destroyed already
+            n.ResetNoteSafe();
+            var q = (n.Type == 0) ? poolA : poolB;
+            q.Enqueue(n);
+        }
         TaikoNote GetFromPool(NoteType t)
         {
             var q = (t == 0) ? poolA : poolB;
@@ -174,15 +250,6 @@ namespace Rhythm.GamePlay.Taiko
             return Instantiate(prefab, transform);
         }
 
-        void ReturnToPool(TaikoNote n)
-        {
-            if (n != null)
-            {
-                n.ResetNote();
-                var q = (n.Type == 0) ? poolA : poolB;
-                q.Enqueue(n);
-            }
-        }
 
         public void SetVisualsEnabled(bool enabled)
         {
@@ -198,14 +265,5 @@ namespace Rhythm.GamePlay.Taiko
             }
         }
 
-        // Reset state when game is reset
-        public void ResetTaikoState()
-        {
-            foreach (var n in active)
-                n.ResetNote();
-            active.Clear();
-            fifo.Clear();
-            taikoSpawnIndex = 0;
-        }
     }
 }

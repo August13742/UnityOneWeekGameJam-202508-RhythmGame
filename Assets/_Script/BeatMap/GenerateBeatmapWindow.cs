@@ -248,10 +248,10 @@ public class GenerateBeatmapWindow : EditorWindow
 
     static string MoveIntoProject(string jsonPath)
     {
-        string target = "Assets/Beatmaps/" + Path.GetFileName(jsonPath);
+        string target = "Assets/Resources/Beatmaps/" + Path.GetFileName(jsonPath);
         try
         {
-            Directory.CreateDirectory("Assets/Beatmaps");
+            Directory.CreateDirectory("Assets/Resources/Beatmaps/");
             File.Copy(jsonPath, target, true);
             AssetDatabase.ImportAsset(target);
             UnityEngine.Debug.Log($"JSON file moved to project at: {target}");
@@ -298,7 +298,7 @@ public class GenerateBeatmapWindow : EditorWindow
                     spawnPointIndex = n.spawnPointIndex
                 });
 
-            string assetPath = $"Assets/Beatmaps/{clip.name}_{level}.asset";
+            string assetPath = $"Assets/Resources/Beatmaps/{clip.name}_{level}.asset";
             AssetDatabase.CreateAsset(asset, assetPath);
             AssetDatabase.SaveAssets();
             UnityEngine.Debug.Log($"Beatmap asset created at: {assetPath}");
@@ -341,7 +341,7 @@ public class GenerateBeatmapWindow : EditorWindow
                     spawnPointIndex = n.spawnPointIndex
                 });
 
-            string assetPath = $"Assets/Beatmaps/{clip.name}_{level}.asset";
+            string assetPath = $"Assets/Resources/Beatmaps/{clip.name}_{level}.asset";
             AssetDatabase.CreateAsset(asset, assetPath);
             AssetDatabase.SaveAssets();
             UnityEngine.Debug.Log($"Beatmap asset created at: {assetPath}");

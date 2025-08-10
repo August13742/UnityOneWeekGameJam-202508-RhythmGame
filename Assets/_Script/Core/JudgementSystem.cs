@@ -78,7 +78,7 @@ namespace Rhythm.Core
         public void RegisterHit(double delta)
         {
             float absDelta = Mathf.Abs((float)delta);
-
+            if (CurrentCombo > MaxComboAchieved) MaxComboAchieved = CurrentCombo;
             if (absDelta <= PerfectWindow)
             {
                 // count once
@@ -104,7 +104,7 @@ namespace Rhythm.Core
 
                 int points = pointsPerGood;
                 CurrentMaxPossibleScore += pointsPerPerfect;
-                if (CurrentCombo>MaxComboAchieved) MaxComboAchieved = CurrentCombo;
+                
                 Score += points;
                 CurrentAccuracy = (float)Score / CurrentMaxPossibleScore;
 

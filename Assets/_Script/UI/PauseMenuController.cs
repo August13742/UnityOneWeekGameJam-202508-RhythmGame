@@ -14,7 +14,7 @@ namespace Rhythm.UI
         [Header("Buttons")]
         [SerializeField] private Button restartButton;
         [SerializeField] private Button calibrationButton;
-        [SerializeField] private Button songListButton;
+        [SerializeField] private Button jukeboxButton;
         [SerializeField] private Button resumeButton;
         
         [Header("Statistics Display")]
@@ -25,7 +25,7 @@ namespace Rhythm.UI
         
         [Header("Scene References")]
         [SerializeField] private string calibrationSceneName = "CalibrationScene";
-        [SerializeField] private string songListSceneName = "SongSelectionScene";
+        [SerializeField] private string jukeboxSceneName = "JukeboxScene";
         
         private RhythmManagerOSUAimless rhythmManager;
         private JudgementSystem judgementSystem;
@@ -40,8 +40,8 @@ namespace Rhythm.UI
                 restartButton.onClick.AddListener(OnRestartClicked);
             if (calibrationButton)
                 calibrationButton.onClick.AddListener(OnCalibrationClicked);
-            if (songListButton)
-                songListButton.onClick.AddListener(OnSongListClicked);
+            if (jukeboxButton)
+                jukeboxButton.onClick.AddListener(OnJukeboxClicked);
             if (resumeButton)
                 resumeButton.onClick.AddListener(OnResumeClicked);
 
@@ -168,14 +168,21 @@ namespace Rhythm.UI
 
         private void OnRestartClicked()
         {
+            StartCoroutine(ScheduleRestart());
+        }
+        private System.Collections.IEnumerator ScheduleRestart()
+        {
             HidePauseMenu();
             AudioManager.Instance.FadeMusic();
+            CrossfadeManager.Instance.FadeToBlack();
+;           yield return new WaitForSeconds(1);
             if (rhythmManager)
             {
+                CrossfadeManager.Instance.FadeFromBlack();
+                yield return new WaitForSeconds(1);
                 rhythmManager.RestartGame();
             }
         }
-
         private void OnCalibrationClicked()
         {
             HidePauseMenu();
@@ -191,14 +198,21 @@ namespace Rhythm.UI
             }
         }
 
-        private void OnSongListClicked()
+        System.Collections.IEnumerator ScheduleChangeJukebox()
+        {
+            AudioManager.Instance.StopMusic();
+            CrossfadeManager.Instance.FadeToBlack();
+            yield return new WaitForSeconds(1);
+            UnityEngine.SceneManagement.SceneManager.LoadScene(jukeboxSceneName);
+        }
+        private void OnJukeboxClicked()
         {
             HidePauseMenu();
             
             // Load song selection scene
-            if (!string.IsNullOrEmpty(songListSceneName))
+            if (!string.IsNullOrEmpty(jukeboxSceneName))
             {
-                UnityEngine.SceneManagement.SceneManager.LoadScene(songListSceneName);
+                StartCoroutine(ScheduleChangeJukebox());
             }
             else
             {
@@ -222,9 +236,9 @@ namespace Rhythm.UI
             calibrationSceneName = sceneName;
         }
 
-        public void SetSongListSceneName(string sceneName)
+        public void SetJukeboxSceneName(string sceneName)
         {
-            songListSceneName = sceneName;
+            jukeboxSceneName = sceneName;
         }
 
         #endregion

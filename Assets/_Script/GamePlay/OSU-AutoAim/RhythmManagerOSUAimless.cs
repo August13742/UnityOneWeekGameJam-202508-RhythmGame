@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
-using Rhythm.UI;
 using Rhythm.Core;
+using Rhythm.UI;
+using UnityEngine;
 
 namespace Rhythm.GamePlay.OSU.Aimless
 {
@@ -28,14 +28,17 @@ namespace Rhythm.GamePlay.OSU.Aimless
         [Header("Game State")]
         public GameState CurrentState { get; private set; } = GameState.NotStarted;
         public bool AutoPlay = false;
-        [SerializeField] private bool playIndicatorSound = true;
-        [SerializeField ]double leadinWindow = 0f;
+
+        
         [Header("Audio Settings")]
         public float AudioStartDelay = 3f;
         public bool LoopSong = false;
 
         [Header("Beatmap Settings")]
         [SerializeField] private BeatmapData beatmap;
+        [SerializeField] private string songKey = ""; 
+        [SerializeField] private Difficulty difficulty = Difficulty.Normal; 
+        [SerializeField] private SongRecordsDB recordsDB;
 
         [SerializeField] private OSUBeatNote notePrefab;
         [SerializeField] private RectTransform noteParentCanvas;
@@ -60,9 +63,12 @@ namespace Rhythm.GamePlay.OSU.Aimless
         [Header("Gameplay Options")]
         public bool showIndicator = true;
         public bool showApproachRing = true;
+        public bool showPerfectSFX = true;
 
+        [SerializeField] double leadinWindow = 0f;
         public bool ShowApproachRing => showApproachRing;
         public bool ShowIndicator => showIndicator;
+        public bool ShowPerfectSFX => showPerfectSFX;
         public float indicatorLeadInMultiplier = 1.0f;
 
         private Canvas canvasComponent;
@@ -94,7 +100,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
         public static event Action OnGameFinished;
         public Action ShotFired;
 
-        // Add this event for UI updates
+        // event for calibration UI updates
         public static event Action<float> OnAudioOffsetChanged;
         public InputSystem_Actions Input
         {
@@ -109,6 +115,40 @@ namespace Rhythm.GamePlay.OSU.Aimless
             }
             Instance = this;
 
+            // Check for parameters from jukebox scene
+            if (GameStartParameters.TryGetParameters(
+                out BeatmapData paramBeatmap,
+                out string paramSongKey,
+                out Difficulty paramDifficulty,
+                out bool paramAutoPlay,
+                out bool paramShowIndicator,
+                out bool paramShowApproachRing,
+                out bool paramShowPerfectSFX))
+            {
+                beatmap = paramBeatmap;
+                songKey = paramSongKey;
+                difficulty = paramDifficulty;
+                AutoPlay = paramAutoPlay;
+                showIndicator = paramShowIndicator;
+                showApproachRing = paramShowApproachRing;
+                showPerfectSFX = paramShowPerfectSFX;
+                
+                Debug.Log($"[RhythmManager] Loaded parameters from jukebox: Song='{songKey}', Difficulty='{difficulty}'");
+                
+                // Clear parameters after use
+                GameStartParameters.ClearParameters();
+            }
+            else
+            {
+                Debug.LogWarning("[RhythmManager] No parameters from jukebox found, using default beatmap settings");
+                
+                // Set default song key from beatmap name if empty
+                if (string.IsNullOrEmpty(songKey) && beatmap != null)
+                {
+                    songKey = beatmap.name;
+                }
+            }
+
             // Load saved audio offset if present
             if (PlayerPrefs.HasKey("AudioOffset"))
             {
@@ -120,12 +160,45 @@ namespace Rhythm.GamePlay.OSU.Aimless
             InitialiseSpawnRange();
             InitialisePools();
             InitialiseEnemySpawnPoints();
+
+            // Initialise records database if not assigned
+            if (recordsDB == null)
+            {
+                // Try to find existing SongRecordsDB in Resources or create one
+                recordsDB = Resources.Load<SongRecordsDB>("SongRecordsDB");
+                if (recordsDB == null)
+                {
+                    Debug.LogWarning("No SongRecordsDB found. Records will not be saved.");
+                }
+            }
         }
-        void OnEnable() => Input.Enable();
-        void OnDisable() => Input.Disable();
+
+        private void OnEnable()
+        {
+            Input?.Enable();
+            AudioManager.OnMusicStartConfirmed += HandleMusicStartConfirmed;
+        }
+        private void OnDisable()
+        {
+            Input?.Disable();
+            AudioManager.OnMusicStartConfirmed -= HandleMusicStartConfirmed;
+        }
+
+        private void HandleMusicStartConfirmed(double actualDspStart)
+        {
+            dspSongStartTime = actualDspStart; // authoritative
+        }
 
         private void Start()
         {
+
+            if (!beatmap || !beatmap.musicTrack || !noteParentCanvas || !indicatorPrefab || !notePrefab || !enemyPrefab || !notificationTextPrefab || !worldCamera)
+            {
+                Debug.LogError("[RhythmManager] Missing required references.");
+                enabled = false;
+                return;
+            }
+
             if (leadinWindow.Equals(0f))
             {
                 leadinWindow = JudgementSystem.Instance.PerfectWindow / 2;
@@ -135,8 +208,20 @@ namespace Rhythm.GamePlay.OSU.Aimless
             indicator.gameObject.SetActive(false);
             
             SetGameState(GameState.NotStarted);
+            
+            Debug.Log($"[RhythmManager] Initialised with beatmap: '{beatmap.name}', Song: '{songKey}', Difficulty: '{difficulty}'");
+            StartCoroutine(StartGameSequence());
         }
+        private System.Collections.IEnumerator StartGameSequence()
+        {
 
+            float fadeInDuration = 1.0f;
+            CrossfadeManager.Instance.FadeFromBlack();
+
+            yield return new WaitForSeconds(fadeInDuration);
+
+            StartGame();
+        }
         private void Update()
         {
             if (CurrentState == GameState.Playing)
@@ -155,14 +240,18 @@ namespace Rhythm.GamePlay.OSU.Aimless
                 return;
             }
 
+            if (beatmap == null || beatmap.musicTrack == null)
+            {
+                Debug.LogError("[RhythmManager] Cannot start game: No valid beatmap or music track!");
+                return;
+            }
+
             ResetGame();
             SetGameState(GameState.CountingDown);
 
             double startTime = AudioSettings.dspTime + AudioStartDelay;
-            dspSongStartTime = startTime;
+            dspSongStartTime = startTime; // provisional; will be overwritten by confirmation
             totalPausedDuration = 0.0;
-
-            // Announce the intent to play scheduled music via the event system
             GameEvents.Instance.PlayMusicScheduled(beatmap.musicTrack, startTime);
 
             JudgementSystem.Instance.TotalNotesInSong = beatmap.notes.Count;
@@ -188,7 +277,6 @@ namespace Rhythm.GamePlay.OSU.Aimless
             pausedDspTime = AudioSettings.dspTime;
             SetGameState(GameState.Paused);
             
-            // Pause the music
             AudioManager.Instance.PauseMusic();
             
             
@@ -209,7 +297,6 @@ namespace Rhythm.GamePlay.OSU.Aimless
             
             SetGameState(GameState.Playing);
             
-            // Resume the music
             AudioManager.Instance.ResumeMusic();
             
             OnGameResumed?.Invoke();
@@ -220,6 +307,28 @@ namespace Rhythm.GamePlay.OSU.Aimless
             SetGameState(GameState.Finished);
             AudioManager.Instance.StopMusic();
             OnGameFinished?.Invoke();
+
+            // Save record only if not in AutoPlay mode and we have valid data
+            if (!AutoPlay && recordsDB != null && JudgementSystem.Instance != null && !string.IsNullOrEmpty(songKey))
+            {
+                recordsDB.SaveRecord(
+                    songKey, 
+                    difficulty,
+                    score: JudgementSystem.Instance.Score,
+                    accuracy: JudgementSystem.Instance.CurrentAccuracy,
+                    combo: JudgementSystem.Instance.MaxComboAchieved
+                );
+                
+                Debug.Log($"Record saved for {songKey} ({difficulty}): Score={JudgementSystem.Instance.Score}, Accuracy={JudgementSystem.Instance.CurrentAccuracy:P2}, Combo={JudgementSystem.Instance.MaxComboAchieved}");
+            }
+            else if (AutoPlay)
+            {
+                Debug.Log("AutoPlay mode - record not saved");
+            }
+            else
+            {
+                Debug.LogWarning("Could not save record: missing recordsDB, JudgementSystem, or songKey");
+            }
         }
 
         public void RestartGame()
@@ -283,7 +392,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
                 spawnIndex++;
             }
 
-            if (playIndicatorSound)
+            if (showPerfectSFX)
             {
                 foreach (var note in activeNotes)
                 {
@@ -366,6 +475,43 @@ namespace Rhythm.GamePlay.OSU.Aimless
                 // Penalty optional
                 AudioManager.Instance.PlaySFX(DryShot);
             }
+        }
+
+        #endregion
+
+        #region Save System API
+
+        /// <summary>
+        /// Set the song key and difficulty for save system
+        /// </summary>
+        public void SetSongInfo(string newSongKey, Difficulty newDifficulty)
+        {
+            songKey = newSongKey;
+            difficulty = newDifficulty;
+        }
+
+        /// <summary>
+        /// Get the current record for this song and difficulty
+        /// </summary>
+        public SongRecord GetCurrentRecord()
+        {
+            if (recordsDB != null && !string.IsNullOrEmpty(songKey))
+            {
+                return recordsDB.GetRecord(songKey, difficulty);
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Check if current score would be a new personal best
+        /// </summary>
+        public bool IsNewPersonalBest()
+        {
+            var currentRecord = GetCurrentRecord();
+            if (currentRecord == null) return true; // First time playing
+            
+            return JudgementSystem.Instance != null && 
+                   JudgementSystem.Instance.Score > currentRecord.highScore;
         }
 
         #endregion

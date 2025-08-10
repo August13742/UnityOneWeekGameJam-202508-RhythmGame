@@ -1,4 +1,3 @@
-using DG.Tweening;
 using Rhythm.GamePlay.OSU.Aimless;
 using TMPro;
 using UnityEngine;
@@ -15,7 +14,6 @@ namespace Rhythm.UI
         [SerializeField] private Button exitButton;
         [SerializeField] private TMP_Text offsetValueText;
         [SerializeField] private TMP_Text instructionsText;
-        [SerializeField] private Image fadePanel;
 
         [Header("Settings")]
         [SerializeField] private BeatmapData calibrationBeatmap;
@@ -24,25 +22,24 @@ namespace Rhythm.UI
 
         private void Start()
         {
-            rhythmManager = RhythmManagerOSUAimless.Instance;
-            SetupUI();
-            //StartCoroutine(DelayedCalibration());
-            fadePanel.color = Color.black;
-            fadePanel.DOFade(0f, 1f).
-                SetEase(Ease.InQuint).
-                OnComplete(() =>
-                {
-                    StartCalibration();
-                    Destroy(fadePanel.gameObject);
-                });
-            
+
+            StartCoroutine(DelayedStart());
 
         }
+        System.Collections.IEnumerator DelayedStart()
+        {
+            rhythmManager = RhythmManagerOSUAimless.Instance;
+            SetupUI();
+            PlayerPrefs.SetFloat("AudioOffset", rhythmManager.AudioOffset);
+            PlayerPrefs.Save();
+            CrossfadeManager.Instance.FadeFromBlack(1f);
+            yield return new WaitForSeconds(1f);
+            StartCalibration();
 
+        }
         private void SetupUI()
         {
             
-            // Setup slider
             if (offsetSlider != null)
             {
                 offsetSlider.minValue = -0.5f;
@@ -51,7 +48,6 @@ namespace Rhythm.UI
                 offsetSlider.onValueChanged.AddListener(OnSliderValueChanged);
             }
 
-            // Setup buttons
             if (increaseButton != null)
                 increaseButton.onClick.AddListener(() => rhythmManager.IncreaseAudioOffset());
                 
@@ -61,7 +57,6 @@ namespace Rhythm.UI
             if (exitButton != null)
                 exitButton.onClick.AddListener(ExitCalibration);
 
-            // Setup instructions
             if (instructionsText != null)
             {
                 //instructionsText.text = "Adjust the audio offset until the beats feel synchronized.\n" +
@@ -105,15 +100,20 @@ namespace Rhythm.UI
 
         private void ExitCalibration()
         {
+            StartCoroutine(ScheduleExitCalibration());
+        }
+        System.Collections.IEnumerator ScheduleExitCalibration()
+        {
             rhythmManager.ExitCalibrationMode();
 
 
             PlayerPrefs.SetFloat("AudioOffset", rhythmManager.AudioOffset);
             PlayerPrefs.Save();
 
+            CrossfadeManager.Instance.FadeToBlack(1f);
+            yield return new WaitForSeconds(1);
             UnityEngine.SceneManagement.SceneManager.LoadScene(nextSceneName);
         }
-
         private void OnDestroy()
         {
             RhythmManagerOSUAimless.OnAudioOffsetChanged -= UpdateOffsetDisplay;

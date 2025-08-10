@@ -1437,14 +1437,14 @@ MonoBehaviour:
   pauseMenuPanel: {fileID: 9027119914157523223}
   restartButton: {fileID: 7785394910324044272}
   calibrationButton: {fileID: 8124713392690619930}
-  songListButton: {fileID: 6887608803638070208}
+  jukeboxButton: {fileID: 6887608803638070208}
   resumeButton: {fileID: 7289203869576524238}
   notesText: {fileID: 2321471879406010759}
   perfectText: {fileID: 3080851802175542104}
   goodText: {fileID: 915358008558600878}
   missText: {fileID: 7273759993504013126}
   calibrationSceneName: CalibrationScene
-  songListSceneName: SongSelectionScene
+  jukeboxSceneName: JukeboxScene
 --- !u!1 &7489037838598007190
 GameObject:
   m_ObjectHideFlags: 0
@@ -1577,7 +1577,7 @@ GameObject:
   - component: {fileID: 9150728896704439456}
   - component: {fileID: 6832246552899625769}
   m_Layer: 0
-  m_Name: VerticleContainer
+  m_Name: VerticalContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

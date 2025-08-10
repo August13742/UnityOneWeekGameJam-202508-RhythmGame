@@ -25,7 +25,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6468985701250363316}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -45,8 +45,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AutoPlay: 1
+  playIndicatorSound: 1
+  leadinWindow: 0
   AudioStartDelay: 3
-  beatmap: {fileID: 11400000, guid: 4ae096d0cd3656845bfdb9f44780ec26, type: 2}
+  LoopSong: 0
+  beatmap: {fileID: 11400000, guid: 60af09a8f06816d43b54a729dc10f8a3, type: 2}
+  songKey: 
+  difficulty: 1
+  recordsDB: {fileID: 0}
   notePrefab: {fileID: 6451794992138514700, guid: c273cb463786c9943b8d4e1fbc558665, type: 3}
   noteParentCanvas: {fileID: 0}
   audioOffset: 0
@@ -54,14 +60,33 @@ MonoBehaviour:
   spawnRangeOffset: {x: 600, y: 300}
   customSpawnRange: {x: 800, y: 440}
   distanceRange: {x: 15, y: 50}
-  virtualSpawnPointCount: 12
+  virtualSpawnPointCount: 32
   DryShot: {fileID: 11400000, guid: ffc723c983edcaa409e10f3d3e358ceb, type: 2}
   worldCamera: {fileID: 0}
-  enemySpawnPoints: []
+  enemySpawnPoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   enemyPrefab: {fileID: 1222443706707990221, guid: 2cc14649f0677014995c899179fb7b52, type: 3}
   notificationTextPrefab: {fileID: 2225637782031080155, guid: dc5077951562ceb469a948608198e6c8, type: 3}
   indicatorPrefab: {fileID: 2071840571437292467, guid: badb515b7f64c0c4596cc5df7ee2410c, type: 3}
+  noteSpawnIndicationSFX: {fileID: 11400000, guid: 49d28f09d3aa1a14bb425be4adff1de5, type: 2}
   showIndicator: 1
   showApproachRing: 1
   indicatorLeadInMultiplier: 1.2
   poolSize: 8
+  isCalibrationMode: 0
+  offsetAdjustmentStep: 0.01
+  maxAudioOffset: 0.5
+  minAudioOffset: -0.5

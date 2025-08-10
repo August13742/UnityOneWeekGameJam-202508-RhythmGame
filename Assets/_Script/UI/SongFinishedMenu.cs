@@ -136,18 +136,12 @@ namespace Rhythm.UI
                 rhythmManager.StopGame();
 
             // Load main menu scene (adjust scene name as needed)
-            UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
+            UnityEngine.SceneManagement.SceneManager.LoadScene("JukeboxScene");
         }
 
         private void ExitGame()
         {
             HideSongFinishedMenu();
-
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-#else
-            Application.Quit();
-#endif
         }
 
         private void OnDestroy()
