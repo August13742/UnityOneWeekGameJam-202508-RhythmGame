@@ -716,7 +716,8 @@ namespace Rhythm.GamePlay.OSU.Aimless
                 ReturnNoteToPool,
                 this,
                 spawnPoint.position,
-                notificationText.gameObject
+                notificationText.gameObject,
+                enemy
             );
 
             activeNotes.Add(note);
