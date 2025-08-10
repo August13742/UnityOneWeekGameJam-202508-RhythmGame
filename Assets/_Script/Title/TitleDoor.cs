@@ -22,8 +22,13 @@ public class TitleDoor : MonoBehaviour, IClickable
     void Start()
     {
         playerRay.ClickDoorListener += () => OnClick(); // クリックイベントを登録
+        StartCoroutine(CrossfadeIn());
     }
-
+    System.Collections.IEnumerator CrossfadeIn()
+    {
+        CrossfadeManager.Instance.FadeFromBlack(1.5f);
+        yield return new WaitForSeconds(1.5f);
+    }
     // IClickableインターフェースの実装
     public void OnClick()
     {

@@ -1,0 +1,65 @@
+# Unity One-Week Project: 「ひく」 -> Rhythm Gunman for WebBuild
+
+
+## Overview
+This repository contains the source code for a rhythm-based game inspired by OSU! gameplay mechanics. The project is built using Unity and focuses on delivering an engaging experience with beatmaps, dynamic visuals, and precise timing-based gameplay. Players interact with notes and enemies in sync with the music, aiming for high scores and accuracy.
+
+## Features
+- **Core Gameplay**: Timing-based note hitting mechanics with visual feedback for hits and misses.
+- **Beatmap System**: Supports custom beatmaps generated via Python scripts and integrated into the game.
+- **Auto-Play Mode**: Allows players to watch the game play itself for demonstration or calibration purposes.
+- **Dynamic Visuals**: Includes approach rings, hit circles, and notification texts for feedback.
+- **Enemy Interaction**: Enemies spawn dynamically and react to player actions.
+- **Song Selection Menu**: A jukebox-style UI for selecting songs and difficulties.
+- **Statistics Tracking**: Tracks player performance, including scores, accuracy, combo, and hit/miss counts.
+- **Save System**: Stores high scores and personal bests for each song and difficulty.
+- **Calibration Mode**: Allows players to adjust audio offset for precise timing.
+
+## Project Structure
+### Key Components
+- **Gameplay**:  
+  - `OSUBeatNote.cs`: Handles individual notes, their animations, and hit/miss processing.
+  - `RhythmManagerOSUAimless.cs`: Manages the overall game state, note spawning, and interactions.
+- **UI**:  
+  - `SongRowController.cs`: Manages song selection and difficulty toggles.
+  - `SongFinishedMenu.cs`: Displays statistics and options after a song finishes.
+- **Beatmap Generation**:  
+  - `GenerateBeatmapWindow.cs`: Editor tool for generating beatmaps using Python scripts.
+- **Save System**:  
+  - `SongRecord.cs`: Stores player performance data for each song and difficulty.
+
+### External Tools
+- **Python Integration**: A Python script (`generate_beatmap.py`) is used to generate beatmaps from audio files. The script processes audio and outputs JSON files that are imported into Unity.
+
+### Assets
+- **Visuals**: Includes UI elements like buttons, text, and indicators for gameplay feedback.
+- **Audio**: Supports custom music tracks for beatmaps.
+
+## Requirements
+- **Unity Version**: 6000.0.54f1 (or later).
+- **.NET Framework**: 4.7.1.
+- **Python**: Required for beatmap generation.
+
+## Installation
+1. Clone the repository:
+2. Open the project in Unity (version 6000.0.54f1 or later).
+3. Ensure Python is installed and accessible via the command line.
+4. Run the game or use the `GenerateBeatmapWindow` tool to create custom beatmaps.
+
+## Usage
+### Playing the Game
+1. Select a song and difficulty from the jukebox menu.
+2. Hit notes in sync with the music to score points.
+3. View your performance statistics after the song ends.
+
+### Beatmap Generation
+1. Open the `GenerateBeatmapWindow` tool in Unity Editor (`Tools > Beatmap > Auto-Generate`).
+2. Select an audio file and difficulty level.
+3. Generate the beatmap and import it into the project.
+
+### Calibration
+Use the calibration mode to adjust audio offset for precise timing:
+- Increase or decrease the offset using the provided UI controls.
+
+## License
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
