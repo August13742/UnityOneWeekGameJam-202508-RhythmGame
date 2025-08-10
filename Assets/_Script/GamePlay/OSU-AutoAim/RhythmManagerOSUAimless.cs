@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
-using Rhythm.UI;
+using System.Globalization;
 using Rhythm.Core;
+using Rhythm.UI;
+using UnityEngine;
 
 namespace Rhythm.GamePlay.OSU.Aimless
 {
@@ -36,6 +37,9 @@ namespace Rhythm.GamePlay.OSU.Aimless
 
         [Header("Beatmap Settings")]
         [SerializeField] private BeatmapData beatmap;
+        [SerializeField] private string songKey = ""; 
+        [SerializeField] private Difficulty difficulty = Difficulty.Normal; 
+        [SerializeField] private SongRecordsDB recordsDB;
 
         [SerializeField] private OSUBeatNote notePrefab;
         [SerializeField] private RectTransform noteParentCanvas;
@@ -120,6 +124,23 @@ namespace Rhythm.GamePlay.OSU.Aimless
             InitialiseSpawnRange();
             InitialisePools();
             InitialiseEnemySpawnPoints();
+
+            // Initialize records database if not assigned
+            if (recordsDB == null)
+            {
+                // Try to find existing SongRecordsDB in Resources or create one
+                recordsDB = Resources.Load<SongRecordsDB>("SongRecordsDB");
+                if (recordsDB == null)
+                {
+                    Debug.LogWarning("No SongRecordsDB found. Records will not be saved.");
+                }
+            }
+
+            // Set default song key from beatmap name if empty
+            if (string.IsNullOrEmpty(songKey) && beatmap != null)
+            {
+                songKey = beatmap.name;
+            }
         }
 
         private void OnEnable()
@@ -234,6 +255,28 @@ namespace Rhythm.GamePlay.OSU.Aimless
             SetGameState(GameState.Finished);
             AudioManager.Instance.StopMusic();
             OnGameFinished?.Invoke();
+
+            // Save record only if not in AutoPlay mode and we have valid data
+            if (!AutoPlay && recordsDB != null && JudgementSystem.Instance != null && !string.IsNullOrEmpty(songKey))
+            {
+                recordsDB.SaveRecord(
+                    songKey, 
+                    difficulty,
+                    score: JudgementSystem.Instance.Score,
+                    accuracy: JudgementSystem.Instance.CurrentAccuracy,
+                    combo: JudgementSystem.Instance.MaxComboAchieved
+                );
+                
+                Debug.Log($"Record saved for {songKey} ({difficulty}): Score={JudgementSystem.Instance.Score}, Accuracy={JudgementSystem.Instance.CurrentAccuracy:P2}, Combo={JudgementSystem.Instance.MaxComboAchieved}");
+            }
+            else if (AutoPlay)
+            {
+                Debug.Log("AutoPlay mode - record not saved");
+            }
+            else
+            {
+                Debug.LogWarning("Could not save record: missing recordsDB, JudgementSystem, or songKey");
+            }
         }
 
         public void RestartGame()
@@ -380,6 +423,43 @@ namespace Rhythm.GamePlay.OSU.Aimless
                 // Penalty optional
                 AudioManager.Instance.PlaySFX(DryShot);
             }
+        }
+
+        #endregion
+
+        #region Save System API
+
+        /// <summary>
+        /// Set the song key and difficulty for save system
+        /// </summary>
+        public void SetSongInfo(string newSongKey, Difficulty newDifficulty)
+        {
+            songKey = newSongKey;
+            difficulty = newDifficulty;
+        }
+
+        /// <summary>
+        /// Get the current record for this song and difficulty
+        /// </summary>
+        public SongRecord GetCurrentRecord()
+        {
+            if (recordsDB != null && !string.IsNullOrEmpty(songKey))
+            {
+                return recordsDB.GetRecord(songKey, difficulty);
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Check if current score would be a new personal best
+        /// </summary>
+        public bool IsNewPersonalBest()
+        {
+            var currentRecord = GetCurrentRecord();
+            if (currentRecord == null) return true; // First time playing
+            
+            return JudgementSystem.Instance != null && 
+                   JudgementSystem.Instance.Score > currentRecord.highScore;
         }
 
         #endregion

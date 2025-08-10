@@ -72,7 +72,7 @@ public static class BeatmapIndex
     
     private static string ExtractSongKey(string assetName)
     {
-        // Assuming format: "SongName_DIFFICULTY"
+        // Assumed format: "SongName_DIFFICULTY"
         int lastUnderscore = assetName.LastIndexOf('_');
         if (lastUnderscore > 0)
         {
@@ -87,7 +87,7 @@ public static class BeatmapIndex
     
     private static Difficulty ExtractDifficulty(string assetName)
     {
-        // Assuming format: "SongName_DIFFICULTY"
+        // Assumed format: "SongName_DIFFICULTY"
         int lastUnderscore = assetName.LastIndexOf('_');
         if (lastUnderscore < 0 || lastUnderscore >= assetName.Length - 1)
         {

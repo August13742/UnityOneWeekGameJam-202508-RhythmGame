@@ -1,59 +1,71 @@
-using UnityEngine;
 using System.Collections.Generic;
+using Rhythm.UI;
+using UnityEngine;
 
 public class JukeboxUIController : MonoBehaviour
 {
-    [SerializeField] private Transform contentRoot; // ScrollRect Content
-    [SerializeField] private SongRowView rowPrefab;
+    [SerializeField] private Transform contentRoot;
+    [SerializeField] private SongRowController rowPrefab;
     [SerializeField] private SongRecordsDB recordsDB;
-    [SerializeField] private RecordsPanelController recordsPanel;
 
-    private readonly List<GameObject> spawned = new();
+    private readonly List<SongRowController> rows = new();
+    private SongRowController expandedRow;
 
     private void OnEnable() => Rebuild();
+    private void OnDisable() => ClearRows();
 
     public void Rebuild()
     {
-        foreach (var go in spawned)
-            Destroy(go);
-        spawned.Clear();
+        ClearRows();
 
-        var db = BeatmapIndex.Build();
-
+        var db = BeatmapIndex.Build(); // songKey -> {diff->BeatmapData}
         foreach (var kv in db)
         {
-            string songKey = kv.Key;
-            var row = Instantiate(rowPrefab, contentRoot);
-            row.songName.text = songKey;
+            SongRowController controller = Instantiate(rowPrefab, contentRoot);
 
-            SetupButton(row.easyBtn, songKey, kv.Value, Difficulty.Easy);
-            SetupButton(row.normalBtn, songKey, kv.Value, Difficulty.Normal);
-            SetupButton(row.hardBtn, songKey, kv.Value, Difficulty.Hard);
-            SetupButton(row.insaneBtn, songKey, kv.Value, Difficulty.Insane);
+            controller.Init(kv.Key, kv.Value, recordsDB);
 
-            spawned.Add(row.gameObject);
+            controller.OnExpandRequested += HandleExpandRequest;
+            controller.OnStartRequested += HandleStartRequest;
+
+            rows.Add(controller);
         }
     }
 
-    private void SetupButton(UnityEngine.UI.Button btn, string songKey,
-                             Dictionary<Difficulty, BeatmapData> diffs, Difficulty d)
+    // This method is called when ANY row asks to be expanded
+    private void HandleExpandRequest(SongRowController requestedRow)
     {
-        if (diffs.TryGetValue(d, out var beatmap))
+        // If a different row is already expanded, collapse it.
+        if (expandedRow != null && expandedRow != requestedRow)
         {
-            btn.gameObject.SetActive(true);
-            btn.onClick.RemoveAllListeners();
-            btn.onClick.AddListener(() =>
-            {
-                Debug.Log($"Selected {songKey} [{d}]");
-                var rec = recordsDB?.GetRecord(songKey, d);
-                recordsPanel.ShowRecord(songKey, d, rec);
+            expandedRow.Collapse();
+        }
+        // Track the newly expanded row.
+        expandedRow = requestedRow;
+    }
 
-                // Later: start playing the song
-            });
-        }
-        else
+    // This method is called when a row's start button is pressed
+    private void HandleStartRequest(BeatmapData beatmap, string songKey, Difficulty difficulty)
+    {
+        Debug.Log($"Starting song '{songKey}' on difficulty '{difficulty}'.");
+        // TODO: Add your scene loading or game start logic here.
+        // Example:
+        // GameManager.Instance.StartSong(beatmap);
+    }
+
+    private void ClearRows()
+    {
+        foreach (var r in rows)
         {
-            btn.gameObject.SetActive(false);
+            if (r)
+            {
+                // Unsubscribe from events to prevent memory leaks
+                r.OnExpandRequested -= HandleExpandRequest;
+                r.OnStartRequested -= HandleStartRequest;
+                Destroy(r.gameObject);
+            }
         }
+        rows.Clear();
+        expandedRow = null;
     }
 }
