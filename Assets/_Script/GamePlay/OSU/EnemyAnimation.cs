@@ -1,3 +1,4 @@
+using Rhythm.GamePlay.OSU.Aimless;
 using UnityEngine;
 
 namespace Rhythm.GamePlay.OSU
@@ -8,7 +9,11 @@ namespace Rhythm.GamePlay.OSU
         [SerializeField] private Animator animator;
         [SerializeField] private string spawnTrigger = "Spawn";
         [SerializeField] private string deathTrigger = "Death";
-        
+        private GameObject player;
+        private void Start()
+        {
+            player = RhythmManagerOSUAimless.Instance.PlayerObject;
+        }
         private void Awake()
         {
             if (animator == null)

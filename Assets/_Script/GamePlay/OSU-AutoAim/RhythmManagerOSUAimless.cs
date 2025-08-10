@@ -25,6 +25,8 @@ namespace Rhythm.GamePlay.OSU.Aimless
             get; private set;
         }
 
+        public GameObject PlayerObject { get; private set; }
+        [SerializeField] private GameObject playerObj;
         [Header("Game State")]
         public GameState CurrentState { get; private set; } = GameState.NotStarted;
         public bool AutoPlay = false;
@@ -114,7 +116,7 @@ namespace Rhythm.GamePlay.OSU.Aimless
                 return;
             }
             Instance = this;
-
+            PlayerObject = playerObj;
             // Check for parameters from jukebox scene
             if (GameStartParameters.TryGetParameters(
                 out BeatmapData paramBeatmap,
