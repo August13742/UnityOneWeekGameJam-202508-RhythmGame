@@ -3,7 +3,7 @@
 
 https://unityroom.com/games/rhythm-revolver
 
-Beatmap generation currently only works in Windows, you can probably change the CLI command to make it work in other OSs. 
+Beatmap generation currently only works in Windows, you can probably change the CLI command via `GenerateBeatmapWindow.cs` to make it work in other OSs. 
 
 Unity will scream at you when you open the project, just ignore it and install DOTween and TMpro into the project.
 
