@@ -1,5 +1,5 @@
 # Unity One-Week Project: 「ひく」 -> Rhythm Game (Rhythm Revolver) for WebBuild
-[🇬🇧 English](README.md) | [🇯🇵 日本語](README.ja.md)
+[🇦🇺 English](README.md) | [🇯🇵 日本語](README.ja.md)
 
 https://unityroom.com/games/rhythm-revolver
 
